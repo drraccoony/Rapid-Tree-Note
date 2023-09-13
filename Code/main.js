@@ -19,6 +19,7 @@ export class Tree
 
     push(line)
     {
+
         var level = getNumTabs(line);
         var data = removeTabs(line);
 
@@ -159,77 +160,6 @@ export class Tree
                         mainArr[line][index] = new Bend();
                         solution = "Fork";
                     }
-                    /**
-                    var rightIsData = access(line,index+1,mainArr)=="Data";
-                    if(rightIsData)
-                    {
-                        var shouldBend = false;
-                        var lock = false;
-                        var offset = 0;
-                        var holder;
-                        var leftData;
-                        var downData;
-                        console.log(mainArr);
-
-                        if(access(line+1,i,mainArr) == "Data")
-                        {
-                            shouldBend = true;
-                            lock = true;
-                        }
-
-                        while(!lock)
-                        {
-                            console.log("QUERT" + access(line+offset+1,index,mainArr));
-                            if(access(line+offset+1,index,mainArr) == "Null")
-                            {
-                                leftData = false;
-                                downData = false;
-                                lock = true;
-                                shouldBend = true;
-                                console.log("exiting early");
-                            }
-
-                            else
-                            {
-                                console.log("slicing line " + (line+offset) + " from 0 to " + (index-1));
-                                console.log("from context of " + line + "," + index);
-                                holder = mainArr[line+offset].slice(0,index-1);
-                                console.log(holder);
-                                leftData = holder.includes("Data");
-                                downData = access(line + offset, index + 1, mainArr) == "Data";
-                            }
-                            
-                            if(!leftData && !downData)
-                            {
-                                offset++;
-                                console.log("A");
-                            }
-                            if(!leftData && downData)
-                            {
-                                shouldBend = false;
-                                lock = true;
-                                console.log("B");
-                            }
-                            if(leftData && !downData)
-                            {
-                                shouldBend = true;
-                                lock = true;
-                                console.log("C");
-                            }
-                            if(leftData && downData)
-                            {
-                                console.warn("Edge case at " + line + "," + index);
-                                shouldBend = false;
-                                lock = true;
-                            }
-                        }
-                        if(shouldBend)
-                        {
-                            mainArr[line][index] = new Bend();
-                            solution = "Bend";
-                        }
-                    }
-                    */
                 }
                 //Fork
                 if(solution == "")
@@ -294,6 +224,8 @@ export class Tree
             }
             return mainArr[row][index].type;
         }
+
+        fun
         
 
         
@@ -385,6 +317,7 @@ class RealBuffer
 
     display()
     {
+        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
         this.raw.update();
         this.exe.update();
         this.readCarrat();
