@@ -1,31 +1,138 @@
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
 
-export default class Schema
+export default class RealBuffer
 {
     constructor(textArea)
     {
-        this.raw = new RawBuffer(document.getElementById("source"));
-        this.exe = new ExeBuffer(document.getElementById("display"));
-        this.state = "UNLOCKED";
+        this.ref = textArea;
+        this.raw = new RawBuffer(textArea);
+        this.exe = new ExeBuffer(textArea);
+        this.state = "EXE"; //RAW or EXE
+        this.lock = "UNLOCKED";
 
-        
-
-        this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
+        this.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
     }
+
+    
 
     keyPreRouter(event)
     {
-        this.raw.keyHandler(event, () => this.keyPostRouter());
+        console.log(Date.now());
+        
+        this.ref.value = this.raw.value;
+        this.ref.selectionStart = this.raw.start;
+        this.ref.selectionEnd = this.raw.end;
+
+        this.keyHandler(event, () => this.keyPostRouter());
     }
 
     keyPostRouter()
     {
+        this.lock = "UNLOCKED";
+
+        this.raw.value = this.ref.value;
+        this.raw.start = this.ref.selectionStart;
+        this.raw.end = this.ref.selectionEnd;
         this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
+
+        this.exe.value = this.raw.value;
+        this.exe.start = this.raw.start;
+        this.exe.end = this.raw.end;
         this.exe.update();
 
-        //console.log(this);
+        this.ref.value = this.exe.value;
+        this.ref.selectionStart = this.exe.start;
+        this.ref.selectionEnd = this.exe.end;
+
+        console.log(this);
+
+        console.log(Date.now());
+    }
+
+    keyHandler(event)
+    {
+        
+        if(this.lock == "LOCKED")
+        {
+            setTimeout(() => {this.keyHandler(event, callback)}, 1);
+            return;
+        }
+
+        if(event.key == "Tab")
+        {
+            event.preventDefault();
+            if(shouldTab(this.ref.value, this.ref.selectionStart))
+            {
+                this.ref.value = this.ref.value.substring(0,this.ref.selectionStart) + "\t" + this.ref.value.substring(this.ref.selectionEnd);
+                this.ref.selectionStart++;
+                this.ref.selectionEnd++;
+            }
+        }
+        if(event.key == "Enter")
+        {
+            event.preventDefault();
+            var autoIndent = countCaretLeft(this.ref.value, this.ref.selectionStart);
+            var spliceval = "\n";
+            for(var i = 0; i < autoIndent; i++)
+            {
+                spliceval += "\t";
+            }
+            this.ref.value = this.ref.value.substring(0,this.ref.selectionStart) + spliceval + this.ref.value.substring(this.ref.selectionEnd);
+            this.ref.selectionStart += spliceval.length;
+            this.ref.selectionEnd += spliceval.length;
+        }
+
+        this.lock = "LOCKED";
+        setTimeout(() => {this.keyPostRouter()}, 3);
+
+        function shouldTab(string, start)
+        {
+            string = string.substring(0, start);
+            var lines = string.split("\n");
+            var current = lines[lines.length-1];
+            var prev = "";
+            if(lines.length > 1)
+            {
+                prev = lines[lines.length-2]
+            }
+            var prevChar = string.substring(start-1,start);
+
+            var noEntombment = (prevChar == "\t" || prevChar == "\n");
+            var noLeading = (countTabs(current)<=countTabs(prev));
+
+            return (noEntombment && noLeading);
+
+            function countTabs(input)
+            {
+                var count = input.match(/^\t*(\t)/gm);
+                if(count != null)
+                {
+                    count = count[0].length;
+                }
+                else
+                {
+                    count = 0;
+                }
+                return count;
+            }
+        }
+
+        function countCaretLeft(string, start)
+        {
+            var input = string.substring(0,start);
+            var lines = input.split("\n");
+            var line = lines[lines.length-1];
+            var count = line.match(/^\t*(\t)/gm);
+            if(count != null)
+            {
+                count = count[0].length;
+            }
+            else
+            {
+                count = 0;
+            }
+            return count;
+        }
     }
 }
 
@@ -261,7 +368,13 @@ class ProcessingTree
             {
                 result += mainArr[line][index].data;
             }
-            result += "\n";
+            if(line < mainArr.length - 1)
+            {
+                result += "\n";
+                //console.log("BBB");
+            }
+            
+            
         }
 
         this.output = result;
@@ -286,22 +399,23 @@ class VirtualBuffer
 {
     constructor(textArea)
     {
-        this.ref = textArea;
-        this.start = textArea.selectionStart;
-        this.end = textArea.selectionEnd;
+        this.parent = textArea;
+        this.value = "";
+        this.start = this.parent.selectionStart;
+        this.end = this.parent.selectionEnd;
         this.state = "UNLOCKED";
     }
 
     writeCarrat()
     {
-        this.ref.selectionStart = this.start;
-        this.ref.selectionEnd = this.end;
+        this.parent.selectionStart = this.start;
+        this.parent.selectionEnd = this.end;
     }
 
     readCarrat()
     {
-        this.start = this.ref.selectionStart;
-        this.end = this.ref.selectionEnd;
+        this.start = this.parent.selectionStart;
+        this.end = this.parent.selectionEnd;
     }
 
     moveCarrat(vector)
@@ -311,90 +425,12 @@ class VirtualBuffer
         this.writeCarrat();
     }
 
-    countCaretLeft()
-    {
-        var lines = this.ref.value.substring(0, this.start).split("\n");
-        var lastLine = lines[lines.length-1];
-        var numTabs = lastLine.split("\t").length - 1;
-        return numTabs;
-    }
-
-    keyHandler(event, callback)
-    {
-
-        
-        
-        if(this.state == "LOCKED")
-        {
-            setTimeout(() => {this.keyHandler(event, callback)}, 10);
-            return;
-        }
-
-        this.readCarrat();
-
-        if(event.key == "Tab")
-        {
-            event.preventDefault();
-            if(shouldTab(this.ref.value, this.start))
-            {
-                this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                this.moveCarrat(1);
-            }
-        }
-        if(event.key == "Enter")
-        {
-            event.preventDefault();
-            var autoIndent = this.countCaretLeft();
-            this.ref.value = this.ref.value.substring(0,this.start) + "\n" + this.ref.value.substring(this.end);
-            this.moveCarrat(1);
-            for(var i = 0; i < autoIndent; i++)
-            {
-                this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                this.moveCarrat(1);
-            }
-        }
-
-        this.state = "LOCKED";
-        setTimeout(() => {callback()}, 10);
-
-        function shouldTab(string, start)
-        {
-            string = string.substring(0, start);
-            var lines = string.split("\n");
-            var current = lines[lines.length-1];
-            var prev = "";
-            if(lines.length > 1)
-            {
-                prev = lines[lines.length-2]
-            }
-            var prevChar = string.substring(start-1,start);
-
-            var noEntombment = (prevChar == "\t" || prevChar == "\n");
-            var noLeading = (countTabs(current)<=countTabs(prev));
-
-            return (noEntombment && noLeading);
-
-            function countTabs(input)
-            {
-                var count = input.match(/^\t*(\t)/gm);
-                if(count != null)
-                {
-                    count = count[0].length;
-                }
-                else
-                {
-                    count = 0;
-                }
-                return count;
-            }
-        }
-    }
+    
 
     update()
     {
         //do something that changes the value of this.ref.value
         this.state = "UNLOCKED";
-        this.readCarrat();
     }
 
 }
@@ -409,8 +445,36 @@ class RawBuffer extends VirtualBuffer
 
     update()
     {
-        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+        this.value = this.value.replace(/├── |│   |└── |    /gm, "\t");
         super.update();
+    }
+
+    correctCarrat()
+    {
+        var lead = this.tree.input.substring(0,this.start);
+
+        //console.log("CONSIDERING >" + lead + "<");
+
+        var correctionVector = ((countGlyphs(lead)) * 3);
+        this.start = this.start - correctionVector;
+        this.end = this.end - correctionVector;
+
+
+        function countGlyphs(input)
+        {
+            var count = input.match(/├── |│   |└── |    /gm);
+            //console.log(count);
+            if(count != null)
+            {
+                count = count.length;
+            }
+            else
+            {
+                count = 0;
+            }
+            return count;
+        }
+
     }
 }
 
@@ -424,9 +488,38 @@ class ExeBuffer extends VirtualBuffer
 
     update()
     {
-        this.tree.input = this.ref.value;
+        this.tree.input = this.value;
         this.tree.totalParse();
-        this.ref.value = this.tree.output;
+        this.value = this.tree.output;
+        this.correctCarrat();
         super.update();
+    }
+
+    correctCarrat()
+    {
+        var lead = this.tree.input.substring(0,this.start);
+
+        //console.log("CONSIDERING >" + lead + "<");
+
+        var correctionVector = ((countTabs(lead)) * 3);
+        this.start = this.start + correctionVector;
+        this.end = this.end + correctionVector;
+
+
+        function countTabs(input)
+        {
+            var count = input.match(/\t/gm);
+            //console.log(count);
+            if(count != null)
+            {
+                count = count.length;
+            }
+            else
+            {
+                count = 0;
+            }
+            return count;
+        }
+
     }
 }

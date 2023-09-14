@@ -14,8 +14,7 @@
     </div>
     
     <div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
-      <textarea id="source" style="width: 95%; height: 80vh; background-color: rgb(67, 72, 91); border: solid 4px black; color: whitesmoke; "></textarea>
-      <textarea id="display" style="width: 95%; height: 80vh; background-color: rgb(67, 72, 91); border: solid 4px black; color: whitesmoke; "></textarea>
+      <textarea id="entry" style="width: 95%; height: 80vh; background-color: rgb(67, 72, 91); border: solid 4px black; color: whitesmoke; "></textarea>
     </div>
 
     <div style="display: flex; justify-content: center; align-items: center; height: 5vh;">
@@ -31,8 +30,8 @@
     
 
     <script type="module">
-      import Schema from "./Code/main.js";
-      var MainBuffer = new Schema(document.getElementById("source"));
+      import RealBuffer from "./Code/main.js";
+      var MainBuffer = new RealBuffer(document.getElementById("entry"));
   </script>
   </body>
 </html>
