@@ -4,38 +4,71 @@ export default class Schema
 {
     constructor(textArea)
     {
-        this.real = new RealBuffer(textArea);
+        this.raw = new RawBuffer(document.getElementById("source"));
+        this.exe = new ExeBuffer(document.getElementById("display"));
+        this.state = "UNLOCKED";
 
-        textArea.addEventListener("keydown", (event) => {this.real.keyHandler(event)});
+        
+
+        this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
+    }
+
+    keyPreRouter(event)
+    {
+        this.raw.keyHandler(event, () => this.keyPostRouter());
+    }
+
+    keyPostRouter()
+    {
+        this.raw.update();
+        this.exe.ref.value = this.raw.ref.value;
+        this.exe.tree.totalParse();
+        this.exe.update();
+
+        //console.log(this);
     }
 }
 
-export class Tree
+class LevelNode
 {
-    constructor()
+    constructor(level, value)
     {
+        this.level = level;
+        this.value = value;
+    }
+}
+
+class ProcessingTree
+{
+    constructor(input)
+    {
+        this.input = input;
         this.nodes = new Array();
+        this.blocks = new Array();
+        this.output = "";
     }
 
-    push(line)
+    toNodes()
     {
+        var lines = this.input.split("\n");
 
-        var level = getNumTabs(line);
-        var data = removeTabs(line);
-
-        this.nodes.push(new Node(data, level));
-
-        //console.log(this);
-
-        
-        function removeTabs(input)
+        for(var line of lines)
         {
-            return input.replaceAll(/\t/g, "");
+            var level = getIndentLevel(line);
+            line = unindent(line);
+            this.nodes.push(new LevelNode(level, line));
         }
 
-        function getNumTabs(input)
+        function unindent(input)
         {
-            var count = line.match(/^\t*(\t)/gm);
+            var result = input;
+            result = result.replaceAll(/\t/g, "");
+            return result;
+        }
+
+        function getIndentLevel(string)
+        {
+            var count = string.match(/^\t*(\t)/gm);
             if(count != null)
             {
                 count = count[0].length;
@@ -48,28 +81,33 @@ export class Tree
         }
     }
 
-    format()
+    toBlocks()
     {
-        var mainArr = new Array();
         for(var node of this.nodes)
         {
-            var holder = new Array();
+            var blockLine = new Array();
             for(var i = 0; i < node.level; i++)
             {
-                holder.push(new New());
+                blockLine.push(new New());
             }
             if(node.value == "")
             {
-                holder.push(new End());
+                blockLine.push(new End());
             }
             else
             {
-                holder.push(new Data(node.value));
+                blockLine.push(new Data(node.value));
             }
-            mainArr.push(holder);
+            this.blocks.push(blockLine);
         }
+    }
 
-        
+    parseNewBlocks()
+    {
+        //convert var name to handle migration
+        var mainArr = this.blocks;
+
+        //iterate over block array to convert type "New" to other non-Data, non-End types
         for(var line = 0; line < mainArr.length; line++)
         {
             for(var index = 0; index < mainArr[line].length; index++)
@@ -188,24 +226,10 @@ export class Tree
                         solution = "Line";
                     }
                 }
-                
-                //console.log("Solved: [" + line + "][" + index + "] with answer " + solution);
             }
         }
-        
-        console.log(mainArr);
 
-        var result = "";
-        for(var line = 0; line < mainArr.length; line++)
-        {
-            for(var index = 0; index < mainArr[line].length; index++)
-            {
-                result += mainArr[line][index].data;
-            }
-            result += "\n";
-        }
-
-        return result;
+        this.blocks = mainArr;
 
         function access(row,index,mainArr)
         {
@@ -224,40 +248,48 @@ export class Tree
             }
             return mainArr[row][index].type;
         }
-
-        fun
-        
-
-        
     }
 
-
-}
-
-class Node
-{
-    constructor(value, level)
+    toString()
     {
-        this.value = value;
-        this.level = level;
+        //assemble a string
+        var result = "";
+        var mainArr = this.blocks;
+        for(var line = 0; line < mainArr.length; line++)
+        {
+            for(var index = 0; index < mainArr[line].length; index++)
+            {
+                result += mainArr[line][index].data;
+            }
+            result += "\n";
+        }
+
+        this.output = result;
+    }
+
+    totalParse()
+    {
+        this.nodes = new Array();
+        this.blocks = new Array();
+        this.output = "";
+
+        this.toNodes();
+        this.toBlocks();
+        this.parseNewBlocks();
+        this.toString();
+
+        //console.log(this);
     }
 }
 
-class RealBuffer
+class VirtualBuffer
 {
     constructor(textArea)
     {
         this.ref = textArea;
         this.start = textArea.selectionStart;
         this.end = textArea.selectionEnd;
-        this.raw = new RawBuffer(this);
-        this.exe = new ExecutiveBuffer(this);
         this.state = "UNLOCKED";
-    }
-
-    write(vb)
-    {
-        this.ref.value = vb.value;
     }
 
     writeCarrat()
@@ -279,23 +311,35 @@ class RealBuffer
         this.writeCarrat();
     }
 
-
-    keyHandler(event)
+    countCaretLeft()
     {
+        var lines = this.ref.value.substring(0, this.start).split("\n");
+        var lastLine = lines[lines.length-1];
+        var numTabs = lastLine.split("\t").length - 1;
+        return numTabs;
+    }
+
+    keyHandler(event, callback)
+    {
+
+        
+        
         if(this.state == "LOCKED")
         {
-            setTimeout(() => {this.keyHandler(event)}, 10);
+            setTimeout(() => {this.keyHandler(event, callback)}, 10);
             return;
-        } 
+        }
+
         this.readCarrat();
-        this.write(this.raw);
-        this.writeCarrat();
 
         if(event.key == "Tab")
         {
             event.preventDefault();
-            this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-            this.moveCarrat(1);
+            if(shouldTab(this.ref.value, this.start))
+            {
+                this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
+                this.moveCarrat(1);
+            }
         }
         if(event.key == "Enter")
         {
@@ -308,104 +352,81 @@ class RealBuffer
                 this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
                 this.moveCarrat(1);
             }
-
         }
 
         this.state = "LOCKED";
-        setTimeout(() => {this.display()}, 10);
-    }
+        setTimeout(() => {callback()}, 10);
 
-    display()
-    {
-        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
-        this.raw.update();
-        this.exe.update();
-        this.readCarrat();
-        this.write(this.exe);
-        this.writeCarrat();
-        //this.formatCaretForward();
-        console.log(this);
-        this.state = "UNLOCKED";
-    }
+        function shouldTab(string, start)
+        {
+            string = string.substring(0, start);
+            var lines = string.split("\n");
+            var current = lines[lines.length-1];
+            var prev = "";
+            if(lines.length > 1)
+            {
+                prev = lines[lines.length-2]
+            }
+            var prevChar = string.substring(start-1,start);
 
-    countCaretLeft()
-    {
-        var lines = this.raw.value.substring(0, this.raw.selectionStart).split("\n");
-        var lastLine = lines[lines.length-1];
-        var numTabs = lastLine.split("\t").length - 1;
-        return numTabs;
-    }
-}
+            var noEntombment = (prevChar == "\t" || prevChar == "\n");
+            var noLeading = (countTabs(current)<=countTabs(prev));
 
-class VirtualBuffer
-{
-    constructor(realBuffer, color)
-    {
-        this.ref = realBuffer.ref;
-        this.value = "";
-        this.start = this.ref.selectionStart;
-        this.end = this.ref.selectionEnd;
-        this.color = color;
+            return (noEntombment && noLeading);
+
+            function countTabs(input)
+            {
+                var count = input.match(/^\t*(\t)/gm);
+                if(count != null)
+                {
+                    count = count[0].length;
+                }
+                else
+                {
+                    count = 0;
+                }
+                return count;
+            }
+        }
     }
 
     update()
     {
-        this.value = this.ref.value.slice();
-        this.ref.style.color = this.color;
-        this.start = this.ref.selectionStart;
-        this.end = this.ref.selectionEnd;
+        //do something that changes the value of this.ref.value
+        this.state = "UNLOCKED";
+        this.readCarrat();
     }
+
 }
+
 
 class RawBuffer extends VirtualBuffer
 {
-    constructor(realBuffer)
+    constructor(textArea)
     {
-        super(realBuffer, "whitesmoke");
+        super(textArea);
     }
 
     update()
     {
+        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
         super.update();
-        
     }
 }
 
-class ExecutiveBuffer extends VirtualBuffer
+class ExeBuffer extends VirtualBuffer
 {
-    constructor(realBuffer)
+    constructor(textArea)
     {
-        super(realBuffer, "whitesmoke");
-        this.tree = new Tree();
+        super(textArea);
+        this.tree = new ProcessingTree("");
     }
 
     update()
     {
+        this.tree.input = this.ref.value;
+        this.tree.totalParse();
+        this.ref.value = this.tree.output;
         super.update();
-        this.value = this.convert(this.value);
-        
-    }
-
-    convert(input)
-    {
-        this.tree = new Tree();
-        var lines = input.split("\n");
-        for(var line of lines)
-        {
-            this.tree.push(line);
-        }
-
-        console.log(this.tree);
-        console.log(new Date(Date.now()).getMilliseconds());
-        var result = this.tree.format();
-        console.log(new Date(Date.now()).getMilliseconds());
-
-        document.getElementById("display").value = result;
-
-
-        return input;
     }
 }
-
-
-
