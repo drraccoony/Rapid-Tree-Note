@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Rapid Tree Note</title>
+    <link rel="icon" href="/RTN/Resources/favicon.ico" type="image/x-icon">
+    
+    
+  </head>
+  <body style="background-color: rgb(44, 46, 54);">
+    <div style="display: flex; align-items: center; justify-content: flex-start; height: 10vh; width: 95vh;">
+        <h1 style="color: whitesmoke; font-size: 64px; justify-content: flex-start;">Rapid Tree Notetaker</h1>
+        <img src="./Resources/RTN_Logo-Light.svg" alt="RTN Website Logo" style="width: 10vh; height: 10vh; margin-left: auto;"></img>
+    </div>
+    
+    <div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+      <textarea id="source" style="width: 95%; height: 80vh; background-color: rgb(67, 72, 91); border: solid 4px black; color: whitesmoke; "></textarea>
+      <textarea id="display" style="width: 95%; height: 80vh; background-color: rgb(67, 72, 91); border: solid 4px black; color: whitesmoke; "></textarea>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; height: 5vh;">
+      <p style="color: whitesmoke">
+        The Rapid Tree Note system is developed by Brendan Rood in collaboration with the <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a> and the <a style="color:cyan" href=3D"https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a> at the <a style="color:cyan" href=3D"https://www.d.umn.edu/">University of Minnesota Duluth</a>.
+      </p>     
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; height: 3vh;">
+      <p style="color: whitesmoke">
+        It is based on <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a> although all code is original.
+      </p>   
+    </div>
+    
+
+    <script type="module">
+      import Schema from "./Code/main.js";
+      var MainBuffer = new Schema(document.getElementById("source"));
+  </script>
+  </body>
+</html>

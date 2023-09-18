@@ -1,0 +1,23 @@
+A key is pressed
+├── It is a tab key
+│   ├── Find the cursor position and add at \t
+│   ├── Process the \t on the downstroke
+│   ├── Set the timer to 0.0s
+│   └── Unlock the system
+├── It is a backspace
+│   ├── Preform a regex to find the number of Tree Blocks
+│   ├── Copy the buffer
+│   ├── Simulat backspace on copy
+│   ├── Preform a regex to find the number of Tree Blocks ^[├└─│ ]+(?=[^├└─│ ])
+│   ├── If the numer is ddiferent, we can assume a block was destroyed
+│   │   └── Take the cursor position and destroy 7 blocks, add a sacrifical char, and then allow standard function
+│   ├── If number is not different, allow standard function to operate on main buffer
+│   ├── Set the timer to 0.0s
+│   └── Unlock the system
+└── It is something else
+    ├── Set the timer to 0.5s
+    ├── Unlock the system
+    └── Preform standard action
+If the timer has reached 0 (it was set more than 0.5 seconds ago) AND system is not locked
+├── Preform the upstoke (conver \t) and organize tree
+└── Lock the system
