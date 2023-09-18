@@ -17,6 +17,7 @@ export default class Schema
         this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
 
         setInterval(() => this.keyPostRouter(), 1000);
+        setInterval(() => this.syncScrollbars(), 1000);
     }
 
     keyPreRouter(event)
