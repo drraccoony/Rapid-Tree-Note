@@ -11,11 +11,12 @@ export default class Schema
         
 
         this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
+        this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
     }
 
     keyPreRouter(event)
     {
-        this.raw.keyHandler(event, () => this.keyPostRouter());
+        this.raw.keyHandler(event, (event) => this.keyPostRouter(event));
     }
 
     keyPostRouter()
@@ -26,6 +27,43 @@ export default class Schema
         this.exe.update();
 
         //console.log(this);
+    }
+
+    handleCopy(event)
+    {
+        event.preventDefault()
+
+        //Determine the number of tabs before the start of the selection to push the exe select forward by that times 7
+        var preOffset = this.raw.ref.selectionStart;
+        var preString = this.raw.ref.value.substring(0,preOffset);
+        var preTabs = getTabs(preString);
+
+        //Determine the number of tabs between the start and end of the selection to widen the exe select by that times 7
+        var postOffset = this.raw.ref.selectionEnd;
+        var postString = this.raw.ref.value.substring(preOffset, postOffset);
+        var postTabs = getTabs(postString);
+        
+        //Calculate the new start and ends and pull that off the exe buffer
+        var selectStart = this.raw.ref.selectionStart + (7 * preTabs);
+        var selectEnd = this.raw.ref.selectionEnd + (7 * preTabs) + (7 * postTabs);
+        var payload = this.exe.ref.value.substring(selectStart, selectEnd);
+
+        //Put that value onto the clipboard
+        navigator.clipboard.writeText(payload);
+
+        function getTabs(string)
+        {
+            var count = string.match(/\t/gm);
+            if(count != null)
+            {
+                count = count.length;
+            }
+            else
+            {
+                count = 0;
+            }
+            return count;
+        }
     }
 }
 
@@ -80,7 +118,6 @@ class ProcessingTree
             return count;
         }
     }
-
     toBlocks()
     {
         for(var node of this.nodes)
@@ -409,7 +446,7 @@ class RawBuffer extends VirtualBuffer
 
     update()
     {
-        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+        this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
         super.update();
     }
 }
