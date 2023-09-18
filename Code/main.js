@@ -12,6 +12,9 @@ export default class Schema
 
         this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
         this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
+
+        this.raw.ref.addEventListener('scroll', (event) => this.syncScrollbars(event));
+        this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
     }
 
     keyPreRouter(event)
@@ -29,9 +32,17 @@ export default class Schema
         //console.log(this);
     }
 
+    handlePaste(event)
+    {
+        setTimeout((event) => this.syncScrollbars(event), 100);
+    }
+
     handleCopy(event)
     {
         event.preventDefault()
+
+        //make sure that async changes like autocorrect are accounted for
+        this.keyPostRouter();
 
         //Determine the number of tabs before the start of the selection to push the exe select forward by that times 7
         var preOffset = this.raw.ref.selectionStart;
@@ -64,6 +75,11 @@ export default class Schema
             }
             return count;
         }
+    }
+
+    syncScrollbars(event)
+    {
+        this.exe.ref.scrollTop = this.raw.ref.scrollTop;
     }
 }
 
@@ -381,13 +397,16 @@ class VirtualBuffer
         if(event.key == "Enter")
         {
             event.preventDefault();
-            var autoIndent = this.countCaretLeft();
-            this.ref.value = this.ref.value.substring(0,this.start) + "\n" + this.ref.value.substring(this.end);
-            this.moveCarrat(1);
-            for(var i = 0; i < autoIndent; i++)
+            if(shouldNewline(this.ref.value, this.start))
             {
-                this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
+                var autoIndent = this.countCaretLeft();
+                this.ref.value = this.ref.value.substring(0,this.start) + "\n" + this.ref.value.substring(this.end);
                 this.moveCarrat(1);
+                for(var i = 0; i < autoIndent; i++)
+                {
+                    this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
+                    this.moveCarrat(1);
+                }
             }
         }
 
@@ -425,6 +444,44 @@ class VirtualBuffer
                 return count;
             }
         }
+
+        function shouldNewline(string, start)
+        {
+            var prestring = string.substring(0, start);
+            var prelines = prestring.split("\n");
+            var current = prelines[prelines.length-1];
+
+            var prevLineContent = (countNonWhitespace(current) > 0);
+
+            var totalstring = string;
+            var totallines = totalstring.split("\n");
+            var nextline = totallines[prelines.length];
+
+            if(nextline == null)
+            {
+                nextline = "PROCEED";
+            }
+
+            var nextLineContent = (countNonWhitespace(nextline) > 0);
+
+            var should = ((prevLineContent == true) && (nextLineContent == true));
+
+            return (should);
+
+            function countNonWhitespace(input)
+            {
+                var count = input.match(/\S/gm);
+                if(count != null)
+                {
+                    count = count.length;
+                }
+                else
+                {
+                    count = 0;
+                }
+                return count;
+            }
+        }
     }
 
     update()
@@ -447,6 +504,7 @@ class RawBuffer extends VirtualBuffer
     update()
     {
         this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
+        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
         super.update();
     }
 }
