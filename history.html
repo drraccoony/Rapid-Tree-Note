@@ -33,22 +33,22 @@
       <pre style="color: whitesmoke; font-size: 0.8vw;">
 History
 ├────── Discovery
-│       ├────── In the summer of 2023, I (Brendan Rood), discovered <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a> and immediately fell in love with it.
+│       ├────── In the summer of 2023, I (Brendan Rood), discovered <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and immediately fell in love with it.
 │       ├────── The neat little tree diagrams were exactly how I like to take notes on paper, and I quickly found that I could retain information better when my notes were in this format.
 │       └────── Immediately, however, I began to run into problems. 
 │               ├────── Resumability
-│               │       ├────── My Boss (<a style="color:cyan" href=3D"https://www.d.umn.edu/~pahp/">Peter Peterson Ph.D.</a>) in the <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a> was happy to work with whatever format of notes made me happy.
-│               │       ├────── However, it was nearly impossible for him to edit the documents I produced with <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a>.
+│               │       ├────── My Boss (<a style="color:cyan" href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>) in the <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a> was happy to work with whatever format of notes made me happy.
+│               │       ├────── However, it was nearly impossible for him to edit the documents I produced with <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>.
 │               │       └────── This led to the unfortunate junction where I had to decide between notes formatted in a way that worked for me vs. notes formated in a way that worked for others.
 │               └────── Computation Time
-│                       ├────── <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a> is a great tool but it slows down exponentially with longer documents.
+│                       ├────── <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> is a great tool but it slows down exponentially with longer documents.
 │                       ├────── Given the length of documents I was writing, I would often reach the point where I had to wait 2-4 seconds between every keypress.
 │                       └────── This was less than ideal, and I knew a more optimized solution must be possible.
 ├────── Planning
-│       ├────── Thankfully, with the JavaScript and HTML knowledge I had gained working on the <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a>'s Security Misconceptions Game, I felt like I could potentially author my own fixes.
+│       ├────── Thankfully, with the JavaScript and HTML knowledge I had gained working on the <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a>'s Security Misconceptions Game, I felt like I could potentially author my own fixes.
 │       ├────── I went through many iterations of the program before I landed on the final version, with dual-panels, buffer shuffling, and a ton of Regular Expressions.
 │       └────── I want to share my algorithm and final implementation so that others can learn from my work without having to reinvent the wheel as I did.
-│               └────── <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a>'s code is publically available, <a style="color:cyan" href=3D"https://github.umn.edu/UMDLARS/Rapid-Tree-Note">just as this project's code is</a>, but is not very well documented.
+│               └────── <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>'s code is publically available, <a style="color:cyan" href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">just as this project's code is</a>, but is not very well documented.
 ├────── The Program
 │       ├────── Defining The Glyphs
 │       │       ├────── A standard set of glyphs was to be used in order to generate the trees and perform Regular Expressions on them.
@@ -120,16 +120,16 @@ History
 │               └────── Regular Expression Validation
 │                       ├────── The primary function of Regular Expressions in this application is to recognize glyph characters and convert them back into tab characters.
 │                       │       └────── this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
-│                       ├────── I also included a regular expression that can handle the length-4 outputs over <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a> and older versions of RTN.
+│                       ├────── I also included a regular expression that can handle the length-4 outputs over <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and older versions of RTN.
 │                       │       └────── this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
 │                       └────── Finally, there is a crude regular expression to remove tab characters from anywhere but the start of a line.
 │                               └────── this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
 ├────── Github Release
-│       ├────── The full source code of this project is available on github at <a style="color:cyan" href=3D"https://github.umn.edu/UMDLARS/Rapid-Tree-Note">https://github.umn.edu/UMDLARS/Rapid-Tree-Note</a>.
+│       ├────── The full source code of this project is available on github at <a style="color:cyan" href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">https://github.umn.edu/UMDLARS/Rapid-Tree-Note</a>.
 │       └────── It is free to use, modify, etc, I just ask that you credit me, "Brendan Rood", and provide a link to this original Application.
 └────── Acknoledgements
-                ├────── This project would not have been possible without contributions from the <a style="color:cyan" href=3D"https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>, <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a>, <a style="color:cyan" href=3D"https://www.d.umn.edu/~pahp/">Peter Peterson Ph.D.</a>, and Ethan Schurman.
-                └────── For more information please visit the <a style="color:cyan" href=3D"https://lars.d.umn.edu/RTN/credits.html">credits page</a>.
+                ├────── This project would not have been possible without contributions from the <a style="color:cyan" href="https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>, <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a>, <a style="color:cyan" href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>, and Ethan Schurman.
+                └────── For more information please visit the <a style="color:cyan" href="https://lars.d.umn.edu/RTN/credits.html">credits page</a>.
       </pre>     
     </div>
 
