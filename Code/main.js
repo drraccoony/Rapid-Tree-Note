@@ -204,7 +204,7 @@ class ProcessingTree
                                 shouldBend = false;
                             }
 
-                            function findDataDown(line, index, mainArr)
+                            function findDataDown(line, index, mainArr) //look down until EOF or Data is found
                             {
                                 //console.log("D", line, index, mainArr);
                                 var distance = 0;
@@ -226,7 +226,7 @@ class ProcessingTree
                                 return distance;
                             }
 
-                            function findDataRight(line, index, mainArr)
+                            function findDataRight(line, index, mainArr) //Look down from the block to the right until EOF or Data is found
                             {
                                 //console.log("R", line, index, mainArr);
                                 var distance = 0;
@@ -508,6 +508,7 @@ class RawBuffer extends VirtualBuffer
     {
         this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
         this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+        this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
         super.update();
     }
 }

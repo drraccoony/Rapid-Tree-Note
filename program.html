@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Rapid Tree Note</title>
+    <link rel="icon" href="/RTN/Resources/favicon.ico" type="image/x-icon">
+    
+    
+  </head>
+  <body style="background-color: rgb(44, 46, 54);">
+    <div style="display: flex; align-items: center; justify-content: center; height: 10vh; width: 100%;">
+      <div style="width: 50%; display: flex; align-items: center; justify-content: left;">
+        <h1 style="color: whitesmoke; font-size: 4vw;">Rapid Tree Notetaker</h1>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center;; justify-content: center;">
+        <button onclick="navigateProgram()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Program</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateInspiration()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Inspiration</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateHistory()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">History</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateCredits()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Credits</button>
+      </div> 
+      <div style="width: 10%; display: flex; align-items: center; justify-content: center;">
+        <img src="./Resources/RTN_Logo-Light.svg" alt="RTN Website Logo" style="width: 5vw;"></img>
+      </div>
+    </div>
+    
+    <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 80vh; padding-top: 3vh;">
+      <textarea id="source" style="z-index: 2; position: absolute; left:5vh; width: 95%; height: 80vh; background-color: rgba(0, 0, 0, 0.0); border: solid 4px black; color: white; "></textarea>
+      <textarea id="display" style="z-index: 1; pointer-events: none; position: absolute; left:5vh; width: 95%; height: 80vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; "></textarea>
+    </div>
+    
+
+    <script type="module">
+      import Schema from "./Code/main.js";
+      var MainBuffer = new Schema(document.getElementById("source"));
+  </script>
+
+  <script> // subpage navigation
+    function navigateProgram()
+    {
+      location.href="https://lars.d.umn.edu/RTN/program.html";
+    }
+    function navigateInspiration()
+    {
+      location.href="https://lars.d.umn.edu/RTN/inspiration.html";
+    }
+    function navigateCredits()
+    {
+      location.href="https://lars.d.umn.edu/RTN/credits.html";
+    }
+    function navigateHistory()
+    {
+      location.href="https://lars.d.umn.edu/RTN/history.html";
+    }
+  </script>
+  </body>
+</html>

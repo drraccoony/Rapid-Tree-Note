@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Rapid Tree Note</title>
+    <link rel="icon" href="/RTN/Resources/favicon.ico" type="image/x-icon">
+    
+    
+  </head>
+  <body style="background-color: rgb(44, 46, 54);">
+    <div style="display: flex; align-items: center; justify-content: center; height: 10vh; width: 100%;">
+        <div style="width: 50%; display: flex; align-items: center; justify-content: left;">
+          <h1 style="color: whitesmoke; font-size: 4vw;">Rapid Tree Notetaker</h1>
+        </div>
+        <div style="width: 10%; height: 100%; display: flex; align-items: center;; justify-content: center;">
+          <button onclick="navigateProgram()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Program</button>
+        </div>
+        <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <button onclick="navigateInspiration()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Inspiration</button>
+        </div>
+        <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <button onclick="navigateHistory()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">History</button>
+        </div>
+        <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <button onclick="navigateCredits()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Credits</button>
+        </div> 
+        <div style="width: 10%; display: flex; align-items: center; justify-content: center;">
+          <img src="./Resources/RTN_Logo-Light.svg" alt="RTN Website Logo" style="width: 5vw;"></img>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: center; align-items: flex-start; height: 80vh;">
+      <pre style="color: whitesmoke; font-size: 1.2vw;">
+        
+Credits
+├────── Nathan Friend
+│       ├────── Original coder of <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a>
+│       └────── Inspiration for this project
+├────── Brendan Rood
+│       ├────── Coder for this entire project
+│       ├────── Student at the <a style="color:cyan" href=3D"https://www.d.umn.edu/">University of Minnesota Duluth</a>
+│       │       └────── Class of 2024(25?)
+│       ├────── Employee at <a style="color:cyan" href=3D"https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>
+│       └────── Employee at <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a>
+├────── <a style="color:cyan" href=3D"https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>
+│       ├────── Motion and Media Across Disciplines Lab at the <a style="color:cyan" href=3D"https://www.d.umn.edu/">University of Minnesota Duluth</a>
+│       ├────── Helped pay for this project's production
+│       └────── Ethan Schurman
+│               ├────── Illustrated RTN logo
+│               └────── Provided general design feedback
+└────── <a style="color:cyan" href=3D"https://lars.d.umn.edu/">LARSLab</a>
+        ├────── Laboratory for Advanced Research in Systems at the <a style="color:cyan" href=3D"https://www.d.umn.edu/">University of Minnesota Duluth</a>
+        ├────── Hosts this website on the internet free of charge!
+        └────── <a style="color:cyan" href=3D"https://www.d.umn.edu/~pahp/">Peter Peterson Ph.D.</a>
+                ├────── Assisted in devising the parsing algorithm for this program's tree
+                ├────── Provided misc design suggestions
+                └────── Assisted Brendan in learning JS initially
+      </pre>     
+    </div>
+
+  <script> // subpage navigation
+    function navigateProgram()
+    {
+      location.href="https://lars.d.umn.edu/RTN/program.html";
+    }
+    function navigateInspiration()
+    {
+      location.href="https://lars.d.umn.edu/RTN/inspiration.html";
+    }
+    function navigateCredits()
+    {
+      location.href="https://lars.d.umn.edu/RTN/credits.html";
+    }
+    function navigateHistory()
+    {
+      location.href="https://lars.d.umn.edu/RTN/history.html";
+    }
+  </script>
+  </body>
+</html>

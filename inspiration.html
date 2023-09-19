@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Rapid Tree Note</title>
+    <link rel="icon" href="/RTN/Resources/favicon.ico" type="image/x-icon">
+    
+    
+  </head>
+  <body style="background-color: rgb(44, 46, 54);">
+    <div style="display: flex; align-items: center; justify-content: center; height: 10vh; width: 100%;">
+      <div style="width: 50%; display: flex; align-items: center; justify-content: left;">
+        <h1 style="color: whitesmoke; font-size: 4vw;">Rapid Tree Notetaker</h1>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center;; justify-content: center;">
+        <button onclick="navigateProgram()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Program</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateInspiration()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Inspiration</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateHistory()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">History</button>
+      </div>
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <button onclick="navigateCredits()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Credits</button>
+      </div> 
+      <div style="width: 10%; display: flex; align-items: center; justify-content: center;">
+        <img src="./Resources/RTN_Logo-Light.svg" alt="RTN Website Logo" style="width: 5vw;"></img>
+      </div>
+    </div>
+    
+    <div style="display: flex; justify-content: center; align-items: flex-start; height: 80vh;">
+      <pre style="color: whitesmoke; font-size: 0.95vw;">
+Inspiration
+├────── <a style="color:cyan" href=3D"https://tree.nathanfriend.io/">https://tree.nathanfriend.io/</a>
+│       ├────── This website is based on the work of Nathan Friend on their website.
+│       ├────── Although it is functionally identical in many ways, all code is original (no code was borrowed).
+│       └────── Their original codebase can be found here <a style="color:cyan" href=3D"https://gitlab.com/nfriend">https://gitlab.com/nfriend</a>.
+└────── Purpose
+        ├────── I had three main goals for changes I wanted to see done to the original project.
+        ├────── Faster Generation Times
+        │       ├────── In the original program by Nathan Friend, longer documents could take multiple seconds to handle drawing the tree after every single key press.
+        │       ├────── This would make it painfully slow to work on longer documents.
+        │       ├────── In my implementation, a document that would have taken Nathan's website 5000ms to handle can be calculated in around 1ms (5000x faster!)
+        │       └────── This is made possible because of a smaller BigO notation resulting in exponentially faster computation with length.
+        ├────── Backward Compatibility and Ability to Resume exported documents
+        │       ├────── In the original program, if you copied the result out to a text document, it was very difficult to edit later because pasting it back in would break the tree.
+        │       └────── In my version, pasting any exported document back into the entry field will parse it correctly such that editing can be resumed.
+        └────── A single-panel implementation instead of a dual-panel view
+                ├────── The original implementation's dual-panel view was less than desirable.
+                └────── I wanted a way to edit-in-place the document directly with a larger view (you can fit more text in a text box that is 100% versus 50% wide).
+      </pre>     
+    </div>
+
+  <script> // subpage navigation
+    function navigateProgram()
+    {
+      location.href="https://lars.d.umn.edu/RTN/program.html";
+    }
+    function navigateInspiration()
+    {
+      location.href="https://lars.d.umn.edu/RTN/inspiration.html";
+    }
+    function navigateCredits()
+    {
+      location.href="https://lars.d.umn.edu/RTN/credits.html";
+    }
+    function navigateHistory()
+    {
+      location.href="https://lars.d.umn.edu/RTN/history.html";
+    }
+  </script>
+  </body>
+</html>
