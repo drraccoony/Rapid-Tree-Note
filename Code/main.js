@@ -19,7 +19,7 @@ export default class Schema
         setInterval(() => this.keyPostRouter(), 1000);
         setInterval(() => this.syncScrollbars(), 1000);
 
-        this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta document\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
+        this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
         this.keyPostRouter();
         this.syncScrollbars();
     }
