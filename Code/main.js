@@ -1,11 +1,24 @@
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
 
+/* The Schema class is a container that handles user input, generates a formatted document, and
+synchronizes scrollbars. */
 export default class Schema
 {
-    constructor(textArea)
+    /**
+     * The constructor function initializes a coding assistant object with input and output text areas,
+     * sets event listeners for keydown, copy, scroll, and paste events, and sets intervals for key
+     * post routing and scrollbar synchronization.
+     * 
+     * @param inputTextArea The inputTextArea parameter is the text area element where the user can
+     * input their text. It is used to capture the user's input and handle events such as keydown,
+     * copy, scroll, and paste.
+     * @param outputTextArea The outputTextArea parameter is the text area element where the generated
+     * document will be displayed. It is not directly accessible to the user.
+     */
+    constructor(inputTextArea, outputTextArea)
     {
-        this.raw = new RawBuffer(document.getElementById("source"));
-        this.exe = new ExeBuffer(document.getElementById("display"));
+        this.raw = new RawBuffer(inputTextArea);
+        this.exe = new ExeBuffer(outputTextArea);
         this.state = "UNLOCKED";
 
         
@@ -19,31 +32,56 @@ export default class Schema
         setInterval(() => this.keyPostRouter(), 1000);
         setInterval(() => this.syncScrollbars(), 1000);
 
+        //force inital values
         this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
         this.keyPostRouter();
         this.syncScrollbars();
     }
 
+    /**
+     * The function "keyPreRouter" is a member of the RawBuffer "raw" that handles key events and passes them to
+     * another function called "keyPostRouter".
+     * @param event - The event parameter is an object that represents the keyboard event that
+     * occurred. It contains information about the key that was pressed, such as the key code, key
+     * name, and any modifiers that were pressed (e.g., shift, alt, ctrl).
+     */
     keyPreRouter(event)
     {
         this.raw.keyHandler(event, (event) => this.keyPostRouter(event));
     }
 
+    /**
+     * The function `keyPostRouter()` updates and parses the data from RawBuffer "raw" before updating ExecutiveBuffer "exe".
+     */
     keyPostRouter()
     {
         this.raw.update();
         this.exe.ref.value = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
-
-        //console.log(this);
     }
 
+    /**
+     * The handlePaste function sets a timeout to call syncronize the scrollbars after 100
+     * milliseconds.
+     * 
+     * @param event The event parameter is an object that represents the event that triggered the
+     * handlePaste function. It contains information about the event, such as the type of event, the
+     * target element, and any additional data associated with the event.
+     */
     handlePaste(event)
     {
         setTimeout((event) => this.syncScrollbars(event), 100);
     }
 
+    /**
+     * The `handleCopy` function in JavaScript handles copying selected text from a textarea to the
+     * clipboard, accounting for tab indentation.
+     * 
+     * @param event The event parameter is an object that represents the event that triggered the copy
+     * action. It contains information about the event, such as the target element and any additional
+     * data associated with the event. In this case, it is used to prevent the default copy behavior.
+     */
     handleCopy(event)
     {
         event.preventDefault()
@@ -67,6 +105,10 @@ export default class Schema
         var payload = this.exe.ref.value.substring(selectStart, selectEnd);
 
         //Put that value onto the clipboard
+        payload = payload.replace(/├────── /gm, "├── ");
+        payload = payload.replace(/└────── /gm, "└── ");
+        payload = payload.replace(/│       /gm, "│   ");
+        payload = payload.replace(/        /gm, "    ");
         navigator.clipboard.writeText(payload);
 
         function getTabs(string)
@@ -84,12 +126,20 @@ export default class Schema
         }
     }
 
+    /**
+     * The function syncScrollbars synchronizes the scroll position of two elements.
+     * 
+     * @param event The `event` parameter is an object that represents the event that triggered the
+     * `syncScrollbars` function. It contains information about the event, such as the type of event,
+     * the target element, and any additional data associated with the event.
+     */
     syncScrollbars(event)
     {
         this.exe.ref.scrollTop = this.raw.ref.scrollTop;
     }
 }
 
+/* The LevelNode class represents a node in a tree structure with a level and a value. */
 class LevelNode
 {
     constructor(level, value)
@@ -101,6 +151,12 @@ class LevelNode
 
 class ProcessingTree
 {
+    /**
+     * The constructor function initializes the input, nodes, blocks, and output properties.
+     * 
+     * @param input The `input` parameter is the input data that will be used in the constructor. It
+     * can be any type of data, such as a string, number, array, or object.
+     */
     constructor(input)
     {
         this.input = input;
@@ -109,6 +165,10 @@ class ProcessingTree
         this.output = "";
     }
 
+    /**
+     * The `toNodes()` function takes an input string and converts it into an array of `LevelNode`
+     * objects, where each object represents a line of data (tabs removed) with its corresponding indentation level.
+     */
     toNodes()
     {
         var lines = this.input.split("\n");
@@ -141,6 +201,11 @@ class ProcessingTree
             return count;
         }
     }
+
+    /**
+     * The function converts JavaScript code into a treeblock-based representation.
+     * If it produces an array of arrays, where each sub-array's content equals N "New" blocks followed by one "End"/"Data" block.
+     */
     toBlocks()
     {
         for(var node of this.nodes)
@@ -162,6 +227,10 @@ class ProcessingTree
         }
     }
 
+    /**
+     * The function `parseNewBlocks()` iterates over a 2D array of blocks and converts blocks of type
+     * "New" to other non-Data, non-End types based on certain conditions.
+     */
     parseNewBlocks()
     {
         //convert var name to handle migration
@@ -291,6 +360,17 @@ class ProcessingTree
 
         this.blocks = mainArr;
 
+        /**
+         * The function "access" checks if a given row and index are within the bounds of a 2D array
+         * and returns the type of the element at that position if it is.
+         * 
+         * @param row The row parameter represents the row index in the mainArr array.
+         * @param index The index parameter represents the column index of the element you want to
+         * access in the 2D array.
+         * @param mainArr The mainArr parameter is an array of arrays. Each inner array represents a
+         * row in a table or grid.
+         * @return the type of the element at the specified row and index in the mainArr, or "Null".
+         */
         function access(row,index,mainArr)
         {
             //console.log(row, index, mainArr);
@@ -310,6 +390,10 @@ class ProcessingTree
         }
     }
 
+    /**
+     * The `toString()` function assembles a string by concatenating the data from each block in the
+     * `mainArr` array, separated by new lines.
+     */
     toString()
     {
         //assemble a string
@@ -327,6 +411,10 @@ class ProcessingTree
         this.output = result;
     }
 
+    /**
+     * The function `totalParse()` converts input into nodes, then into blocks, parses new blocks, and
+     * finally converts the result into a string. That final string is written to this.output.
+     */
     totalParse()
     {
         this.nodes = new Array();
@@ -337,13 +425,21 @@ class ProcessingTree
         this.toBlocks();
         this.parseNewBlocks();
         this.toString();
-
-        //console.log(this);
     }
 }
 
+/* The VirtualBuffer class is a JavaScript class that provides methods for handling text input in a
+textarea element, including tab and newline functionality. */
 class VirtualBuffer
 {
+    /**
+     * The constructor function initializes a textArea object with properties for the reference, carrat start,
+     * and carrat end positions of the selection, and the state of the object.
+     * 
+     * @param textArea The `textArea` parameter is the reference to the HTML textarea element that you
+     * want to work with. It is used to access and manipulate the text content and selection of the
+     * textarea.
+     */
     constructor(textArea)
     {
         this.ref = textArea;
@@ -352,18 +448,32 @@ class VirtualBuffer
         this.state = "UNLOCKED";
     }
 
+    /**
+     * The function sets the selection range of a text input field based on the internal start and end members.
+     */
     writeCarrat()
     {
         this.ref.selectionStart = this.start;
         this.ref.selectionEnd = this.end;
     }
 
+    /**
+     * The function "readCarrat()" is used to get the start and end positions of the current text
+     * selection in a text input field and save it to the internal start and end memebers.
+     */
     readCarrat()
     {
         this.start = this.ref.selectionStart;
         this.end = this.ref.selectionEnd;
     }
 
+    /**
+     * The moveCarrat function updates the start and end positions of the carrat and then writes the
+     * carrat.
+     * 
+     * @param vector The parameter "vector" represents the amount by which the carrat should be moved.
+     * It is a vector that specifies the direction and magnitude of the movement.
+     */
     moveCarrat(vector)
     {
         this.start += vector;
@@ -371,6 +481,13 @@ class VirtualBuffer
         this.writeCarrat();
     }
 
+    /**
+     * The function "countCaretLeft" counts the number of tabs before the current cursor position in a
+     * text area.
+     * 
+     * @return The number of tabs (represented by "\t") in the last line of text before the caret
+     * position.
+     */
     countCaretLeft()
     {
         var lines = this.ref.value.substring(0, this.start).split("\n");
@@ -379,11 +496,24 @@ class VirtualBuffer
         return numTabs;
     }
 
+    /**
+     * The `keyHandler` function in JavaScript handles key events, such as pressing the Tab or Enter
+     * key, and performs specific actions based on the current state and caret position in a text input
+     * field.
+     * @param event - The `event` parameter is an object that represents the keyboard event that
+     * occurred. It contains information about the key that was pressed, such as the key code and key
+     * value.
+     * @param callback - The `callback` parameter is a function that will be called after processing
+     * the key event. It is used to handle any additional logic or actions that need to be performed
+     * after processing the key event.
+     * @returns The function `keyHandler` does not explicitly return a value, but functionally returns by
+     * executing its callaback after 10ms
+     */
     keyHandler(event, callback)
     {
-
-        
-        
+        /* The below code is checking the value of the "state" property. If the value is "LOCKED", it
+        sets a timeout of 10 milliseconds and calls this function with the provided
+        event and callback parameters, effectively processing the command later if it can't currently be done. */
         if(this.state == "LOCKED")
         {
             setTimeout(() => {this.keyHandler(event, callback)}, 10);
@@ -392,6 +522,9 @@ class VirtualBuffer
 
         this.readCarrat();
 
+        /* The below code is checking if the key pressed is the "Tab" key. If it is, it prevents the
+        default behavior of the tab key (which is to move focus to the next element) and insets a "\t"
+        at the appropriate position if shouldTab() returns true. */
         if(event.key == "Tab")
         {
             event.preventDefault();
@@ -401,6 +534,12 @@ class VirtualBuffer
                 this.moveCarrat(1);
             }
         }
+
+        /* The below code is checking if the "Enter" key is pressed. If it is, it prevents the default
+        behavior of creating a new line. It then checks if a newline should be added based on the
+        current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and
+        automatically indents the new line based on the number of tabs at the current caret
+        position. */
         if(event.key == "Enter")
         {
             event.preventDefault();
@@ -420,6 +559,14 @@ class VirtualBuffer
         this.state = "LOCKED";
         setTimeout(() => {callback()}, 10);
 
+        /**
+         * The function `shouldTab` determines whether a tab should be inserted at a given
+         * position in a string based on the content of the previous and next lines.
+         * @param string - The string parameter is the input string that you want to check for tabbing.
+         * @param start - The start parameter is the index at which the tabbing should start in the
+         * given string.
+         * @returns a boolean value.
+         */
         function shouldTab(string, start)
         {
             string = string.substring(0, start);
@@ -452,6 +599,15 @@ class VirtualBuffer
             }
         }
 
+        /**
+         * The function shouldNewline determines whether a newline should be inserted at a given
+         * position in a string based on the content of the previous and next lines.
+         * @param string - The input string that you want to check for newlines.
+         * @param start - The start parameter is the index at which to start checking for newlines in
+         * the string.
+         * @returns a boolean value indicating whether a newline should be inserted at a given position
+         * in a string.
+         */
         function shouldNewline(string, start)
         {
             var prestring = string.substring(0, start);
@@ -491,6 +647,10 @@ class VirtualBuffer
         }
     }
 
+    /**
+     * The update function changes the value of this.ref.value, sets the state to "UNLOCKED", and calls
+     * the readCarrat function.
+     */
     update()
     {
         //do something that changes the value of this.ref.value
@@ -501,6 +661,9 @@ class VirtualBuffer
 }
 
 
+/* The `RawBuffer` class extends the `VirtualBuffer` class and overrides the `update()` function to
+* replace specific glyphs with tabs and then calls the parent class's `update()` function.
+* It is used as the data processor for the "source" textarea. */
 class RawBuffer extends VirtualBuffer
 {
     constructor(textArea)
@@ -508,6 +671,10 @@ class RawBuffer extends VirtualBuffer
         super(textArea);
     }
 
+    /**
+     * The `update()` function replaces glyphs of length 8 and 4 in a string with tabs, removes interal tabs, and then calls the
+     * `update()` function of the parent class.
+     */
     update()
     {
         this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
@@ -517,6 +684,8 @@ class RawBuffer extends VirtualBuffer
     }
 }
 
+/* The `ExeBuffer` class extends the `VirtualBuffer` class and provides a way to update the input value
+of a tree object, parse it, and update the output value. It is used for the "display" textarea. */
 class ExeBuffer extends VirtualBuffer
 {
     constructor(textArea)
@@ -525,6 +694,10 @@ class ExeBuffer extends VirtualBuffer
         this.tree = new ProcessingTree("");
     }
 
+    /**
+     * The `update()` function updates the input value of a tree object, parses it, and updates the
+     * output value.
+     */
     update()
     {
         this.tree.input = this.ref.value;
