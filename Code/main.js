@@ -17,11 +17,30 @@ export default class Schema
      */
     constructor(inputTextArea, outputTextArea)
     {
+        var regex = /(?:data=)(.*)/gm;
+        var urlInit = regex.exec(window.location.href);
+        if(urlInit == null || urlInit[1] == "")
+        {
+            urlInit = new Array(null, "");
+        }
+        else
+        {
+            urlInit = urlInit[1];
+            console.log(urlInit);
+            urlInit = decodeURIComponent(urlInit);
+            console.log(urlInit);
+            urlInit = urlInit.replace(/_/gm, ",");
+            urlInit = new Uint8Array(urlInit.split(","));
+            console.log(urlInit);
+            urlInit = pako.inflate(urlInit, { to: 'string' });
+            console.log(urlInit);
+        }
+        
+
+
         this.raw = new RawBuffer(inputTextArea);
         this.exe = new ExeBuffer(outputTextArea);
         this.state = "UNLOCKED";
-
-        
 
         this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
         this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
@@ -32,8 +51,17 @@ export default class Schema
         setInterval(() => this.keyPostRouter(), 1000);
         setInterval(() => this.syncScrollbars(), 1000);
 
+
+
         //force inital values
-        this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
+        if(urlInit != ",")
+        {
+            this.raw.ref.value = urlInit;
+        }
+        else
+        {
+            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
+        }
         this.keyPostRouter();
         this.syncScrollbars();
     }
@@ -59,6 +87,17 @@ export default class Schema
         this.exe.ref.value = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
+
+        var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
+        payload = pako.deflate(payload, { level: 9, to: 'string'});
+        payload = payload.toString();
+        payload = payload.replace(/,/gm, "_");
+        payload = encodeURIComponent(payload);
+        if(payload.length > 1024)
+        {
+            payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
+        }
+        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
     }
 
     /**
