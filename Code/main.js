@@ -63,9 +63,9 @@ export default class Schema
         else
         {
             urlInit = urlInit[1];
-            console.log(urlInit);
+            //console.log(urlInit);
             urlInit = decodeURIComponent(urlInit);
-            console.log(urlInit);
+            //console.log(urlInit);
             urlInit = urlInit.match(/.{2}/g);
             var baseten = new Array();
             for(var item of urlInit)
@@ -73,9 +73,17 @@ export default class Schema
                 baseten.push(parseInt(item, 16));
             }
             urlInit = new Uint8Array(baseten);
-            console.log(urlInit);
-            urlInit = pako.inflate(urlInit, { to: 'string' });
-            console.log(urlInit);
+            //console.log(urlInit);
+            try
+            {
+                urlInit = pako.inflate(urlInit, { to: 'string' });
+            }
+            catch (error)
+            {
+                urlInit = "There was a problem decoding the data in the link.\nAre you sure it was produced by this program?\nError has been printed to console.";
+                console.error(error);
+            }
+            //console.log(urlInit);
         }
         return urlInit;
     }
