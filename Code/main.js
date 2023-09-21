@@ -65,7 +65,7 @@ export default class Schema
             urlInit = urlInit[1];
             //console.log(urlInit);
             urlInit = decodeURIComponent(urlInit);
-            //console.log(urlInit);
+            urlInit = urlSafeBase64ToHex(urlInit);
             urlInit = urlInit.match(/.{2}/g);
             var baseten = new Array();
             for(var item of urlInit)
@@ -86,6 +86,19 @@ export default class Schema
             //console.log(urlInit);
         }
         return urlInit;
+
+        function urlSafeBase64ToHex(urlSafeBase64String) {
+            // Replace URL-safe characters with Base64 characters
+            const base64String = urlSafeBase64String.replace(/-/g, '+').replace(/_/g, '/');
+          
+            // Decode Base64 string to byte array
+            const byteArray = Array.from(atob(base64String), byte => byte.charCodeAt(0));
+          
+            // Convert byte array to hex string
+            const hexString = byteArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+          
+            return hexString;
+          }
     }
 
     /**
@@ -118,12 +131,26 @@ export default class Schema
         {
             holder += item.toString(16).padStart(2, '0').toUpperCase();
         }
-        payload = encodeURIComponent(holder);
+        payload = hexToUrlSafeBase64(holder);
+        payload = encodeURIComponent(payload);
         if(payload.length > 1024)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
+
+        function hexToUrlSafeBase64(hexString) {
+            // Convert hex string to byte array
+            const byteArray = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+          
+            // Encode byte array using Base64 encoding
+            const base64String = btoa(String.fromCharCode(...byteArray));
+          
+            // Replace characters that are not URL-safe
+            const urlSafeBase64String = base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+          
+            return urlSafeBase64String;
+          }
     }
 
     /**
