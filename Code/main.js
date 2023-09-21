@@ -47,6 +47,11 @@ export default class Schema
         this.syncScrollbars();
     }
 
+    /**
+     * The function `pullURL()` extracts and decodes the URL parameter "data", converts it from hexadecimal to
+     * base 10, inflates it using the pako library, and returns the result as a string.
+     * @returns the decoded and decompressed URL as a string.
+     */
     pullURL()
     {
         var regex = /(?:data=)(.*)/gm;
@@ -75,6 +80,11 @@ export default class Schema
         return urlInit;
     }
 
+    /**
+     * The function `setURL` sets the value of a text input field to the provided data, or a default
+     * value if the data is empty.
+     * @param data - The `data` parameter is a string that represents the URL that needs to be set.
+     */
     setURL(data)
     {
         if(data != "")
@@ -87,6 +97,10 @@ export default class Schema
         }
     }
 
+    /**
+     * The function `pushURL()` compresses a string with the pako library, converts it to hexadecimal, encodes it, and
+     * updates the URL with the encoded data.
+     */
     pushURL()
     {
         var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
