@@ -17,26 +17,7 @@ export default class Schema
      */
     constructor(inputTextArea, outputTextArea)
     {
-        var regex = /(?:data=)(.*)/gm;
-        var urlInit = regex.exec(window.location.href);
-        if(urlInit == null || urlInit[1] == "")
-        {
-            urlInit = new Array(null, "");
-        }
-        else
-        {
-            urlInit = urlInit[1];
-            console.log(urlInit);
-            urlInit = decodeURIComponent(urlInit);
-            console.log(urlInit);
-            urlInit = urlInit.replace(/_/gm, ",");
-            urlInit = new Uint8Array(urlInit.split(","));
-            console.log(urlInit);
-            urlInit = pako.inflate(urlInit, { to: 'string' });
-            console.log(urlInit);
-        }
-        
-
+        var urlData = this.pullURL();
 
         this.raw = new RawBuffer(inputTextArea);
         this.exe = new ExeBuffer(outputTextArea);
@@ -49,21 +30,72 @@ export default class Schema
         this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
 
         setInterval(() => this.keyPostRouter(), 1000);
+        setInterval(() => this.pushURL(), 1000);
         setInterval(() => this.syncScrollbars(), 1000);
 
 
 
         //force inital values
-        if(urlInit != ",")
+        this.setURL(urlData);
+        this.keyPostRouter();
+        this.syncScrollbars();
+    }
+
+    pullURL()
+    {
+        var regex = /(?:data=)(.*)/gm;
+        var urlInit = regex.exec(window.location.href);
+        if(urlInit == null || urlInit[1] == "")
         {
-            this.raw.ref.value = urlInit;
+            urlInit = "";
+        }
+        else
+        {
+            urlInit = urlInit[1];
+            console.log(urlInit);
+            urlInit = decodeURIComponent(urlInit);
+            console.log(urlInit);
+            urlInit = urlInit.match(/.{2}/g);
+            var baseten = new Array();
+            for(var item of urlInit)
+            {
+                baseten.push(parseInt(item, 16));
+            }
+            urlInit = new Uint8Array(baseten);
+            console.log(urlInit);
+            urlInit = pako.inflate(urlInit, { to: 'string' });
+            console.log(urlInit);
+        }
+        return urlInit;
+    }
+
+    setURL(data)
+    {
+        if(data != "")
+        {
+            this.raw.ref.value = data;
         }
         else
         {
             this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
         }
-        this.keyPostRouter();
-        this.syncScrollbars();
+    }
+
+    pushURL()
+    {
+        var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
+        payload = pako.deflate(payload, { level: 9, to: 'string'});
+        var holder = "";
+        for(var item of payload)
+        {
+            holder += item.toString(16).padStart(2, '0').toUpperCase();
+        }
+        payload = encodeURIComponent(holder);
+        if(payload.length > 1024)
+        {
+            payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
+        }
+        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
     }
 
     /**
@@ -87,17 +119,6 @@ export default class Schema
         this.exe.ref.value = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
-
-        var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
-        payload = pako.deflate(payload, { level: 9, to: 'string'});
-        payload = payload.toString();
-        payload = payload.replace(/,/gm, "_");
-        payload = encodeURIComponent(payload);
-        if(payload.length > 1024)
-        {
-            payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
-        }
-        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
     }
 
     /**
