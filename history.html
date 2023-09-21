@@ -110,20 +110,33 @@ History
 │   │           ├── Each DATA block was already initialized such that DATA.data = node.data.
 │   │           ├── Therefore, we simply iterate over the entire array schema and concatenate BLOCK.data to the output buffer.
 │   │           └── This buffer can then replace the contents of EXE and everything works!
-│   └── Resuming Documents, Misc Error Handling, and Illegal Actions
-│       ├── Certain actions the user can take may result in an illegal tree.
-│       ├── Although not perfect, I have implemented certain checks to ensure that it is far more difficult to accidentally create an illegal tree.
-│       ├── Key Interceptions
-│       │   ├── Illegal trees can be prevented by intercepting TAB and ENTER keypresses and making sure their result would be possible to parse.
-│       │   ├── To any aspiring developers take a look firsthand at /main.js > class VirtualBuffer > keyHandler() > function shouldTab() and function shouldNewLine()
-│       │   └── These functions make sure that the current, previous, and next line meet certain conditions, and if those conditions are met, the key is allowed to process.
-│       └── Regular Expression Validation
-│           ├── The primary function of Regular Expressions in this application is to recognize glyph characters and convert them back into tab characters.
-│           │   └── this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
-│           ├── I also included a regular expression that can handle the length-4 outputs over <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and older versions of RTN.
-│           │   └── this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
-│           └── Finally, there is a crude regular expression to remove tab characters from anywhere but the start of a line.
-│               └── this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
+│   ├── Resuming Documents, Misc Error Handling, and Illegal Actions
+│   │   ├── Certain actions the user can take may result in an illegal tree.
+│   │   ├── Although not perfect, I have implemented certain checks to ensure that it is far more difficult to accidentally create an illegal tree.
+│   │   ├── Key Interceptions
+│   │   │   ├── Illegal trees can be prevented by intercepting TAB and ENTER keypresses and making sure their result would be possible to parse.
+│   │   │   ├── To any aspiring developers take a look firsthand at /main.js > class VirtualBuffer > keyHandler() > function shouldTab() and function shouldNewLine()
+│   │   │   └── These functions make sure that the current, previous, and next line meet certain conditions, and if those conditions are met, the key is allowed to process.
+│   │   └── Regular Expression Validation
+│   │       ├── The primary function of Regular Expressions in this application is to recognize glyph characters and convert them back into tab characters.
+│   │       │   └── this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
+│   │       ├── I also included a regular expression that can handle the length-4 outputs over <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and older versions of RTN.
+│   │       │   └── this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+│   │       └── Finally, there is a crude regular expression to remove tab characters from anywhere but the start of a line.
+│   │           └── this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
+│   └── Writing to the URL
+│            │   ├── Every 1000ms the contents of the document are written to the URL.
+│            │   ├── This is done by taking the data, and compressing it using the <a style="color:cyan" href="https://github.com/nodeca/pako">Pako compression Library<\a>.
+│            │   │   └── Compression is at level 9 (highest compression possible) to enable saving documents as long as possible.
+│            │   ├── Pako produces a uInt8 array, which is then converted into a block of 2-digit hex values concatenated together.
+│            │   └── If the resultant URL payload is longer than 1024 characters, it is replaced with "MAXIMUM_LINK_LENGTH_EXCEEDED"
+│            └── Initializing from the URL
+│                ├── If ?data= is something other than "", we do the same steps above in reverse upon first starting the program.
+│                ├── Split the payload into 2-digit hex values
+│                ├── Convert back to base 10
+│                ├── Load values into a uInt8 array
+│                ├── Decompress data with the <a style="color:cyan" href="https://github.com/nodeca/pako">Pako compression Library<\a>.
+│                └── Write contents into raw.ref.value
 ├── Github Release
 │   ├── The full source code of this project is available on github at <a style="color:cyan" href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">https://github.umn.edu/UMDLARS/Rapid-Tree-Note</a>.
 │   └── It is free to use, modify, etc, I just ask that you credit me, "Brendan Rood", and provide a link to this original Application.
