@@ -23,12 +23,6 @@ export default class Schema
         this.exe = new ExeBuffer(outputTextArea);
         this.state = "UNLOCKED";
 
-        if(navigator.maxTouchPoints > 0) //IF VIEWED FROM MOBILE
-        {
-            this.raw.ref.value = "This tool does not work on Mobile!\n├── Sorry!\n├── To use this tool, please access this website from Desktop/PC.\n└── You are still welcome to visit the other information tabs though.";
-            return;
-        }
-
         this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
         this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
 
