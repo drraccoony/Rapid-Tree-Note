@@ -19,26 +19,49 @@ export default class Schema
     {
         var urlData = this.pullURL();
 
-        this.raw = new RawBuffer(inputTextArea);
-        this.exe = new ExeBuffer(outputTextArea);
-        this.state = "UNLOCKED";
+        {
+            this.raw = new RawBuffer(inputTextArea);
+            this.exe = new ExeBuffer(outputTextArea);
+            this.state = "UNLOCKED";
+        }
 
-        this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
-        this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
+        {
+            this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
+            this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
+        }
 
-        this.raw.ref.addEventListener('scroll', (event) => this.syncScrollbars(event));
-        this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
+        {
+            this.raw.ref.addEventListener('scroll', (event) => this.syncScrollbars(event));
+            this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
+        }
 
-        setInterval(() => this.keyPostRouter(), 1000);
-        setInterval(() => this.pushURL(), 1000);
-        setInterval(() => this.syncScrollbars(), 1000);
+        {
+            this.intervalIDs = new Array();
+            this.intervalIDs.push(setInterval(() => this.keyPostRouter(), 1000));
+            this.intervalIDs.push(setInterval(() => this.pushURL(), 1000));
+            this.intervalIDs.push(setInterval(() => this.syncScrollbars(), 1000));
+        }
 
-
+        window.addEventListener('beforeunload', (event) => this.safeShutdown(event));
 
         //force inital values
         this.setURL(urlData);
         this.keyPostRouter();
         this.syncScrollbars();
+    }
+
+    /**
+     * The function "safeShutdown" clears all interval IDs stored in the "intervalIDs" array.
+     * @param event - A dummy event associated with the 'beforeunload' event. Its values are not used.
+     * This is necessary to avoid browser hanging in some edge cases.
+     */
+    safeShutdown(event)
+    {
+        for(var ID of this.intervalIDs)
+        {
+            clearInterval(ID);
+        }
+        console.log("RTN Safe Shutdown Complete; " + this.intervalIDs.length + " intervals consumed.");
     }
 
     /**
