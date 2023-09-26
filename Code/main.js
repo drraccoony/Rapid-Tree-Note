@@ -50,10 +50,10 @@ export default class Schema
         }
 
         {
-            this.intervalIDs = new Array();
-            this.intervalIDs.push(setInterval(() => this.keyPostRouter(), 1000));
-            this.intervalIDs.push(setInterval(() => this.pushURL(), 1000));
-            this.intervalIDs.push(setInterval(() => this.syncScrollbars(), 1000));
+            this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
+            this.intervalState = "NORMAL"; //NORMAL or REDUCED
+            this.focused = true;
+            document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
         }
 
         window.addEventListener('beforeunload', (event) => this.safeShutdown(event));
@@ -71,11 +71,42 @@ export default class Schema
      */
     safeShutdown(event)
     {
-        for(var ID of this.intervalIDs)
+        clearInterval(this.intervalUpdater());
+        console.log("RTN Safe Shutdown Complete.");
+    }
+
+    /**
+     * The function toggles the value of the "focused" variable based on the visibility state of the
+     * document.
+     * @param event - The event parameter is the event object that is passed to the function when it is
+     * called. It contains information about the event that triggered the function, such as the type of
+     * event, the target element, and any additional data associated with the event. NOT USED
+     */
+    focusToggle(event)
+    {
+        this.focused = !this.focused;
+        if (document.visibilityState === 'hidden') 
         {
-            clearInterval(ID);
+            this.focused = false;
+        } 
+        else if (document.visibilityState === 'visible') 
+        {
+            this.focused = true;
         }
-        console.log("RTN Safe Shutdown Complete; " + this.intervalIDs.length + " intervals consumed.");
+    }
+
+    /**
+     * The function `intervalUpdate()` checks if the page is focused and performs certain actions if it
+     * is. These actions keep the page looking clean and update the URL's payload.
+     */
+    intervalUpdate()
+    {
+        if(this.focused)
+        {
+            this.keyPostRouter();
+            this.pushURL();
+            this.syncScrollbars()
+        }
     }
 
     /**
@@ -167,7 +198,25 @@ export default class Schema
         if(payload.length > 1024)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
+            if(this.intervalState == "NORMAL")
+            {
+                clearInterval(this.intervalUpdater);
+                this.intervalUpdater = setInterval(() => this.intervalUpdate(), 5000);
+                this.intervalState = "REDUCED";
+                //console.log("switched interval to reduced");
+            }
         }
+        else
+        {
+            if(this.intervalState == "REDUCED")
+            {
+                clearInterval(this.intervalUpdater);
+                this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
+                this.intervalState = "NORMAL";
+                //console.log("switched interval to norm");
+            }
+        }
+        //console.log("ITERATED");
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
         function hexToUrlSafeBase64(hexString) {
