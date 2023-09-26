@@ -71,7 +71,7 @@ export default class Schema
      */
     safeShutdown(event)
     {
-        clearInterval(this.intervalUpdater());
+        clearInterval(this.intervalUpdater);
         console.log("RTN Safe Shutdown Complete.");
     }
 
