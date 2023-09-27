@@ -51,7 +51,6 @@ export default class Schema
 
         {
             this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
-            this.intervalState = "NORMAL"; //NORMAL or REDUCED
             this.focused = true;
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
         }
@@ -97,15 +96,51 @@ export default class Schema
 
     /**
      * The function `intervalUpdate()` checks if the page is focused and performs certain actions if it
-     * is. These actions keep the page looking clean and update the URL's payload.
+     * is. These actions keep the page looking clean up-to-date.
      */
     intervalUpdate()
     {
         if(this.focused)
         {
             this.keyPostRouter();
-            this.pushURL();
             this.syncScrollbars()
+        }
+    }
+
+    /**
+     * This function is called every time a key is pressed
+     * The function generates a random number between 0 and 8192 and sets it as the value of
+     * "shouldEncode", then it calls the "urlPostEncodeOnIdle" function every second with the generated
+     * number as an argument.
+     * If this function hasn't been called in the last 1000ms, the value of this.shouldEncode will be the same as
+     * the this.urlPostEncodeOnIdle parameter was set as
+     */
+    urlPreEncodeOnIdle()
+    {
+        const min = 0;
+        const max = 8192;
+        const randomDecimalInRange = Math.random() * (max - min) + min;
+
+        this.shouldEncode = randomDecimalInRange;
+
+        //console.log("random idle value was " + randomDecimalInRange);
+
+        setTimeout(() => this.urlPostEncodeOnIdle(randomDecimalInRange), 1000);
+     
+    }
+
+    /**
+     * The function `urlPostEncodeOnIdle` checks if `shouldEncode` is still equal to `staticOldValue` and if
+     * so, it calls the `pushURL` function. This will only be the case if this.urlPreEncodeOnIdle hasn't
+     * been called within the last 1000ms.
+     * @param staticOldValue - The value of the staticOldValue parameter is a variable that represents
+     * the previous value of the variable.
+     */
+    urlPostEncodeOnIdle(staticOldValue)
+    {
+        if(this.shouldEncode == staticOldValue)
+        {
+            this.pushURL();
         }
     }
 
@@ -198,23 +233,6 @@ export default class Schema
         if(payload.length > 1024)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
-            if(this.intervalState == "NORMAL")
-            {
-                clearInterval(this.intervalUpdater);
-                this.intervalUpdater = setInterval(() => this.intervalUpdate(), 5000);
-                this.intervalState = "REDUCED";
-                //console.log("switched interval to reduced");
-            }
-        }
-        else
-        {
-            if(this.intervalState == "REDUCED")
-            {
-                clearInterval(this.intervalUpdater);
-                this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
-                this.intervalState = "NORMAL";
-                //console.log("switched interval to norm");
-            }
         }
         //console.log("ITERATED");
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
@@ -243,6 +261,7 @@ export default class Schema
     keyPreRouter(event)
     {
         this.raw.keyHandler(event, (event) => this.keyPostRouter(event));
+        this.urlPreEncodeOnIdle();
     }
 
     /**
