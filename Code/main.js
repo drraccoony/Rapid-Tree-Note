@@ -211,7 +211,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3";
+            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3\n\tTo indent use tabs, NOT SPACES!";
         }
     }
 
