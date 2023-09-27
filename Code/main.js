@@ -110,7 +110,7 @@ export default class Schema
     /**
      * This function is called every time a key is pressed
      * The function generates a random number between 0 and 8192 and sets it as the value of
-     * "shouldEncode", then it calls the "urlPostEncodeOnIdle" function every second with the generated
+     * "shouldEncode", then it calls the "urlPostEncodeOnIdle" function after one second with the generated
      * number as an argument.
      * If this function hasn't been called in the last 1000ms, the value of this.shouldEncode will be the same as
      * the this.urlPostEncodeOnIdle parameter was set as
