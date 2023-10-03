@@ -48,10 +48,10 @@ You should have received a copy of the GNU Affero General Public License along w
       <textarea id="display" style="z-index: 1; pointer-events: none; position: absolute; left:5vh; width: 95%; height: 80vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; "></textarea>
     </div>
 
-    <script src="./Code/pako.min.js"></script>
+    <script src="./Code/exe/pako.min.js"></script>
 
     <script type="module">
-      import Schema from "./Code/main.js";
+      import Schema from "./Code/exe/main.js";
       var MainBuffer = new Schema(document.getElementById("source"), document.getElementById("display"));
   </script>
 
