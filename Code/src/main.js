@@ -303,26 +303,26 @@ export default class Schema
         //make sure that async changes like autocorrect are accounted for
         this.keyPostRouter();
 
-        //Determine the number of tabs before the start of the selection to push the exe select forward by that times 7
+        //Determine the number of tabs before the start of the selection to push the exe select forward by that times 7(8)
         var preOffset = this.raw.ref.selectionStart;
         var preString = this.raw.ref.value.substring(0,preOffset);
         var preTabs = getTabs(preString);
 
-        //Determine the number of tabs between the start and end of the selection to widen the exe select by that times 7
+        //Determine the number of tabs between the start and end of the selection to widen the exe select by that times 7(8)
         var postOffset = this.raw.ref.selectionEnd;
         var postString = this.raw.ref.value.substring(preOffset, postOffset);
         var postTabs = getTabs(postString);
         
         //Calculate the new start and ends and pull that off the exe buffer
-        var selectStart = this.raw.ref.selectionStart + (7 * preTabs);
-        var selectEnd = this.raw.ref.selectionEnd + (7 * preTabs) + (7 * postTabs);
+        var selectStart = this.raw.ref.selectionStart + (8 * preTabs);
+        var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
         var payload = this.exe.ref.value.substring(selectStart, selectEnd);
 
         //Put that value onto the clipboard
-        payload = payload.replace(/├────── /gm, "├── ");
-        payload = payload.replace(/└────── /gm, "└── ");
-        payload = payload.replace(/│       /gm, "│   ");
-        payload = payload.replace(/        /gm, "    ");
+        payload = payload.replace(/├────── ​/gm, "├── ​");
+        payload = payload.replace(/└────── ​/gm, "└── ​");
+        payload = payload.replace(/│       ​/gm, "│   ​");
+        payload = payload.replace(/        ​/gm, "    ​");
         navigator.clipboard.writeText(payload);
 
         function getTabs(string)
@@ -891,8 +891,8 @@ class RawBuffer extends VirtualBuffer
      */
     update()
     {
-        this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
-        this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+        this.ref.value = this.ref.value.replace(/├────── ​|│       ​|└────── ​|        ​/gm, "\t");
+        this.ref.value = this.ref.value.replace(/├── ​|│   ​|└── ​|    ​/gm, "\t");
         this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
         super.update();
     }

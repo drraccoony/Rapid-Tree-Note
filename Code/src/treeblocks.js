@@ -25,7 +25,7 @@ export class Line extends Block
 {
     constructor()
     {
-        super("Line", "│       ");
+        super("Line", "│       ​");
     }
 }
 
@@ -33,7 +33,7 @@ export class Fork extends Block
 {
     constructor()
     {
-        super("Fork", "├────── ");
+        super("Fork", "├────── ​");
     }
 }
 
@@ -41,7 +41,7 @@ export class Bend extends Block
 {
     constructor()
     {
-        super("Bend", "└────── ");
+        super("Bend", "└────── ​");
     }
 }
 
@@ -49,7 +49,7 @@ export class Gap extends Block
 {
     constructor()
     {
-        super("Gap", "        ");
+        super("Gap", "        ​");
     }
 }
 
