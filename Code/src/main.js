@@ -639,8 +639,6 @@ class ProcessingTree
         this.toBlocks();
         this.parseNewBlocks();
         this.toString();
-
-        //console.log(this);
     }
 }
 
@@ -893,6 +891,7 @@ class RawBuffer extends VirtualBuffer
      */
     update()
     {
+        this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
         this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
         this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
         super.update();
