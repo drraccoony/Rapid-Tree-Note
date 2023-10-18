@@ -40,6 +40,7 @@ export default class Schema
         }
 
         {
+            this.raw.ref.addEventListener("input", () => this.keyPostRouter());
             this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
             this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
         }
@@ -50,7 +51,7 @@ export default class Schema
         }
 
         {
-            this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
+            //this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
             this.focused = true;
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
         }
@@ -639,6 +640,8 @@ class ProcessingTree
         this.toBlocks();
         this.parseNewBlocks();
         this.toString();
+
+        //console.log(this);
     }
 }
 
