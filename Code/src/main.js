@@ -287,6 +287,11 @@ export default class Schema
     handlePaste(event)
     {
         setTimeout((event) => this.syncScrollbars(event), 100);
+        setTimeout(() =>
+        {
+            this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
+            this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
+        }, 500);
     }
 
     /**
@@ -894,8 +899,7 @@ class RawBuffer extends VirtualBuffer
      */
     update()
     {
-        this.ref.value = this.ref.value.replace(/├────── ​|│       ​|└────── ​|        ​/gm, "\t");
-        this.ref.value = this.ref.value.replace(/├── ​|│   ​|└── ​|    ​/gm, "\t");
+        this.ref.value = this.ref.value.replace(/[└├│─ ]*​/gm, "\t");
         this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
         super.update();
     }
