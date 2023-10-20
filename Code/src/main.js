@@ -62,6 +62,7 @@ export default class Schema
         this.setURL(urlData);
         this.keyPostRouter();
         this.syncScrollbars();
+        this.handlePaste();
     }
 
     /**
@@ -287,11 +288,11 @@ export default class Schema
     handlePaste(event)
     {
         setTimeout((event) => this.syncScrollbars(event), 100);
-        setTimeout(() =>
+        setTimeout(() => //do misc glyph replacement for forward conversion to zero-width-deliminated glyphs
         {
-            this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
-            this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
-        }, 500);
+            this.raw.ref.value = this.raw.ref.value.replace(/├────── |│       |└────── |        /gm, "\t"); //size 8 glyphs
+            this.raw.ref.value = this.raw.ref.value.replace(/├── |│   |└── |    /gm, "\t"); //size 4 glyphs
+        }, 100);
     }
 
     /**
