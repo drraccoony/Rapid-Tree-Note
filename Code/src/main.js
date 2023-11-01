@@ -63,6 +63,9 @@ export default class Schema
         this.keyPostRouter();
         this.syncScrollbars();
         this.handlePaste();
+
+        //static config
+        this.maxURLLength = 8192;
     }
 
     /**
@@ -232,7 +235,7 @@ export default class Schema
         }
         payload = hexToUrlSafeBase64(holder);
         payload = encodeURIComponent(payload);
-        if(payload.length > 1024)
+        if(payload.length + 256 > this.maxURLLength)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
