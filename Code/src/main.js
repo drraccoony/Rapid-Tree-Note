@@ -235,7 +235,7 @@ export default class Schema
         }
         payload = hexToUrlSafeBase64(holder);
         payload = encodeURIComponent(payload);
-        if(payload.length + 256 > this.maxURLLength)
+        if(payload.length + 512 > this.maxURLLength)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
