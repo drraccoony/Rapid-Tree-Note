@@ -13,6 +13,8 @@ You should have received a copy of the GNU Affero General Public License along w
 */
 
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
+import "./markdown.js";
+import Markdown from "./markdown.js";
 
 /* The Schema class is a container that handles user input, generates a formatted document, and
 synchronizes scrollbars. */
@@ -66,6 +68,9 @@ export default class Schema
 
         //static config
         this.maxURLLength = 8192;
+
+        this.marker = new Markdown();
+        window.main = new Markdown();
     }
 
     /**
