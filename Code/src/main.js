@@ -9,7 +9,7 @@ RTN is free software: you can redistribute it and/or modify it under the terms o
 
 RTN is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along with Foobar. It is avalible at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
+You should have received a copy of the GNU Affero General Public License along with RTN. It is avalible at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
 */
 
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
@@ -762,7 +762,7 @@ class VirtualBuffer
             if(shouldTab(this.ref.value, this.start))
             {
                 this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                this.moveCarrat(1);
+                this.moveCarrat(8);
             }
         }
 

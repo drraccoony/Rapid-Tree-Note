@@ -15,9 +15,18 @@ You should have received a copy of the GNU Affero General Public License along w
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset='utf-8'/>
+    <meta charset='utf-8'>
     <title>Rapid Tree Note</title>
     <link rel="icon" href="/RTN/Resources/RTN-Logo.svg" type="image/x-icon">
+    <style>
+      @font-face 
+      {
+        font-family: 'Box';
+        src: 
+          url('https://lars.d.umn.edu/RTN/Resources/consola-box.woff2') format('woff2'),
+          url('https://lars.d.umn.edu/RTN/Resources/consola-box.woff') format('woff');
+      }
+    </style>
     
     
   </head>
@@ -26,7 +35,7 @@ You should have received a copy of the GNU Affero General Public License along w
       <div style="width: 50%; display: flex; align-items: center; justify-content: left;">
         <h1 style="color: whitesmoke; font-size: 4vw;">Rapid Tree Notetaker</h1>
       </div>
-      <div style="width: 10%; height: 100%; display: flex; align-items: center;; justify-content: center;">
+      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
         <button onclick="navigateProgram()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Program</button>
       </div>
       <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
@@ -42,10 +51,12 @@ You should have received a copy of the GNU Affero General Public License along w
         <img src="./Resources/RTN-Logo.svg" alt="RTN Website Logo" style="width: 5vw;"></img>
       </div>
     </div>
+
+    <hr>
     
-    <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 80vh; padding-top: 3vh;">
-      <textarea id="source" style="z-index: 2; position: absolute; left:5vh; width: 95%; height: 80vh; background-color: rgba(0, 0, 0, 0.0); border: solid 4px black; color: white; "></textarea>
-      <textarea id="display" style="z-index: 1; pointer-events: none; position: absolute; left:5vh; width: 95%; height: 80vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; "></textarea>
+    <div style="position: relative; justify-content: center; align-items: center; height: 75vh; padding-top: 3vh; column-gap: 1em; columns: 2">
+      <textarea id="display" style="z-index: 1; pointer-events: none; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; font-family: Box, monospace; tab-size:8; line-height: 1; resize: none;"></textarea>
+      <textarea id="source" style="z-index: 2; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(0, 0, 0, 0.0); border: solid 4px black; color: white; font-family: Box, monospace; tab-size:8; line-height: 1; resize: none;"></textarea>
     </div>
 
     <script src="./Code/exe/pako.min.js"></script>
