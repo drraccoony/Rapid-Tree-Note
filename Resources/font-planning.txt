@@ -1,0 +1,5 @@
+View a Font's Glyphs from File:
+https://torinak.com/font/lsfont.html
+
+List of Candidate Chars:
+https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
