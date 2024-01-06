@@ -112,6 +112,7 @@ export default class Schema
     {
         if(this.focused)
         {
+            //stuff here is done once every 1000ms, regardless of program state
             this.keyPostRouter();
             this.syncScrollbars()
         }
@@ -283,6 +284,28 @@ export default class Schema
         this.exe.ref.value = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
+    }
+
+    /**
+     * The function `hardFix()` preforms much the same functions as `postKeyRouter()`,
+     * except gaurentees that the graph will be brought to a consistent state, even if
+     * data loss occurs.
+     */
+    hardFix()
+    {
+        this.raw.update();
+        this.exe.ref.value = this.raw.ref.value;
+        this.exe.tree.totalParse();
+        this.exe.update();
+        var hold_start = this.raw.ref.selectionStart;
+        var hold_end = this.raw.ref.selectionEnd;
+        this.raw.ref.value = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
+        this.raw.update();
+        this.exe.ref.value = this.raw.ref.value;
+        this.exe.tree.totalParse();
+        this.exe.update();
+        this.raw.ref.selectionStart = hold_start;
+        this.raw.ref.selectionEnd = hold_end;
     }
 
     /**
@@ -759,10 +782,77 @@ class VirtualBuffer
         if(event.key == "Tab")
         {
             event.preventDefault();
-            if(shouldTab(this.ref.value, this.start))
+            if(this.start == this.end)
             {
-                this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                this.moveCarrat(8);
+                if(shouldTab(this.ref.value, this.start))
+                {
+                    this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
+                    this.moveCarrat(1);
+                    //setTimeout(() => {window.main.hardFix()}, 25);
+                }
+            }
+            else //a region is selected
+            {
+                var startRoot = this.start;
+                var endRoot = this.end -1;
+
+                while(this.ref.value.substring(startRoot,startRoot+1) != "\n" && startRoot > 0)
+                {
+                    startRoot--;
+                    //console.log(this.ref.value.substring(startRoot,startRoot+1));
+                }
+                while(this.ref.value.substring(endRoot,endRoot+1) != "\n" && endRoot > 0)
+                {
+                    endRoot--;
+                    //console.log(this.ref.value.substring(endRoot,endRoot+1));
+                }
+
+                var roots = new Array();
+                var index = startRoot;
+                roots.push(startRoot);
+                while(index < endRoot-1)
+                {
+                    index++;
+                    if(this.ref.value.substring(index, index+1) == "\n")
+                    {
+                        roots.push(index);
+                    }
+                }
+
+                //console.log(startRoot, endRoot);
+
+                if(endRoot != startRoot)
+                {
+                    roots.push(endRoot);
+                }
+
+                //console.log(roots);
+
+                var rootnum = 1;
+                for(var root of roots)
+                {
+                    if(shouldTab(this.ref.value, root+rootnum))
+                    {
+                        if(!event.shiftKey)
+                        {
+                            this.ref.value = this.ref.value.substring(0,root+rootnum) + "\t" + this.ref.value.substring(root+rootnum);
+                            rootnum++;
+                            this.ref.selectStart = root+rootnum;
+                            this.ref.selectEnd = root+rootnum;
+                        }
+                        else //shift is pressed, REMOVE a \t rather than adding one
+                        {
+                            if(this.ref.value.substring(root+rootnum, root+rootnum+1) == "\t")
+                            {
+                                this.ref.value = this.ref.value.substring(0,root+rootnum) + "" + this.ref.value.substring(root+rootnum+1);
+                                rootnum++;
+                                this.ref.selectStart = root+rootnum;
+                                this.ref.selectEnd = root+rootnum;
+                            }
+                        }
+                    }
+                }
+                setTimeout(() => {window.main.hardFix()}, 25);
             }
         }
 
