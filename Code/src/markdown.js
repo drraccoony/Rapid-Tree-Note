@@ -18,10 +18,10 @@ export default class Markdown
     constructor()
     {
 
-        this.normal = new Alphabet(65); //65 - 117
-        this.bold = new Alphabet(120276); //120276-120327
-        this.italic = new Alphabet(120328); //120328-120379
-        this.double = new Alphabet(120380); //120380-120431
+        this.normal = new Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+        this.bold = new Alphabet("𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇");
+        this.italic = new Alphabet("𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻");
+        this.double = new Alphabet("𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙒𝙓𝙔𝙕𝙖𝙗𝙘𝙙𝙚𝙛𝙜𝙝𝙞𝙟𝙠𝙡𝙢𝙣𝙤𝙥𝙦𝙧𝙨𝙩𝙪𝙫𝙬𝙭𝙮𝙯");
     }
 
     test()
@@ -208,53 +208,48 @@ export default class Markdown
 
 class Alphabet
 {
-    constructor(startingPoint)
+    constructor(alpha)
     {
-        this.root = startingPoint;
+        this.glyphs = alpha;
     }
 
-    isThisScript(char)
+    isThisScript(test)
     {
-        if(this.root != 65)
+        for (const char of [...this.glyphs])
         {
-            var greater_than_root = char.codePointAt(0) >= this.root;
-            var less_than_celing = char.codePointAt(0) <= this.root + 51;
-            var soln = greater_than_root && less_than_celing;
-            return soln;
+            if(test == char)
+            {
+                return true;
+            }
         }
-        else
-        {
-            var soln = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(char);
-            return (soln != -1); 
-        }
+        return false;
     }
 
-    getRelativeIndex(char)
+    getRelativeIndex(test)
     {
-        //console.log(char, char.codePointAt(0), this);
-        if(this.root != 65)
+        var index = 0;
+        for (const char of [...this.glyphs])
         {
-            return char.codePointAt(0) - this.root;
+            if(test == char)
+            {
+                return index;
+            }
+            index++;
         }
-        else
-        {
-            var soln = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(char);
-            return (soln); 
-        }
+        return -1;
     }
 
     relativeIndexAsString(index)
     {
-        //console.log(index);
-        //console.log(this.root);
-        if(this.root != 65)
+        var glyphSelector = 0;
+        for (const char of [...this.glyphs])
         {
-            return String.fromCodePoint(this.root + index);
+            if(glyphSelector == index)
+            {
+                return char;
+            }
+            glyphSelector++;
         }
-        else
-        {
-            var soln = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[index];
-            return (soln); 
-        }
+        return "�";
     }
 }

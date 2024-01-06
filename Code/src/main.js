@@ -70,7 +70,7 @@ export default class Schema
         this.maxURLLength = 8192;
 
         this.marker = new Markdown();
-        window.main = new Markdown();
+        window.main = this.marker;
     }
 
     /**
@@ -149,10 +149,12 @@ export default class Schema
      */
     urlPostEncodeOnIdle(staticOldValue)
     {
+        this.markdownParse();
         if(this.shouldEncode == staticOldValue)
         {
             this.pushURL();
         }
+       
     }
 
     /**
@@ -287,7 +289,7 @@ export default class Schema
     }
 
     /**
-     * The function `hardFix()` preforms much the same functions as `postKeyRouter()`,
+     * The function `hardFix()` preforms much the same functions as `keyPostRouter()`,
      * except gaurentees that the graph will be brought to a consistent state, even if
      * data loss occurs.
      */
@@ -306,6 +308,49 @@ export default class Schema
         this.exe.update();
         this.raw.ref.selectionStart = hold_start;
         this.raw.ref.selectionEnd = hold_end;
+    }
+
+    markdownParse()
+    {
+        var hold_start = this.raw.ref.selectionStart;
+        var hold_end = this.raw.ref.selectionEnd;
+
+        {//revert everything to basic
+            this.raw.ref.value = window.main.marker.removeBold(this.raw.ref.value);
+            this.raw.ref.value = window.main.marker.removeItalic(this.raw.ref.value);
+        }
+
+        {//bold what is needed
+            let str = this.raw.ref.value;
+            let regex = /![^!\t\n]+!/g;
+
+            let newStr = str.replace(regex, function(match)
+            {
+                return window.main.marker.addBold(match);
+            });
+
+            this.raw.ref.value = newStr;
+        }
+
+        {//italicise what is needed
+            let str = this.raw.ref.value;
+            let regex = /\*[^*\t\n]+\*/g;
+
+            let newStr = str.replace(regex, function(match)
+            {
+                return window.main.marker.addItalic(match);
+            });
+
+            this.raw.ref.value = newStr;
+        }
+
+        
+
+        this.keyPostRouter();
+
+        this.raw.ref.selectionStart = hold_start;
+        this.raw.ref.selectionEnd = hold_end;
+
     }
 
     /**
@@ -837,8 +882,8 @@ class VirtualBuffer
                         {
                             this.ref.value = this.ref.value.substring(0,root+rootnum) + "\t" + this.ref.value.substring(root+rootnum);
                             rootnum++;
-                            this.ref.selectStart = root+rootnum;
-                            this.ref.selectEnd = root+rootnum;
+                            this.ref.selectionStart = root+rootnum;
+                            this.ref.selectionEnd = root+rootnum;
                         }
                         else //shift is pressed, REMOVE a \t rather than adding one
                         {
@@ -846,8 +891,8 @@ class VirtualBuffer
                             {
                                 this.ref.value = this.ref.value.substring(0,root+rootnum) + "" + this.ref.value.substring(root+rootnum+1);
                                 rootnum++;
-                                this.ref.selectStart = root+rootnum;
-                                this.ref.selectEnd = root+rootnum;
+                                this.ref.selectionStart = root+rootnum;
+                                this.ref.selectionEnd = root+rootnum;
                             }
                         }
                     }
