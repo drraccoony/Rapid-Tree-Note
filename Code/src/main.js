@@ -224,7 +224,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3\n\tUse TABS to indent, NOT SPACES!";
+            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3\nMisc Instructions\n\tIndentation\n\t\tUse TAB to indent\n\t\tSupports block indentation editing\n\tLimited Markdown Support\n\t\t!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗲𝘅𝗰𝗹𝗶𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱!\n\t\t*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤*";
         }
     }
 
