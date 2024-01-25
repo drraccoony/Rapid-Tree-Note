@@ -250,6 +250,9 @@ export default class Schema
         //console.log("ITERATED");
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
+        //update the URL Title
+        document.title = "RTN - " + this.exe.ref.value.split("\n")[0];
+
         function hexToUrlSafeBase64(hexString) {
             // Convert hex string to byte array
             const byteArray = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
