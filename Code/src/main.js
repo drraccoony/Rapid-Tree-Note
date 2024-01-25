@@ -66,6 +66,12 @@ export default class Schema
         this.syncScrollbars();
         this.handlePaste();
 
+        //update the URL Title
+        if(urlData != "" && urlData != null)
+        {
+            document.title = "RTN - " + this.exe.ref.value.split("\n")[0];
+        }
+        
         //static config
         this.maxURLLength = 8192;
 
