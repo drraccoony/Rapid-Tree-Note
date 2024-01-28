@@ -69,7 +69,7 @@ export default class Schema
         //update the URL Title
         if(urlData != "" && urlData != null)
         {
-            document.title = this.exe.ref.value.split("\n")[0];
+            document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
         }
         
         //static config
@@ -257,7 +257,7 @@ export default class Schema
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
         //update the URL Title
-        document.title = this.exe.ref.value.split("\n")[0];
+        document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
 
         function hexToUrlSafeBase64(hexString) {
             // Convert hex string to byte array
