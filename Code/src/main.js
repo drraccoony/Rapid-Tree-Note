@@ -259,7 +259,7 @@ export default class Schema
 
         console.log(debug);
 
-        //history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
+        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
         //update the URL Title
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
