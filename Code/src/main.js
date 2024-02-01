@@ -193,7 +193,11 @@ export default class Schema
             urlInit = u8;
             try
             {
-                urlInit = pako.inflate(urlInit, { to: 'string' });
+                urlInit = pako.inflate(urlInit);
+                debug.resultBytes = urlInit;
+                const decoder = new TextDecoder();
+                urlInit = decoder.decode(urlInit);
+                debug.resultText = urlInit;
             }
             catch (error)
             {
@@ -201,7 +205,6 @@ export default class Schema
                 console.error(error);
             }
         }
-        debug.result = urlInit;
         console.log(debug);
         return urlInit;
     }
@@ -233,8 +236,11 @@ export default class Schema
         debug.type = "COMPRESSION EVENT";
         var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
         debug.rawText = payload;
-        payload = pako.deflate(payload, { level: 9});
-        debug.compressArr = payload;
+        var encoder = new TextEncoder();
+        var u8 = encoder.encode(payload);
+        debug.rawBytes = u8;
+        payload = pako.deflate(u8, { level: 9});
+        debug.compressBytes = payload;
         var utf8str = "";
         for(var item of payload)
         {
@@ -253,7 +259,7 @@ export default class Schema
 
         console.log(debug);
 
-        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
+        //history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
         //update the URL Title
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
