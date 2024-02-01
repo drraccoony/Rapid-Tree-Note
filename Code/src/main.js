@@ -170,6 +170,8 @@ export default class Schema
      */
     pullURL()
     {
+        var debug = ({});
+        debug.type = "DECOMPRESSION EVENT";
         var regex = /(?:data=)(.*)/gm;
         var urlInit = regex.exec(window.location.href);
         if(urlInit == null || urlInit[1] == "")
@@ -179,17 +181,16 @@ export default class Schema
         else
         {
             urlInit = urlInit[1];
-            //console.log(urlInit);
-            urlInit = decodeURIComponent(urlInit);
-            urlInit = urlSafeBase64ToHex(urlInit);
-            urlInit = urlInit.match(/.{2}/g);
-            var baseten = new Array();
-            for(var item of urlInit)
+            urlInit = urlInit.replace(/\-/g, '+').replace(/\_/g, '/');
+            debug.b64 = urlInit;
+            var utf8str = atob(urlInit);
+            var u8 = new Array();
+            for(var char of utf8str)
             {
-                baseten.push(parseInt(item, 16));
+                u8.push(char.charCodeAt(0));
             }
-            urlInit = new Uint8Array(baseten);
-            //console.log(urlInit);
+            u8 = new Uint8Array(u8);
+            urlInit = u8;
             try
             {
                 urlInit = pako.inflate(urlInit, { to: 'string' });
@@ -199,22 +200,10 @@ export default class Schema
                 urlInit = "There was a problem decoding the data in the link.\nAre you sure it was produced by this program?\nError has been printed to console.";
                 console.error(error);
             }
-            //console.log(urlInit);
         }
+        debug.result = urlInit;
+        console.log(debug);
         return urlInit;
-
-        function urlSafeBase64ToHex(urlSafeBase64String) {
-            // Replace URL-safe characters with Base64 characters
-            const base64String = urlSafeBase64String.replace(/-/g, '+').replace(/_/g, '/');
-          
-            // Decode Base64 string to byte array
-            const byteArray = Array.from(atob(base64String), byte => byte.charCodeAt(0));
-          
-            // Convert byte array to hex string
-            const hexString = byteArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-          
-            return hexString;
-          }
     }
 
     /**
@@ -240,37 +229,34 @@ export default class Schema
      */
     pushURL()
     {
+        var debug = ({});
+        debug.type = "COMPRESSION EVENT";
         var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
-        payload = pako.deflate(payload, { level: 9, to: 'string'});
-        var holder = "";
+        debug.rawText = payload;
+        payload = pako.deflate(payload, { level: 9});
+        debug.compressArr = payload;
+        var utf8str = "";
         for(var item of payload)
         {
-            holder += item.toString(16).padStart(2, '0').toUpperCase();
+            utf8str += String.fromCodePoint(item);
         }
-        payload = hexToUrlSafeBase64(holder);
-        payload = encodeURIComponent(payload);
+        debug.compressStr = utf8str;
+        payload = btoa(utf8str);
+        payload = payload.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, "");
+
+        debug.result = payload;
+
         if(payload.length + 512 > this.maxURLLength)
         {
             payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
-        //console.log("ITERATED");
+
+        console.log(debug);
+
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
 
         //update the URL Title
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
-
-        function hexToUrlSafeBase64(hexString) {
-            // Convert hex string to byte array
-            const byteArray = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
-          
-            // Encode byte array using Base64 encoding
-            const base64String = btoa(String.fromCharCode(...byteArray));
-          
-            // Replace characters that are not URL-safe
-            const urlSafeBase64String = base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-          
-            return urlSafeBase64String;
-          }
     }
 
     /**
