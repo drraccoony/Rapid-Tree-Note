@@ -260,7 +260,8 @@ export default class Schema
         console.log(debug);
 
         //change URL / Metadata
-        history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
+        var baseURL = window.location.href.split("?")[0];
+        history.replaceState({}, "", baseURL + "?data=" + payload);
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
         
     }
