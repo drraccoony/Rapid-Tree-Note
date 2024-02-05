@@ -222,7 +222,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Edit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3\nMisc Instructions\n\tIndentation\n\t\tUse TAB to indent\n\t\tSupports block indentation editing\n\tLimited Markdown Support\n\t\t!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗲𝘅𝗰𝗹𝗶𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱!\n\t\t*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤*";
+            this.raw.ref.value = "What is this?\n\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\tIt is free to use and will never ask you to log in.\n\t\nEdit this text\n\tto generate\n\t\ta\n\t\tdocument\n\tformatted\n\t\tlike a tree!\n\t\t\t:3\n\t\t\t\nMisc Instructions\n\tIndentation\n\t\tUse TAB to indent\n\t\tSupports block indentation editing\n\tLimited Markdown Support\n\t\t!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗲𝘅𝗰𝗹𝗶𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱!\n\t\t*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤*";
         }
     }
 
@@ -259,10 +259,10 @@ export default class Schema
 
         console.log(debug);
 
+        //change URL / Metadata
         history.replaceState({}, "", "https://lars.d.umn.edu/RTN/program.html?data=" + payload);
-
-        //update the URL Title
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
+        
     }
 
     /**
