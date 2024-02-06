@@ -6,7 +6,10 @@ if(isset($_GET['data']))
     $compressedData = base64_decode($base64CompressedData);
     $compressedData = substr($compressedData, 2);
     $data = gzinflate($compressedData);
+    $data = substr($data, 0, 2048);
     $title = explode("\n", $data)[0];
+    $title = substr($title, 0, 32);
+    $data = substr($data, strpos($data, "\n") + 1);
     $content = file_get_contents('program.html');
     $content = str_replace("<meta property=\"og:title\" content=\"\"/>", "<meta property=\"og:title\" content=\"" . $title . "\"/>", $content);
     $content = str_replace("<meta property=\"og:description\" content=\"\"/>", "<meta property=\"og:description\" content=\"" . $data . "\"/>", $content);
