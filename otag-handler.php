@@ -16,13 +16,19 @@ if(isset($_GET['data']))
     $compressedData = base64_decode($base64CompressedData);
     $compressedData = substr($compressedData, 2);
     $data = gzinflate($compressedData);
+
+    //shrink tree glyphs
     $data = str_replace("├────── ", "├── ", $data);
     $data = str_replace("└────── ", "└── ", $data);
     $data = str_replace("│       ", "│   ", $data);
     $data = str_replace("        ", "    ", $data);
-    $data = substr($data, 0, 2048);
+    
+    //escape special chars
+    $data = str_replace("\"", "&quot;", $data);
+
+    //$data = substr($data, 0, 8192);
     $title = explode("\n", $data)[0];
-    $title = substr($title, 0, 32);
+    //$title = substr($title, 0, 64);
     $data = substr($data, strpos($data, "\n") + 1);
     $content = str_replace("{{pageTitle}}", $title, $content);
     $content = str_replace("{{description}}", $data, $content);
