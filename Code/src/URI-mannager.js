@@ -186,7 +186,20 @@ export class URIMannager
 
         function lzma2(data)
         {
-            return;
+            var s8 = new Array();
+            for(var val of data)
+            {
+                s8.push(val-128);
+            }
+            var data = LZMA.decompress(s8);
+            var u8 = new Array();
+            for(var val of data)
+            {
+                u8.push(val+128);
+            }
+            u8 = new Uint8Array(u8);
+            console.log(u8);
+            return u8;
         }
     }
 
@@ -211,7 +224,19 @@ export class URIMannager
 
         function lzma2(data)
         {
-
+            var s8 = new Array();
+            for(var val of data)
+            {
+                s8.push(val-128);
+            }
+            data = LZMA.compress(s8, 9);
+            var u8 = new Array();
+            for(var val of data)
+            {
+                u8.push(val+128);
+            }
+            u8 = new Uint8Array(u8);
+            return u8;
         }
     }
 }
