@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License along w
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
 import "./markdown.js";
 import Markdown from "./markdown.js";
+import { URIMannager } from "./URI-mannager.js";
 
 /* The Schema class is a container that handles user input, generates a formatted document, and
 synchronizes scrollbars. */
@@ -33,6 +34,12 @@ export default class Schema
      */
     constructor(inputTextArea, outputTextArea)
     {
+        //static config
+        this.maxURLLength = 8192;
+        this.marker = new Markdown();
+        this.uri = new URIMannager();
+        window.main = this;
+        
         var urlData = this.pullURL();
 
         {
@@ -71,12 +78,7 @@ export default class Schema
         {
             document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
         }
-        
-        //static config
-        this.maxURLLength = 8192;
 
-        this.marker = new Markdown();
-        window.main = this.marker;
     }
 
     /**
@@ -170,43 +172,7 @@ export default class Schema
      */
     pullURL()
     {
-        var debug = ({});
-        debug.type = "DECOMPRESSION EVENT";
-        var regex = /(?:data=)(.*)/gm;
-        var urlInit = regex.exec(window.location.href);
-        if(urlInit == null || urlInit[1] == "")
-        {
-            urlInit = "";
-        }
-        else
-        {
-            urlInit = urlInit[1];
-            urlInit = urlInit.replace(/\-/g, '+').replace(/\_/g, '/');
-            debug.b64 = urlInit;
-            var utf8str = atob(urlInit);
-            var u8 = new Array();
-            for(var char of utf8str)
-            {
-                u8.push(char.charCodeAt(0));
-            }
-            u8 = new Uint8Array(u8);
-            urlInit = u8;
-            try
-            {
-                urlInit = pako.inflate(urlInit);
-                debug.resultBytes = urlInit;
-                const decoder = new TextDecoder();
-                urlInit = decoder.decode(urlInit);
-                debug.resultText = urlInit;
-            }
-            catch (error)
-            {
-                urlInit = "There was a problem decoding the data in the link.\nAre you sure it was produced by this program?\nError has been printed to console.";
-                console.error(error);
-            }
-        }
-        console.log(debug);
-        return urlInit;
+        return this.uri.pull();
     }
 
     /**
@@ -232,36 +198,9 @@ export default class Schema
      */
     pushURL()
     {
-        var debug = ({});
-        debug.type = "COMPRESSION EVENT";
         var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
-        debug.rawText = payload;
-        var encoder = new TextEncoder();
-        var u8 = encoder.encode(payload);
-        debug.rawBytes = u8;
-        payload = pako.deflate(u8, { level: 9});
-        debug.compressBytes = payload;
-        var utf8str = "";
-        for(var item of payload)
-        {
-            utf8str += String.fromCodePoint(item);
-        }
-        debug.compressStr = utf8str;
-        payload = btoa(utf8str);
-        payload = payload.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, "");
+        this.uri.push(payload);
 
-        debug.result = payload;
-
-        if(payload.length + 512 > this.maxURLLength)
-        {
-            payload = "MAXIMUM-LINK-LENGTH-EXCEEDED";
-        }
-
-        console.log(debug);
-
-        //change URL / Metadata
-        var baseURL = window.location.href.split("?")[0];
-        history.replaceState({}, "", baseURL + "?data=" + payload);
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
         
     }
