@@ -203,7 +203,35 @@ export default class Markdown
         return result;
     }
 
+    addStrikethough(string)
+    {
+        return Strikethrough.strike(string);
+    }
 
+    removeStrikethrough(string)
+    {
+        return Strikethrough.unstrike(string);
+    }
+
+
+}
+
+class Strikethrough
+{
+    constructor()
+    {
+        this.CLSO = "\u0336";   
+    }
+    static strike(string) {
+        var result = string.replace(/[^\n\t]/gm, function(match) {
+            return match + "\u0336";
+        });
+        return "\u0336" + result.substring(0, result.length-1);
+    }
+    static unstrike(string) {
+        var result = string.replace(/\u0336/gm, "");
+        return result;
+    }
 }
 
 class Alphabet
