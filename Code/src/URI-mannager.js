@@ -17,7 +17,7 @@ export class URIMannager
     constructor()
     {
         this.maxURILength = 8192;
-        this.defaultCompression = "ZLIB";
+        this.defaultCompression = "LZMA2";
         this.defaultEncoding = "URI-B64";
     }
 
@@ -40,26 +40,29 @@ export class URIMannager
 
     push(string) //turn data into URL
     {
+        var title = string.split("\n")[0];
         const encoder = new TextEncoder();
         var data = encoder.encode(string);
 
         data = this.compress(data, this.defaultCompression);
+        title = this.compress(title, "ZLIB");
 
         data = this.encode(data, this.defaultEncoding);
+        title = this.encode(title, "URI-B64");
 
-        this.setURL(data, this.defaultCompression, this.defaultEncoding);
+        this.setURL(data, title, this.defaultCompression, this.defaultEncoding);
 
         return null;
     }
 
-    setURL(encodedData, compressionType, encoding) //set the url given the 3 URI params
+    setURL(encodedData, title, compressionType, encoding) //set the url given the 3 URI params
     {
         var baseURL = window.location.href.split("?")[0];
-        var URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + encodedData;
+        var URL = baseURL + "?title=" + title + "&enc=" + encoding + "&cmpr=" + compressionType + "&data=" + encodedData;
 
         if(URL.length + 512 > this.maxURILength)
         {
-            URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + "MAXIMUM-LINK-LENGTH-EXCEEDED";
+            URL = baseURL + "?title=" + title + "&enc=" + encoding + "&cmpr=" + compressionType + "&data=" + "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
 
         history.replaceState({}, "", URL);
