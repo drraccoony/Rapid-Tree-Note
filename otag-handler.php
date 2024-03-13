@@ -7,6 +7,13 @@ error_reporting(E_ALL);
 
 $content = file_get_contents('program.html');
 
+if(isset($_GET['error']))
+{
+    $content = str_replace("{{pageTitle}}", "Rapid Tree Notetaker", $content);
+    echo $content;
+    exit;
+}
+
 if(isset($_GET['data']))
 {
     if(!isset($_GET['title']))

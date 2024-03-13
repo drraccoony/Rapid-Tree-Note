@@ -62,7 +62,7 @@ export class URIMannager
 
         if(URL.length + 512 > this.maxURILength)
         {
-            URL = baseURL + "?title=" + title + "&enc=" + encoding + "&cmpr=" + compressionType + "&data=" + "MAXIMUM-LINK-LENGTH-EXCEEDED";
+            URL = baseURL + "?error=MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
 
         history.replaceState({}, "", URL);
