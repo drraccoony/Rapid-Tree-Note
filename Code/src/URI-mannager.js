@@ -41,14 +41,14 @@ export class URIMannager
     push(string) //turn data into URL
     {
         var title = string.split("\n")[0];
+        title = encodeURIComponent(title);
+
         const encoder = new TextEncoder();
         var data = encoder.encode(string);
 
         data = this.compress(data, this.defaultCompression);
-        title = this.compress(title, "ZLIB");
 
         data = this.encode(data, this.defaultEncoding);
-        title = this.encode(title, "URI-B64");
 
         this.setURL(data, title, this.defaultCompression, this.defaultEncoding);
 

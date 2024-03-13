@@ -27,12 +27,7 @@ if(isset($_GET['data']))
     }
     else
     {
-        $base64CompressedData = $_GET['title'];
-        $base64CompressedData = strtr($base64CompressedData, '-_', '+/');
-        $compressedData = base64_decode($base64CompressedData);
-        $compressedData = substr($compressedData, 2);
-        $data = gzinflate($compressedData);
-        $title = $data;
+        $title = urldecode($_GET['title']);
     }
     
     $content = str_replace("{{pageTitle}}", $title, $content);
