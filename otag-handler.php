@@ -5,36 +5,68 @@ error_reporting(E_ALL);
 
 $content = file_get_contents('program.html');
 
-if(isset($_GET['error']))
+if(isset($_GET['error']) || !isset($_GET['data'])) //return generic on error
 {
-    $content = str_replace("{{pageTitle}}", "Rapid Tree Notetaker", $content);
-    echo $content;
-    exit;
-}
-
-if(isset($_GET['data']))
-{
-    if(!isset($_GET['title']))
-    {
-        $base64CompressedData = $_GET['data'];
-        $base64CompressedData = strtr($base64CompressedData, '-_', '+/');
-        $compressedData = base64_decode($base64CompressedData);
-        $compressedData = substr($compressedData, 2);
-        $data = gzinflate($compressedData);
-        $title = explode("\n", $data)[0];
-    }
-    else
-    {
-        $title = urldecode($_GET['title']);
-    }
-    
-    $content = str_replace("{{pageTitle}}", $title, $content);
+    $exe_title = "Rapid Tree Notetaker";
+    $exe_data = "A tree-based notetaking program developed at the University of Minnesota Duluth";
+    $content = str_replace("{{pageTitle}}", "$exe_title", $content);
+    $content = str_replace("{{description}}", "$exe_data", $content);
     echo $content;
     exit; 
 }
-else
+
+if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-24 encoding
 {
-    $content = str_replace("{{pageTitle}}", "Rapid Tree Notetaker", $content);
+    $encoding = $_GET['enc'];
+    $compression = $_GET['cmpr'];
+    $data = $_GET['data'];
+    $url = "https://lars.d.umn.edu/RTN/decompressor.php?enc=$encoding&cmpr=$compression&data=$data";
+    $cmd = "node ./scrape.js \"$url\"";
+    $output = shell_exec($cmd);
+
+    $output = str_replace("█", "\n", $output);
+    $exe_title = explode("\n", $output)[0];
+    $exe_data = substr($output, strpos($output, "\n") + 1);
+    $exe_data = str_replace("├────── ", "├── ", $exe_data);
+    $exe_data = str_replace("└────── ", "└── ", $exe_data);
+    $exe_data = str_replace("│       ", "│   ", $exe_data);
+    $exe_data = str_replace("        ", "    ", $exe_data);
+    
+    $content = str_replace("{{pageTitle}}", $exe_title, $content);
+    $content = str_replace("{{description}}", $exe_data, $content);
+    echo $content;
+    exit; 
+}
+
+if(isset($_GET['title'])) //3-13-24 encoding
+{
+    $exe_title = urldecode($_GET['title']);
+    $exe_data = "A tree-based notetaking program developed at the University of Minnesota Duluth";
+    $content = str_replace("{{pageTitle}}", "$exe_title", $content);
+    $content = str_replace("{{description}}", "$exe_data", $content);
+    echo $content;
+    exit; 
+}
+
+if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
+{
+    $encoding = "URI-B64";
+    $compression = "ZLIB";
+    $data = $_GET['data'];
+    $url = "https://lars.d.umn.edu/RTN/decompressor.php?enc=$encoding&cmpr=$compression&data=$data";
+    $cmd = "node ./scrape.js \"$url\"";
+    $output = shell_exec($cmd);
+
+    $output = str_replace("█", "\n", $output);
+    $exe_title = explode("\n", $output)[0];
+    $exe_data = substr($output, strpos($output, "\n") + 1);
+    $exe_data = str_replace("├────── ", "├── ", $exe_data);
+    $exe_data = str_replace("└────── ", "└── ", $exe_data);
+    $exe_data = str_replace("│       ", "│   ", $exe_data);
+    $exe_data = str_replace("        ", "    ", $exe_data);
+
+    $content = str_replace("{{pageTitle}}", $exe_title, $content);
+    $content = str_replace("{{description}}", $exe_data, $content);
     echo $content;
     exit; 
 }
