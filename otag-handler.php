@@ -3,6 +3,15 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+//record WHEN, WHO, and WHAT users access (protect with hashing!)
+$timestamp = time();
+$ipAddress = hash('sha256',$_SERVER['REMOTE_ADDR']);
+$data = hash('sha256', http_build_query($_GET));
+$usage = "$timestamp,$ipAddress,$data";
+$cmd = "echo \"$usage\" >> \"./Usage/accesses.txt\"";
+shell_exec($cmd);
+
+
 $content = file_get_contents('./program.html');
 
 if(isset($_GET['error']) || !isset($_GET['data'])) //return generic on error
