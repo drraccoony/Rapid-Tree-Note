@@ -40,9 +40,6 @@ export class URIMannager
 
     push(string) //turn data into URL
     {
-        var title = string.split("\n")[0];
-        title = encodeURIComponent(title);
-
         const encoder = new TextEncoder();
         var data = encoder.encode(string);
 
@@ -50,19 +47,19 @@ export class URIMannager
 
         data = this.encode(data, this.defaultEncoding);
 
-        this.setURL(data, title, this.defaultCompression, this.defaultEncoding);
+        this.setURL(data, this.defaultCompression, this.defaultEncoding);
 
         return null;
     }
 
-    setURL(encodedData, title, compressionType, encoding) //set the url given the 3 URI params
+    setURL(encodedData, compressionType, encoding) //set the url given the 3 URI params
     {
         var baseURL = window.location.href.split("?")[0];
-        var URL = baseURL + "?title=" + title + "&enc=" + encoding + "&cmpr=" + compressionType + "&data=" + encodedData;
+        var URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + encodedData;
 
         if(URL.length + 512 > this.maxURILength)
         {
-            URL = baseURL + "?error=MAXIMUM-LINK-LENGTH-EXCEEDED";
+            URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + "MAXIMUM-LINK-LENGTH-EXCEEDED";
         }
 
         history.replaceState({}, "", URL);

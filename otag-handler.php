@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$content = file_get_contents('program.html');
+$content = file_get_contents('./program.html');
 
 if(isset($_GET['error']) || !isset($_GET['data'])) //return generic on error
 {
@@ -21,7 +21,7 @@ if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-2
     $compression = $_GET['cmpr'];
     $data = $_GET['data'];
     $url = "https://lars.d.umn.edu/RTN/decompressor.php?enc=$encoding&cmpr=$compression&data=$data";
-    $cmd = "node ./scrape.js \"$url\"";
+    $cmd = "node ./decompressor.js \"$url\"";
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
@@ -54,7 +54,7 @@ if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
     $compression = "ZLIB";
     $data = $_GET['data'];
     $url = "https://lars.d.umn.edu/RTN/decompressor.php?enc=$encoding&cmpr=$compression&data=$data";
-    $cmd = "node ./scrape.js \"$url\"";
+    $cmd = "node ./decompressor.js \"$url\"";
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
