@@ -8,7 +8,7 @@ $timestamp = time();
 $ipAddress = hash('sha256',$_SERVER['REMOTE_ADDR']);
 $data = hash('sha256', http_build_query($_GET));
 $usage = "$timestamp,$ipAddress,$data";
-$cmd = "echo \"$usage\" >> \"./Usage/accesses.txt\"";
+$cmd = "echo \"$usage\" >> \"./Usage/accesses.csv\"";
 shell_exec($cmd);
 
 
