@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 
 //record WHEN, WHO, and WHAT users access (protect with hashing!)
 $timestamp = time();
-$ipAddress = hash('sha256',$_SERVER['REMOTE_ADDR']);
-$data = hash('sha256', http_build_query($_GET));
+$ipAddress = base64_encode(hex2bin(hash('sha256',$_SERVER['REMOTE_ADDR'])));
+$data = base64_encode(hex2bin(hash('sha256', $_GET['data'])));
 $usage = "$timestamp,$ipAddress,$data";
 $cmd = "echo \"$usage\" >> \"./Usage/accesses.csv\"";
 shell_exec($cmd);
