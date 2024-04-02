@@ -23,7 +23,6 @@ $usage = "$timestamp,$ipAddress,$data";
 $cmd = "echo \"$usage\" >> \"./Usage/accesses.csv\"";
 shell_exec($cmd);
 
-
 $content = file_get_contents('./program.html');
 
 if(isset($_GET['error']) || !isset($_GET['data'])) //return generic on error
@@ -46,6 +45,7 @@ if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-2
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
+    $output = htmlspecialchars($output);
     $exe_title = explode("\n", $output)[0];
     $exe_data = substr($output, strpos($output, "\n") + 1);
     $exe_data = str_replace("├────── ", "├── ", $exe_data);
@@ -55,6 +55,7 @@ if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-2
     
     $content = str_replace("{{pageTitle}}", $exe_title, $content);
     $content = str_replace("{{description}}", $exe_data, $content);
+
     echo $content;
     exit; 
 }
@@ -65,6 +66,7 @@ if(isset($_GET['title'])) //3-13-24 encoding
     $exe_data = "A tree-based notetaking program developed at the University of Minnesota Duluth";
     $content = str_replace("{{pageTitle}}", "$exe_title", $content);
     $content = str_replace("{{description}}", "$exe_data", $content);
+
     echo $content;
     exit; 
 }
@@ -79,6 +81,7 @@ if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
+    $output = htmlspecialchars($output);
     $exe_title = explode("\n", $output)[0];
     $exe_data = substr($output, strpos($output, "\n") + 1);
     $exe_data = str_replace("├────── ", "├── ", $exe_data);
@@ -88,6 +91,7 @@ if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
 
     $content = str_replace("{{pageTitle}}", $exe_title, $content);
     $content = str_replace("{{description}}", $exe_data, $content);
+
     echo $content;
     exit; 
 }
