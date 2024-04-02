@@ -9,7 +9,7 @@ RTN is free software: you can redistribute it and/or modify it under the terms o
 
 RTN is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along with RTN. It is avalible at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
+You should have received a copy of the GNU Affero General Public License along with RTN. It is available at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
 -->
 
 <!DOCTYPE html>
@@ -18,7 +18,14 @@ You should have received a copy of the GNU Affero General Public License along w
     <meta charset='utf-8'/>
     <title>Rapid Tree Note</title>
     <link rel="icon" href="./Resources/RTN-Logo.svg" type="image/x-icon">
-    
+    <style type="text/css">
+      a{
+          color: cyan;
+      }
+      a:visited{
+        color: plum;
+      }
+    </style>
     
   </head>
   <body style="background-color: rgb(44, 46, 54); font-family: monospace;">
@@ -47,22 +54,22 @@ You should have received a copy of the GNU Affero General Public License along w
       <pre style="color: whitesmoke; font-size: 0.8vw;">
 History
 ├── Discovery
-│   ├── In the summer of 2023, I (Brendan Rood), discovered <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and immediately fell in love with it.
+│   ├── In the summer of 2023, I (Brendan Rood), discovered <a href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and immediately fell in love with it.
 │   ├── The neat little tree diagrams were exactly how I like to take notes on paper, and I quickly found that I could retain information better when my notes were in this format.
 │   └── Immediately, however, I began to run into problems. 
 │       ├── Resumability
-│       │   ├── My Boss (<a style="color:cyan" href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>) in the <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a> was happy to work with whatever format of notes made me happy.
-│       │   ├── However, it was nearly impossible for him to edit the documents I produced with <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>.
-│       │   └── This led to the unfortunate junction where I had to decide between notes formatted in a way that worked for me vs. notes formated in a way that worked for others.
+│       │   ├── My Boss (<a href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>) in the <a href="https://lars.d.umn.edu">LARSLab</a> was happy to work with whatever format of notes made me happy.
+│       │   ├── However, it was nearly impossible for him to edit the documents I produced with <a href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>.
+│       │   └── This led to the unfortunate junction where I had to decide between notes formatted in a way that worked for me vs. notes formatted in a way that worked for others.
 │       └── Computation Time
-│           ├── <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> is a great tool but it slows down exponentially with longer documents.
+│           ├── <a href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> is a great tool but it slows down exponentially with longer documents.
 │           ├── Given the length of documents I was writing, I would often reach the point where I had to wait 2-4 seconds between every keypress.
 │           └── This was less than ideal, and I knew a more optimized solution must be possible.
 ├── Planning
-│   ├── Thankfully, with the JavaScript and HTML knowledge I had gained working on the <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a>'s Security Misconceptions Game, I felt like I could potentially author my own fixes.
+│   ├── Thankfully, with the JavaScript and HTML knowledge I had gained working on the <a href="https://lars.d.umn.edu">LARSLab</a>'s Security Misconceptions Game, I felt like I could potentially author my own fixes.
 │   ├── I went through many iterations of the program before I landed on the final version, with dual-panels, buffer shuffling, and a ton of Regular Expressions.
 │   └── I want to share my algorithm and final implementation so that others can learn from my work without having to reinvent the wheel as I did.
-│       └── <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>'s code is publically available, <a style="color:cyan" href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">just as this project's code is</a>, but is not very well documented.
+│       └── <a href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a>'s code is publicly available, <a href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">just as this project's code is</a>, but is not very well documented.
 ├── The Program
 │   ├── Defining The Glyphs
 │   │   ├── A standard set of glyphs was to be used in order to generate the trees and perform Regular Expressions on them.
@@ -134,7 +141,7 @@ History
 │   │   └── Regular Expression Validation
 │   │       ├── The primary function of Regular Expressions in this application is to recognize glyph characters and convert them back into tab characters.
 │   │       │   └── this.ref.value = this.ref.value.replace(/├────── |│       |└────── |        /gm, "\t");
-│   │       ├── I also included a regular expression that can handle the length-4 outputs over <a style="color:cyan" href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and older versions of RTN.
+│   │       ├── I also included a regular expression that can handle the length-4 outputs over <a href="https://tree.nathanfriend.io">https://tree.nathanfriend.io</a> and older versions of RTN.
 │   │       │   └── this.ref.value = this.ref.value.replace(/├── |│   |└── |    /gm, "\t");
 │   │       └── Finally, there is a crude regular expression to remove tab characters from anywhere but the start of a line.
 │   │           └── this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
@@ -142,7 +149,7 @@ History
 │   │   ​├── Process
 │   │   ​│   ├── Writing to the URL
 │   │   ​│   │   ├── When requested, the contents of the document are written to the URL.
-│   │   ​│   │   ├── This is done by taking the data, and compressing it using the <a style="color:cyan" href="https://github.com/nodeca/pako">Pako compression Library</a>.
+│   │   ​│   │   ├── This is done by taking the data, and compressing it using the <a href="https://github.com/nodeca/pako">Pako compression Library</a>.
 │   │   ​│   │   ├── Compression is at level 9 (highest compression possible) to enable saving documents as long as possible.
 │   │   ​│   │   ├── Pako produces a uInt8 array, which is then converted into a block of 2-digit hex values concatenated together.
 │   │   ​│   │   └── If the resultant URL payload is longer than 1024 characters, it is replaced with "MAXIMUM_LINK_LENGTH_EXCEEDED"
@@ -151,11 +158,11 @@ History
 │   │   ​│       ├── Split the payload into 2-digit hex values
 │   │   ​│       ├── Convert back to base 10
 │   │   ​│       ├── Load values into a uInt8 array
-│   │   ​│       ├── Decompress data with the <a style="color:cyan" href="https://github.com/nodeca/pako">Pako compression Library</a>.
+│   │   ​│       ├── Decompress data with the <a href="https://github.com/nodeca/pako">Pako compression Library</a>.
 │   │   ​│       └── Write contents into raw.ref.value
 │   │   ​└── Frequency
 │   │   ​    ├── First Approach
-│   │   ​    │   ├── Alorithm
+│   │   ​    │   ├── Algorithm
 │   │   ​    │   │   └── Every 1000ms, write to the URL
 │   │   ​    │   └── Issues
 │   │   ​    │       ├── Hugely wasteful
@@ -175,20 +182,45 @@ History
 │   │   ​        └── Benefits
 │   │   ​            ├── Way simpler
 │   │   ​            └── Operates WAY less often
-│   ​​└── ​The Box-Drawing-Glyph Problem
-│   ​    ​├── ​For many months, I noticed that on some devices the textareas would come out of alignment, causing a hard-to-read mess.
-│   ​    ​├── ​On 1/5/24, I Discovered the problem and how to solve it.
-│   ​    ​├── ​This program uses the special characters "─│└├", which not all webrowsers have monospaced fonts that contain them.
-│   ​    ​├── ​Because of this, some devices were falling back to a monospace font and a few were falling back to a non-monospaced one.
-│   ​    ​├── ​To fix this, I created a special font that contains just these four characters as a subset of consolas.
-│   ​    ​│   ​└── ​It is available at <a style="color:cyan;" href="./Resources/consola-box.woff2">./Resources/consola-box.woff2</a>.
-│   ​    ​└── ​By forcing browsers to download this font before accessing the website, all devices are guaranteed to draw the glyphs successfully.
+│   ​​├── ​The Box-Drawing-Glyph Problem
+│   ​│   ​├── ​For many months, I noticed that on some devices the textareas would come out of alignment, causing a hard-to-read mess.
+│   ​│   ​├── ​On 1/5/24, I Discovered the problem and how to solve it.
+│   ​│   ​├── ​This program uses the special characters "─│└├", which not all webrowsers have monospaced fonts that contain them.
+│   ​│   ​├── ​Because of this, some devices were falling back to a monospace font and a few were falling back to a non-monospaced one.
+│   ​│   ​├── ​To fix this, I created a special font that contains just these four characters as a subset of consolas.
+│   ​│   ​│   ​└── ​It is available at <a href="./Resources/consola-box.woff2">./Resources/consola-box.woff2</a>.
+│   ​│   ​└── ​By forcing browsers to download this font before accessing the website, all devices are guaranteed to draw the glyphs successfully.
+│   ​├── ​oTag / Metadata Handling
+│   ​│   ​├── ​Foreword
+│   ​│   ​│   ​├── ​Programs may create previews for links by examining certain tags in the header of an HTML document
+│   ​│   ​│   ​└── ​The services that do this, <b>never execute JavaScript</b>, meaning the page must be preprocessed before it is ever served to the user
+│   ​│   ​├── ​<a href="https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html">Apache Rewrite Engine</a>
+│   ​│   ​│   ​├── ​Apache's rewrite engine is used to direct all accesses to .../program.html to .../otag-handler.php
+│   ​│   ​│   ​├── ​This script decodes and decompresses the URL data to replace the corresponding tags in the <head> with the page's data.
+│   ​│   ​│   ​└── ​This is accomplished via <a href="./decompressor.js">decompressor.js</a>, which is a minimized version of the URI manager, made only for decompression.
+│   ​│   ​├── ​NodeJS for command-line JS execution
+│   ​│   ​│   ​├── ​NodeJS is used by the server to decode and decompress the URL data using special libraries only available in Javascript
+│   ​│   ​│   ​├── ​The www-data (apache default) user must be permitted to execute NodeJS commands
+│   ​│   ​│   ​└── ​This is way better than my old solution, which was to render a webpage to do the decompression and collect the results using a NodeJS puppeteer
+│   ​│   ​└── ​Special HTML Characters
+│   ​│   ​    ​├── ​It is important to escape all characters that are inserted into the <head>, such as " -> &ampquot;
+│   ​│   ​    ​└── ​Otherwise, the tag may end early, start a new string, etc.
+│   ​└── ​User Analytics
+│   ​    ​├── ​Foreword
+│   ​    ​│   ​├── ​Knowing how many users are using this service and how may help produce a more robust product
+│   ​    ​│   ​├── ​The RTN strives to be stateless-- no user data is ever stored, as user documents are stored in links
+│   ​    ​│   ​└── ​User analytics require some minimum local storage, so certain considerations must be made
+│   ​    ​├── ​Anonymity
+│   ​    ​│   ​├── ​We do not need to know who is connecting and to what document they are connecting, we just want to know the unique number of documents and users
+│   ​    ​│   ​└── ​Hashes are perfect for this! We execute sha256 on the user's IP address and the `data=` parameter of the URL
+│   ​    ​└── ​Size Minimization
+│   ​    ​    ​└── ​To use as little space as possible, data will be stored in base 64
 ├── Github Release
-│   ├── The full source code of this project is available on github at <a style="color:cyan" href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">https://github.umn.edu/UMDLARS/Rapid-Tree-Note</a>.
+│   ├── The full source code of this project is available on github at <a href="https://github.umn.edu/UMDLARS/Rapid-Tree-Note">https://github.umn.edu/UMDLARS/Rapid-Tree-Note</a>.
 │   └── It is free to use, modify, etc, I just ask that you credit me, "Brendan Rood", and provide a link to this original Application.
-└── Acknoledgements
-    ├── This project would not have been possible without contributions from the <a style="color:cyan" href="https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>, <a style="color:cyan" href="https://lars.d.umn.edu">LARSLab</a>, <a style="color:cyan" href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>, and Ethan Schurman.
-    └── For more information please visit the <a style="color:cyan" href="./credits.html">credits page</a>.
+└── Acknowledgements
+    ├── This project would not have been possible without contributions from the <a href="https://cahss.d.umn.edu/centers-facilities/viz-lab-mmad-lab">MMADLab</a>, <a href="https://lars.d.umn.edu">LARSLab</a>, <a href="https://www.d.umn.edu/~pahp">Peter Peterson Ph.D.</a>, and Ethan Schurman.
+    └── For more information please visit the <a href="./credits.html">credits page</a>.
       </pre>     
     </div>
 
