@@ -45,6 +45,8 @@ if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-2
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
+    $output = str_replace("<", "＜", $output);
+    $output = str_replace(">", "＞", $output);
     $output = htmlspecialchars($output);
     $exe_title = explode("\n", $output)[0];
     $exe_data = substr($output, strpos($output, "\n") + 1);
@@ -81,6 +83,8 @@ if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
     $output = shell_exec($cmd);
 
     $output = str_replace("█", "\n", $output);
+    $output = str_replace("<", "＜", $output);
+    $output = str_replace(">", "＞", $output);
     $output = htmlspecialchars($output);
     $exe_title = explode("\n", $output)[0];
     $exe_data = substr($output, strpos($output, "\n") + 1);
