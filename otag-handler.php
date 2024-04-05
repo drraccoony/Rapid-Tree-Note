@@ -20,8 +20,7 @@ $data = base64_encode(hex2bin(hash('sha256', $data)));
 $data = strtr($data, '+/', '-_'); // Replacing '+' with '-' and '/' with '_'
 $data = rtrim($data, '='); // Removing trailing '=' characters
 $usage = "$timestamp,$ipAddress,$data";
-$cmd = "echo \"$usage\" >> \"./Usage/accesses.csv\"";
-shell_exec($cmd);
+file_put_contents("./Usage/accesses.csv", $usage, FILE_APPEND);
 
 $content = file_get_contents('./program.html');
 
@@ -31,6 +30,7 @@ if(isset($_GET['error']) || !isset($_GET['data'])) //return generic on error
     $exe_data = "A tree-based notetaking program developed at the University of Minnesota Duluth";
     $content = str_replace("{{pageTitle}}", "$exe_title", $content);
     $content = str_replace("{{description}}", "$exe_data", $content);
+    file_put_contents("./Usage/accesses.csv", "\n", FILE_APPEND); //cap off access record
     echo $content;
     exit; 
 }
@@ -58,6 +58,11 @@ if(isset($_GET['enc']) && isset($_GET['cmpr']) && isset($_GET['data'])) //3-23-2
     $content = str_replace("{{pageTitle}}", $exe_title, $content);
     $content = str_replace("{{description}}", $exe_data, $content);
 
+    $record = preg_replace('/[^a-zA-Z0-9]/', '_', $exe_title);
+    $record = preg_replace('/_+/', '_', $record);
+    $record = substr($record, 0, 512);
+    file_put_contents("./Usage/accesses.csv", ",$record\n", FILE_APPEND); //append the title to access log
+
     echo $content;
     exit; 
 }
@@ -68,6 +73,8 @@ if(isset($_GET['title'])) //3-13-24 encoding
     $exe_data = "A tree-based notetaking program developed at the University of Minnesota Duluth";
     $content = str_replace("{{pageTitle}}", "$exe_title", $content);
     $content = str_replace("{{description}}", "$exe_data", $content);
+
+    file_put_contents("./Usage/accesses.csv", "\n", FILE_APPEND); //cap off access record
 
     echo $content;
     exit; 
@@ -95,6 +102,11 @@ if(!isset($_GET['enc'])) //Old ZLIB, Base-64 encoding
 
     $content = str_replace("{{pageTitle}}", $exe_title, $content);
     $content = str_replace("{{description}}", $exe_data, $content);
+
+    $record = preg_replace('/[^a-zA-Z0-9]/', '_', $exe_title);
+    $record = preg_replace('/_+/', '_', $record);
+    $record = substr($record, 0, 512);
+    file_put_contents("./Usage/accesses.csv", ",$record\n", FILE_APPEND); //append the title to access log
 
     echo $content;
     exit; 
