@@ -25,15 +25,32 @@ export class URIMannager
     {
         var URI = this.getURL();
         var data = URI.data;
+        if(data == "")
+        {
+            return data;
+        }
         var compression = URI.compressor;
         var encoding = URI.encoding;
 
-        data = this.decode(data, encoding);
+        try
+        {
+            data = this.decode(data, encoding);
 
-        data = this.decompress(data, compression);
+            data = this.decompress(data, compression);
 
-        const decoder = new TextDecoder("utf-8");
-        var data = decoder.decode(data);
+            const decoder = new TextDecoder("utf-8");
+            var data = decoder.decode(data);
+        }
+        catch(error)
+        {
+            console.error(error);
+            data = "";
+        }
+
+        if(data == "" || data == null)
+        {
+            data = "Couldn't decode the provided link.\nAre you sure it was made by the RTN?";
+        }
 
         return data;
     }
