@@ -35,7 +35,7 @@ class Decompressor
         var data = URI.data;
         if(data == "")
         {
-            return data;
+            return "Error\n\tNo data parameter provided";
         }
         var compression = URI.compressor;
         var encoding = URI.encoding;
@@ -51,8 +51,8 @@ class Decompressor
         }
         catch(error)
         {
-            console.error(error);
-            data = "";
+            data = error.stack;
+            data = data.replace(/[\t ]{4,}/g, "\t");
         }
 
         if(data == "" || data == null)

@@ -21,13 +21,17 @@ export class URIMannager
         this.defaultEncoding = "URI-B64";
     }
 
-    pull() //turn URL into data
+    pull(URL) //turn URL into data
     {
-        var URI = this.getURL();
+        var URI = this.getURL(URL);
         var data = URI.data;
+        if(window.location.href.endsWith("program.html"))
+        {
+            return "";
+        }
         if(data == "")
         {
-            return data;
+            return "Error\n\tNo data parameter provided";
         }
         var compression = URI.compressor;
         var encoding = URI.encoding;
@@ -43,8 +47,8 @@ export class URIMannager
         }
         catch(error)
         {
-            console.error(error);
-            data = "";
+            data = error.stack;
+            data = data.replace(/[\t ]{4,}/g, "\t");
         }
 
         if(data == "" || data == null)
