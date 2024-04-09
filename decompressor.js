@@ -113,8 +113,7 @@ class Decompressor
             case "URI-B64":
                 return URIB64(encodedData);
             default:
-                console.warn("unrecognized encoding argument: " + encodingType);
-                return null;
+                return "Unrecognized encoding argument:\t" + encodingType;
         }
 
         function URIB64(data)
@@ -140,8 +139,7 @@ class Decompressor
             case "LZMA2":
                 return lzma2(uint8_compressed);
             default:
-                console.warn("unrecognized decompression argument: " + compressionType);
-                return null;
+                return "unrecognized decompression argument:\t" + compressionType;
         }
 
         function zlib(data)
@@ -152,8 +150,7 @@ class Decompressor
             }
             catch (error)
             {
-                data = "There was a problem decoding the data in the link.\nAre you sure it was produced by this program?\nError has been printed to console.";
-                console.error(error);
+                data = "There was a problem decoding the data in the link.\nAre you sure it was produced by this program?";
             }
             return data;
         }
