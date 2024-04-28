@@ -188,7 +188,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗲𝘅𝗰𝗹𝗶𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱!\n\t\t\t*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤*\n\t\t\t~̶Y̶o̶u̶ ̶c̶a̶n̶ ̶w̶r̶a̶p̶ ̶t̶e̶x̶t̶ ̶w̶i̶t̶h̶ ̶t̶i̶l̶d̶e̶s̶ ̶t̶o̶ ̶s̶t̶r̶i̶k̶e̶ ̶i̶t̶ ̶t̶h̶r̶o̶u̶g̶h~";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗽𝗲𝗿𝗰𝗲𝗻𝘁 𝗲𝘅𝗰𝗹𝗮𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱%!\n\t\t\t%*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘱𝘦𝘳𝘤𝘦𝘯𝘵 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤%*\n\t\t\t%~̶Y̶o̶u̶ ̶c̶a̶n̶ ̶w̶r̶a̶p̶ ̶t̶e̶x̶t̶ ̶w̶i̶t̶h̶ ̶p̶e̶r̶c̶e̶n̶t̶ ̶t̶i̶l̶d̶e̶s̶ ̶t̶o̶ ̶s̶t̶r̶i̶k̶e̶ ̶i̶t̶ ̶t̶h̶r̶o̶u̶g̶h%~";
         }
     }
 
@@ -263,58 +263,121 @@ export default class Schema
         }
 
         {//bold what is needed
-            if(countCharOccurances(this.raw.ref.value, "!") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.ref.value, "\%\!") > 0) //bypass this logic if it is unneeded
             {
-                let str = this.raw.ref.value;
-                let regex = /![^!\t\n]+!/g;
-
-                let newStr = str.replace(regex, function(match)
+                var lines = this.raw.ref.value.split("\n");
+                var result = "";
+                for(var i = 0; i < lines.length; i++)
                 {
-                    return this.marker.addBold(match);
-                }.bind(this));
-
-                this.raw.ref.value = newStr;
+                    var line = lines[i];
+                    var components = line.split("\%\!");
+                    for(var j = 0; j < components.length; j++)
+                    {
+                        // Check if the component should be bold
+                        if((j % 2 == 1) && (components.length-1 > j))
+                        {
+                            // Apply bold to the component
+                            components[j] = this.marker.addBold(components[j]);
+                        }
+                        // Reconstruct the line with bold applied where necessary
+                        result += components[j];
+                        // Add the "%!" back to the result, except for the last component of each line
+                        if(j < components.length - 1)
+                        {
+                            result += "\%\!";
+                        }
+                    }
+                    // Add a newline character after each line, except for the last line
+                    if(i < lines.length - 1)
+                    {
+                        result += "\n";
+                    }
+                }
+                // Ensure the result does not end with a newline character if the original text did not
+                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                {
+                    result = result.substring(0, result.length-1);
+                }
+                this.raw.ref.value = result;
             }
         }
 
         {//italicise what is needed
-            if(countCharOccurances(this.raw.ref.value, "*") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.ref.value, "\%\*") > 0) //bypass this logic if it is unneeded
             {
-                let str = this.raw.ref.value;
-                let regex = /\*[^*\t\n]+\*/g;
-
-                let newStr = str.replace(regex, function(match)
+                var lines = this.raw.ref.value.split("\n");
+                var result = "";
+                for(var i = 0; i < lines.length; i++)
                 {
-                    return this.marker.addItalic(match);
-                }.bind(this));
-
-                this.raw.ref.value = newStr;
+                    var line = lines[i];
+                    var components = line.split("\%\*");
+                    for(var j = 0; j < components.length; j++)
+                    {
+                        // Check if the component should be italics
+                        if((j % 2 == 1) && (components.length-1 > j))
+                        {
+                            // Apply italics to the component
+                            components[j] = this.marker.addItalic(components[j]);
+                        }
+                        // Reconstruct the line with italics applied where necessary
+                        result += components[j];
+                        // Add the "%*" back to the result, except for the last component of each line
+                        if(j < components.length - 1)
+                        {
+                            result += "\%\*";
+                        }
+                    }
+                    // Add a newline character after each line, except for the last line
+                    if(i < lines.length - 1)
+                    {
+                        result += "\n";
+                    }
+                }
+                // Ensure the result does not end with a newline character if the original text did not
+                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                {
+                    result = result.substring(0, result.length-1);
+                }
+                this.raw.ref.value = result;
             }
         }
 
         {//strikethough what is needed
-            if(countCharOccurances(this.raw.ref.value, "~") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.ref.value, "\%\~") > 0) //bypass this logic if it is unneeded
             {
                 var lines = this.raw.ref.value.split("\n");
                 var result = "";
-                for(var line of lines)
+                for(var i = 0; i < lines.length; i++)
                 {
-                    var components = line.split("~");
-                    for(var i = 0; i < components.length; i++)
+                    var line = lines[i];
+                    var components = line.split("\%\~");
+                    for(var j = 0; j < components.length; j++)
                     {
-                        if((i % 2 == 1) && (components.length-1 > i))
+                        // Check if the component should be strikethrough
+                        if((j % 2 == 1) && (components.length-1 > j))
                         {
-                            components[i] = this.marker.addStrikethough(components[i]);
+                            // Apply strikethrough to the component
+                            components[j] = this.marker.addStrikethough(components[j]);
+                        }
+                        // Reconstruct the line with strikethrough applied where necessary
+                        result += components[j];
+                        // Add the "%~" back to the result, except for the last component of each line
+                        if(j < components.length - 1)
+                        {
+                            result += "\%\~";
                         }
                     }
-                    for (var component of components)
+                    // Add a newline character after each line, except for the last line
+                    if(i < lines.length - 1)
                     {
-                        result += component + "~";
+                        result += "\n";
                     }
-                    result = result.substring(0, result.length-1);
-                    result += "\n";
                 }
-                result = result.substring(0, result.length-1);   
+                // Ensure the result does not end with a newline character if the original text did not
+                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                {
+                    result = result.substring(0, result.length-1);
+                }
                 this.raw.ref.value = result;
             }
         }
