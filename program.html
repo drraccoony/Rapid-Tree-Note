@@ -1,125 +1,42 @@
-<!--
-Copyright 2023, Brendan Andrew Rood
--->
-
-<!--
-This file is part of the Rapid-Tree-Note / RTN program.
-
-RTN is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-RTN is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along with RTN. It is avalible at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
--->
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <title>Rapid Tree Note</title>
-    <link rel="icon" href="./Resources/RTN-Logo.svg" type="image/x-icon">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-    <title>{{pageTitle}}</title>
-    <meta charset="utf-8">
-    <meta name="description" content="{{description}}">
-    <meta name="keywords" content="Tree,Notetaking,Rapid Tree Notetaker,RTN,UMD,University of Minnesota Duluth,rtn,Brendan Rood,brendan rood,rood,LARS Lab,lars,university of minnesota,computer science,study,learning,education,UMD Duluth">
-    <link rel="author" href="Brendan Andrew Rood" />
-    <link rel="canonical" href="https://lars.d.umn.edu/RTN" />
-
-    <meta property="og:title" content="{{pageTitle}}">
-    <meta property="og:description" content="{{description}}">
-    <meta property="og:site_name" content="Rapid Tree Notetaker">
-    <meta property="og:see_also" content="{{homepageUrl}}">
-    <meta property="og:url" content="https://lars.d.umn.edu/RTN">
-    <meta property="og:image" content="https://lars.d.umn.edu/RTN/Resources/RTN-Logo.svg">
-
-    <meta itemprop="name" content="{{pageTitle}}">
-    <meta itemprop="description" content="{{description}}">
-    <meta itemprop="image" content="https://lars.d.umn.edu/RTN/Resources/RTN-Logo.svg">
-
-    <meta name="twitter:card" content="{{description}}">
-    <meta name="twitter:url" content="https://lars.d.umn.edu/RTN">
-    <meta name="twitter:title" content="{{pageTitle}}">
-    <meta name="twitter:description" content="{{description}}">
-    <meta name="twitter:image" content="https://lars.d.umn.edu/RTN/Resources/RTN-Logo.svg">
-    
-
+<head>
+    <title>Editable Table</title>
     <style>
-      @font-face 
-      {
-        font-family: 'Box';
-        src: 
-          url('./Resources/consola-box.woff2') format('woff2'),
-          url('./Resources/consola-box.woff') format('woff');
-      }
-      @font-face 
-      {
-        font-family: 'BoldItalic_Latin';
-        src: 
-          url('./Resources/submark.woff2') format('woff2'),
-          url('./Resources/submark.woff') format('woff'),
-          url('./Resources/u1d400.woff') format('woff'),
-      }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
     </style>
-    
-    
-  </head>
-  <body style="background-color: rgb(44, 46, 54); font-family: monospace;">
-    <div style="display: flex; align-items: center; justify-content: center; height: 10vh; width: 100%;">
-      <div style="width: 50%; display: flex; align-items: center; justify-content: left;">
-        <h1 style="color: whitesmoke; font-size: 4vw;">Rapid Tree Notetaker</h1>
-      </div>
-      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
-        <button onclick="navigateProgram()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Program</button>
-      </div>
-      <div style="width: 15%; height: 100%; display: flex; align-items: center; justify-content: center;">
-        <button onclick="navigateImplementation()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Implementation</button>
-      </div>
-      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
-        <button onclick="navigateInspiration()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Inspiration</button>
-      </div>
-      <div style="width: 10%; height: 100%; display: flex; align-items: center; justify-content: center;">
-        <button onclick="navigateCredits()" style="width: 95%; height: 75%; background-color: rgba(67, 72, 91, 1.0); outline: solid 2px black; box-shadow: none; color: whitesmoke; font-size: 1.5vw;">Credits</button>
-      </div> 
-      <div style="width: 10%; display: flex; align-items: center; justify-content: center;">
-        <img src="./Resources/RTN-Logo.svg" alt="RTN Website Logo" style="width: 5vw;"></img>
-      </div>
-    </div>
+</head>
+<body>
 
-    <hr>
-    
-    <div style="position: relative; justify-content: center; align-items: center; height: 75vh; padding-top: 3vh; column-gap: 1em; columns: 2">
-      <textarea id="display" style="z-index: 1; pointer-events: none; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; resize: none; letter-spacing: 0px;"></textarea>
-      <textarea id="source" style="z-index: 2; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(0, 0, 0, 0.0); border: solid 4px black; color: white; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; resize: none; letter-spacing: 0px;"></textarea>
-    </div>
+<p id="pmain" contenteditable="true" style="outline: 2px solid slateblue;"></p>
+<button onclick="window.convert()">Write!</button>
+<script>
+  // Function to handle backspace key press
+  function handleBackspace(event)
+  {
+    const messageElement = document.getElementById('type');
+    messageElement.innerHTML = "Typing in Cell " + event.target.id;
+  }
 
-    <script src="./Code/lib/lzma-min.js"></script>
-    <script src="./Code/lib/pako-min.js"></script>
+  window.convert = function convert()
+  {
+    let element = document.getElementById("pmain");
+    var content = element.textContent;
+    content = content.replace(/\<b\>/g, '\<b\>&lt;b&gt;');
+    content = content.replace(/\<\/b\>/g, '</b>&lt;/b&gt;');
+    element.innerHTML = content;
+    console.log("wrote to html!");
 
-    <script type="module">
-      import Schema from "./Code/exe/main.js";
-      var MainBuffer = new Schema(document.getElementById("source"), document.getElementById("display"));
-      window.main = MainBuffer;
-    </script>
+  }
+</script>
 
-  <script> // subpage navigation
-    function navigateProgram()
-    {
-      location.href="./program.html";
-    }
-    function navigateInspiration()
-    {
-      location.href="./inspiration.html";
-    }
-    function navigateCredits()
-    {
-      location.href="./credits.html";
-    }
-    function navigateImplementation()
-    {
-      location.href="./implementation.html";
-    }
-  </script>
-  </body>
+</body>
 </html>
