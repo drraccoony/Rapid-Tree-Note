@@ -19,13 +19,6 @@
 <p id="pmain" contenteditable="true" style="outline: 2px solid slateblue;"></p>
 <button onclick="window.convert()">Write!</button>
 <script>
-  // Function to handle backspace key press
-  function handleBackspace(event)
-  {
-    const messageElement = document.getElementById('type');
-    messageElement.innerHTML = "Typing in Cell " + event.target.id;
-  }
-
   window.convert = function convert()
   {
     let element = document.getElementById("pmain");
