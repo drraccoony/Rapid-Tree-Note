@@ -26,25 +26,25 @@ export default class Schema
      * sets event listeners for keydown, copy, scroll, and paste events, and sets intervals for key
      * post routing and scrollbar synchronization.
      * 
-     * @param inputTextArea The inputTextArea parameter is the text area element where the user can
+     * @param inputPre The inputPre parameter is the text area element where the user can
      * input their text. It is used to capture the user's input and handle events such as keydown,
      * copy, scroll, and paste.
-     * @param outputTextArea The outputTextArea parameter is the text area element where the generated
+     * @param outputPre The outputPre parameter is the text area element where the generated
      * document will be displayed. It is not directly accessible to the user.
      */
-    constructor(inputTextArea, outputTextArea)
+    constructor(inputPre, outputPre)
     {
         //static config
         this.maxURLLength = 8192;
-        this.marker = new Markdown();
+        //this.marker = new Markdown();
         this.uri = new URIMannager();
         window.main = this;
         
-        var urlData = this.pullURL();
+        //var urlData = this.pullURL();
 
         {
-            this.raw = new RawBuffer(inputTextArea);
-            this.exe = new ExeBuffer(outputTextArea);
+            this.raw = new RawBuffer(inputPre);
+            this.exe = new ExeBuffer(outputPre);
             this.state = "UNLOCKED";
         }
 
@@ -68,16 +68,18 @@ export default class Schema
         window.addEventListener('beforeunload', (event) => this.safeShutdown(event));
 
         //force inital values
-        this.setURL(urlData);
+        //this.setURL(urlData);
         this.keyPostRouter();
-        this.syncScrollbars();
-        this.handlePaste();
 
         //update the URL Title
-        if(urlData != "" && urlData != null)
-        {
-            document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
-        }
+        //if(urlData != "" && urlData != null)
+        //{
+        //    document.title = this.exe.textContent.split("\n")[0].substring(0,32);
+        //}
+
+        //setInterval(() => {
+        //    console.log(this.raw.textContent);
+        //}, 1000);
 
     }
 
@@ -122,7 +124,6 @@ export default class Schema
         {
             //stuff here is done once every 1000ms, regardless of program state
             this.keyPostRouter();
-            this.syncScrollbars()
         }
     }
 
@@ -160,7 +161,7 @@ export default class Schema
         this.markdownParse();
         if(this.shouldEncode == staticOldValue)
         {
-            this.pushURL();
+            //this.pushURL();
         }
        
     }
@@ -184,11 +185,11 @@ export default class Schema
     {
         if(data != "")
         {
-            this.raw.ref.value = data;
+            this.raw.textContent = data;
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗽𝗲𝗿𝗰𝗲𝗻𝘁 𝗲𝘅𝗰𝗹𝗮𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱%!\n\t\t\t%*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘱𝘦𝘳𝘤𝘦𝘯𝘵 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤%*\n\t\t\t%~̶Y̶o̶u̶ ̶c̶a̶n̶ ̶w̶r̶a̶p̶ ̶t̶e̶x̶t̶ ̶w̶i̶t̶h̶ ̶p̶e̶r̶c̶e̶n̶t̶ ̶t̶i̶l̶d̶e̶s̶ ̶t̶o̶ ̶s̶t̶r̶i̶k̶e̶ ̶i̶t̶ ̶t̶h̶r̶o̶u̶g̶h%~";
+            this.raw.textContent = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗽𝗲𝗿𝗰𝗲𝗻𝘁 𝗲𝘅𝗰𝗹𝗮𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱%!\n\t\t\t%*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘱𝘦𝘳𝘤𝘦𝘯𝘵 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤%*\n\t\t\t%~̶Y̶o̶u̶ ̶c̶a̶n̶ ̶w̶r̶a̶p̶ ̶t̶e̶x̶t̶ ̶w̶i̶t̶h̶ ̶p̶e̶r̶c̶e̶n̶t̶ ̶t̶i̶l̶d̶e̶s̶ ̶t̶o̶ ̶s̶t̶r̶i̶k̶e̶ ̶i̶t̶ ̶t̶h̶r̶o̶u̶g̶h%~";
         }
     }
 
@@ -198,10 +199,10 @@ export default class Schema
      */
     pushURL()
     {
-        var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
+        var payload = this.exe.textContent.substring(0,this.exe.textContent.length-1);
         this.uri.push(payload);
 
-        document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
+        document.title = this.exe.textContent.split("\n")[0].substring(0,32);
         
     }
 
@@ -224,48 +225,28 @@ export default class Schema
     keyPostRouter()
     {
         this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
+        this.exe.ref.innerHTML = this.raw.ref.innerHTML;
         this.exe.update();
-    }
-
-    /**
-     * The function `hardFix()` preforms much the same functions as `keyPostRouter()`,
-     * except gaurentees that the graph will be brought to a consistent state, even if
-     * data loss occurs.
-     */
-    hardFix()
-    {
-        this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
         this.exe.tree.totalParse();
-        this.exe.update();
-        var hold_start = this.raw.ref.selectionStart;
-        var hold_end = this.raw.ref.selectionEnd;
-        this.raw.ref.value = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
-        this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
-        this.exe.update();
-        this.raw.ref.selectionStart = hold_start;
-        this.raw.ref.selectionEnd = hold_end;
     }
 
     markdownParse()
     {
-        var hold_start = this.raw.ref.selectionStart;
-        var hold_end = this.raw.ref.selectionEnd;
+        return;
+        this.raw.readCarrat();
+        var hold_start = this.raw.start;
+        var hold_end = this.raw.end;
 
         {//revert everything to basic
-            this.raw.ref.value = this.marker.removeBold(this.raw.ref.value);
-            this.raw.ref.value = this.marker.removeItalic(this.raw.ref.value);
-            this.raw.ref.value = this.marker.removeStrikethrough(this.raw.ref.value);
+            this.raw.textContent = this.marker.removeBold(this.raw.textContent);
+            this.raw.textContent = this.marker.removeItalic(this.raw.textContent);
+            this.raw.textContent = this.marker.removeStrikethrough(this.raw.textContent);
         }
 
         {//bold what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\!") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.textContent, "\%\!") > 0) //bypass this logic if it is unneeded
             {
-                var lines = this.raw.ref.value.split("\n");
+                var lines = this.raw.textContent.split("\n");
                 var result = "";
                 for(var i = 0; i < lines.length; i++)
                 {
@@ -294,18 +275,18 @@ export default class Schema
                     }
                 }
                 // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                if(this.raw.textContent.endsWith("\n") && !result.endsWith("\n"))
                 {
                     result = result.substring(0, result.length-1);
                 }
-                this.raw.ref.value = result;
+                this.raw.textContent = result;
             }
         }
 
         {//italicise what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\*") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.textContent, "\%\*") > 0) //bypass this logic if it is unneeded
             {
-                var lines = this.raw.ref.value.split("\n");
+                var lines = this.raw.textContent.split("\n");
                 var result = "";
                 for(var i = 0; i < lines.length; i++)
                 {
@@ -334,18 +315,18 @@ export default class Schema
                     }
                 }
                 // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                if(this.raw.textContent.endsWith("\n") && !result.endsWith("\n"))
                 {
                     result = result.substring(0, result.length-1);
                 }
-                this.raw.ref.value = result;
+                this.raw.textContent = result;
             }
         }
 
         {//strikethough what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\~") > 0) //bypass this logic if it is unneeded
+            if(countCharOccurances(this.raw.textContent, "\%\~") > 0) //bypass this logic if it is unneeded
             {
-                var lines = this.raw.ref.value.split("\n");
+                var lines = this.raw.textContent.split("\n");
                 var result = "";
                 for(var i = 0; i < lines.length; i++)
                 {
@@ -374,18 +355,19 @@ export default class Schema
                     }
                 }
                 // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
+                if(this.raw.textContent.endsWith("\n") && !result.endsWith("\n"))
                 {
                     result = result.substring(0, result.length-1);
                 }
-                this.raw.ref.value = result;
+                this.raw.textContent = result;
             }
         }
 
         this.keyPostRouter();
 
-        this.raw.ref.selectionStart = hold_start;
-        this.raw.ref.selectionEnd = hold_end;
+        this.raw.start = hold_start;
+        this.raw.end = hold_end;
+        this.raw.writeCarrat();
 
         function countCharOccurances(inputString, searchfor)
         {
@@ -406,16 +388,15 @@ export default class Schema
      */
     handlePaste(event)
     {
-        setTimeout((event) => this.syncScrollbars(event), 100);
         setTimeout(() => //do misc glyph replacement for forward conversion to zero-width-deliminated glyphs
         {
-            this.raw.ref.value = this.raw.ref.value.replace(/├────── |│       |└────── |        /gm, "\t"); //size 8 glyphs
-            this.raw.ref.value = this.raw.ref.value.replace(/├── |│   |└── |    /gm, "\t"); //size 4 glyphs
+            this.raw.textContent = this.raw.textContent.replace(/├────── |│       |└────── |        /gm, "\t"); //size 8 glyphs
+            this.raw.textContent = this.raw.textContent.replace(/├── |│   |└── |    /gm, "\t"); //size 4 glyphs
         }, 100);
     }
 
     /**
-     * The `handleCopy` function in JavaScript handles copying selected text from a textarea to the
+     * The `handleCopy` function in JavaScript handles copying selected text from a Pre to the
      * clipboard, accounting for tab indentation.
      * 
      * @param event The event parameter is an object that represents the event that triggered the copy
@@ -424,58 +405,18 @@ export default class Schema
      */
     handleCopy(event)
     {
-        event.preventDefault()
-
         //make sure that async changes like autocorrect are accounted for
         this.keyPostRouter();
 
-        //Determine the number of tabs before the start of the selection to push the exe select forward by that times 7(8)
-        var preOffset = this.raw.ref.selectionStart;
-        var preString = this.raw.ref.value.substring(0,preOffset);
-        var preTabs = getTabs(preString);
-
-        //Determine the number of tabs between the start and end of the selection to widen the exe select by that times 7(8)
-        var postOffset = this.raw.ref.selectionEnd;
-        var postString = this.raw.ref.value.substring(preOffset, postOffset);
-        var postTabs = getTabs(postString);
-        
-        //Calculate the new start and ends and pull that off the exe buffer
-        var selectStart = this.raw.ref.selectionStart + (8 * preTabs);
-        var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
-        var payload = this.exe.ref.value.substring(selectStart, selectEnd);
-
-        //Put that value onto the clipboard
-        payload = payload.replace(/├────── ​/gm, "├── ​");
-        payload = payload.replace(/└────── ​/gm, "└── ​");
-        payload = payload.replace(/│       ​/gm, "│   ​");
-        payload = payload.replace(/        ​/gm, "    ​");
-        navigator.clipboard.writeText(payload);
-
-        function getTabs(string)
-        {
-            var count = string.match(/\t/gm);
-            if(count != null)
-            {
-                count = count.length;
-            }
-            else
-            {
-                count = 0;
-            }
-            return count;
-        }
-    }
-
-    /**
-     * The function syncScrollbars synchronizes the scroll position of two elements.
-     * 
-     * @param event The `event` parameter is an object that represents the event that triggered the
-     * `syncScrollbars` function. It contains information about the event, such as the type of event,
-     * the target element, and any additional data associated with the event.
-     */
-    syncScrollbars(event)
-    {
-        this.exe.ref.scrollTop = this.raw.ref.scrollTop;
+        //after 10 ms, adjust the clipboard
+        setTimeout(async function(){
+            var payload = await navigator.clipboard.readText();
+            payload = payload.replace(/├────── ​/gm, "├── ​");
+            payload = payload.replace(/└────── ​/gm, "└── ​");
+            payload = payload.replace(/│       ​/gm, "│   ​");
+            payload = payload.replace(/        ​/gm, "    ​");
+            navigator.clipboard.writeText(payload);
+        }, 10);
     }
 }
 
@@ -511,7 +452,14 @@ class ProcessingTree
      */
     toNodes()
     {
-        var lines = this.input.split("\n");
+        const regex = /<div>.*?<\/div>/g;
+        const matches = [...this.input.matchAll(regex)];
+        var lines = matches.map(match => match[0]);
+
+        for(var i = 0; i < lines.length; i++) {
+            lines[i] = lines[i].replace(/\<\/?div\>/g, "");
+            lines[i] = lines[i].replace(/\<br\>/g, "");
+        }
 
         for(var line of lines)
         {
@@ -771,71 +719,24 @@ class ProcessingTree
 }
 
 /* The VirtualBuffer class is a JavaScript class that provides methods for handling text input in a
-textarea element, including tab and newline functionality. */
+Pre element, including tab and newline functionality. */
 class VirtualBuffer
 {
     /**
-     * The constructor function initializes a textArea object with properties for the reference, carrat start,
+     * The constructor function initializes a Pre object with properties for the reference, carrat start,
      * and carrat end positions of the selection, and the state of the object.
      * 
-     * @param textArea The `textArea` parameter is the reference to the HTML textarea element that you
+     * @param Pre The `Pre` parameter is the reference to the HTML Pre element that you
      * want to work with. It is used to access and manipulate the text content and selection of the
-     * textarea.
+     * Pre.
      */
-    constructor(textArea)
+    constructor(Pre)
     {
-        this.ref = textArea;
-        this.start = textArea.selectionStart;
-        this.end = textArea.selectionEnd;
+        this.ref = Pre;
+        this.start = 0;
+        this.end = 0;
         this.state = "UNLOCKED";
-    }
-
-    /**
-     * The function sets the selection range of a text input field based on the internal start and end members.
-     */
-    writeCarrat()
-    {
-        this.ref.selectionStart = this.start;
-        this.ref.selectionEnd = this.end;
-    }
-
-    /**
-     * The function "readCarrat()" is used to get the start and end positions of the current text
-     * selection in a text input field and save it to the internal start and end memebers.
-     */
-    readCarrat()
-    {
-        this.start = this.ref.selectionStart;
-        this.end = this.ref.selectionEnd;
-    }
-
-    /**
-     * The moveCarrat function updates the start and end positions of the carrat and then writes the
-     * carrat.
-     * 
-     * @param vector The parameter "vector" represents the amount by which the carrat should be moved.
-     * It is a vector that specifies the direction and magnitude of the movement.
-     */
-    moveCarrat(vector)
-    {
-        this.start += vector;
-        this.end += vector;
-        this.writeCarrat();
-    }
-
-    /**
-     * The function "countCaretLeft" counts the number of tabs before the current cursor position in a
-     * text area.
-     * 
-     * @return The number of tabs (represented by "\t") in the last line of text before the caret
-     * position.
-     */
-    countCaretLeft()
-    {
-        var lines = this.ref.value.substring(0, this.start).split("\n");
-        var lastLine = lines[lines.length-1];
-        var numTabs = lastLine.split("\t").length - 1;
-        return numTabs;
+        this.ref.innerHTML = "<div>DEFAULT<br></div>";
     }
 
     /**
@@ -858,11 +759,11 @@ class VirtualBuffer
         event and callback parameters, effectively processing the command later if it can't currently be done. */
         if(this.state == "LOCKED")
         {
-            setTimeout(() => {this.keyHandler(event, callback)}, 10);
+            setTimeout(function() {
+                this.keyHandler(event, callback);
+            }.bind(this), 10);
             return;
         }
-
-        this.readCarrat();
 
         /* The below code is checking if the key pressed is the "Tab" key. If it is, it prevents the
         default behavior of the tab key (which is to move focus to the next element) and insets a "\t"
@@ -870,201 +771,37 @@ class VirtualBuffer
         if(event.key == "Tab")
         {
             event.preventDefault();
-            if(this.start == this.end)
-            {
-                if(shouldTab(this.ref.value, this.start))
-                {
-                    this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                    this.moveCarrat(1);
-                    //setTimeout(() => {window.main.hardFix()}, 25);
-                }
-            }
-            else //a region is selected
-            {
-                var startRoot = this.start;
-                var endRoot = this.end -1;
 
-                while(this.ref.value.substring(startRoot,startRoot+1) != "\n" && startRoot > 0)
-                {
-                    startRoot--;
-                    //console.log(this.ref.value.substring(startRoot,startRoot+1));
-                }
-                while(this.ref.value.substring(endRoot,endRoot+1) != "\n" && endRoot > 0)
-                {
-                    endRoot--;
-                    //console.log(this.ref.value.substring(endRoot,endRoot+1));
-                }
+            // Get the current selection
+            var selection = window.getSelection();
+            var range = selection.getRangeAt(0);
 
-                var roots = new Array();
-                var index = startRoot;
-                roots.push(startRoot);
-                while(index < endRoot-1)
-                {
-                    index++;
-                    if(this.ref.value.substring(index, index+1) == "\n")
-                    {
-                        roots.push(index);
-                    }
-                }
+            // Create a new text node with a tab character
+            var tabNode = document.createTextNode("\t");
 
-                //console.log(startRoot, endRoot);
+            // Insert the tab character at the start of the selection
+            range.insertNode(tabNode);
 
-                if(endRoot != startRoot)
-                {
-                    roots.push(endRoot);
-                }
-
-                //console.log(roots);
-
-                var rootnum = 1;
-                for(var root of roots)
-                {
-                    if(shouldTab(this.ref.value, root+rootnum))
-                    {
-                        if(!event.shiftKey)
-                        {
-                            this.ref.value = this.ref.value.substring(0,root+rootnum) + "\t" + this.ref.value.substring(root+rootnum);
-                            rootnum++;
-                            this.ref.selectionStart = root+rootnum;
-                            this.ref.selectionEnd = root+rootnum;
-                        }
-                        else //shift is pressed, REMOVE a \t rather than adding one
-                        {
-                            if(this.ref.value.substring(root+rootnum, root+rootnum+1) == "\t")
-                            {
-                                this.ref.value = this.ref.value.substring(0,root+rootnum) + "" + this.ref.value.substring(root+rootnum+1);
-                                rootnum++;
-                                this.ref.selectionStart = root+rootnum;
-                                this.ref.selectionEnd = root+rootnum;
-                            }
-                        }
-                    }
-                }
-                setTimeout(() => {window.main.hardFix()}, 25);
-            }
-        }
-
-        /* The below code is checking if the "Enter" key is pressed. If it is, it prevents the default
-        behavior of creating a new line. It then checks if a newline should be added based on the
-        current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and
-        automatically indents the new line based on the number of tabs at the current caret
-        position. */
-        if(event.key == "Enter")
-        {
-            event.preventDefault();
-            if(shouldNewline(this.ref.value, this.start))
-            {
-                var autoIndent = this.countCaretLeft();
-                this.ref.value = this.ref.value.substring(0,this.start) + "\n" + this.ref.value.substring(this.end);
-                this.moveCarrat(1);
-                for(var i = 0; i < autoIndent; i++)
-                {
-                    this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
-                    this.moveCarrat(1);
-                }
-            }
+            // Move the cursor to the right of the inserted tab character
+            range.setStartAfter(tabNode);
+            range.setEndAfter(tabNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
 
         this.state = "LOCKED";
         setTimeout(() => {callback()}, 10);
 
-        /**
-         * The function `shouldTab` determines whether a tab should be inserted at a given
-         * position in a string based on the content of the previous and next lines.
-         * @param string - The string parameter is the input string that you want to check for tabbing.
-         * @param start - The start parameter is the index at which the tabbing should start in the
-         * given string.
-         * @returns a boolean value.
-         */
-        function shouldTab(string, start)
-        {
-            string = string.substring(0, start);
-            var lines = string.split("\n");
-            var current = lines[lines.length-1];
-            var prev = "";
-            if(lines.length > 1)
-            {
-                prev = lines[lines.length-2]
-            }
-            var prevChar = string.substring(start-1,start);
-
-            var noEntombment = (prevChar == "\t" || prevChar == "\n");
-            var noLeading = (countTabs(current)<=countTabs(prev));
-
-            return (noEntombment && noLeading);
-
-            function countTabs(input)
-            {
-                var count = input.match(/^\t*(\t)/gm);
-                if(count != null)
-                {
-                    count = count[0].length;
-                }
-                else
-                {
-                    count = 0;
-                }
-                return count;
-            }
-        }
-
-        /**
-         * The function shouldNewline determines whether a newline should be inserted at a given
-         * position in a string based on the content of the previous and next lines.
-         * @param string - The input string that you want to check for newlines.
-         * @param start - The start parameter is the index at which to start checking for newlines in
-         * the string.
-         * @returns a boolean value indicating whether a newline should be inserted at a given position
-         * in a string.
-         */
-        function shouldNewline(string, start)
-        {
-            var prestring = string.substring(0, start);
-            var prelines = prestring.split("\n");
-            var current = prelines[prelines.length-1];
-
-            var prevLineContent = (countNonWhitespace(current) > 0);
-
-            var totalstring = string;
-            var totallines = totalstring.split("\n");
-            var nextline = totallines[prelines.length];
-
-            if(nextline == null)
-            {
-                nextline = "PROCEED";
-            }
-
-            var nextLineContent = (countNonWhitespace(nextline) > 0);
-
-            var should = ((prevLineContent == true) && (nextLineContent == true));
-
-            return (should);
-
-            function countNonWhitespace(input)
-            {
-                var count = input.match(/\S/gm);
-                if(count != null)
-                {
-                    count = count.length;
-                }
-                else
-                {
-                    count = 0;
-                }
-                return count;
-            }
-        }
     }
 
     /**
-     * The update function changes the value of this.ref.value, sets the state to "UNLOCKED", and calls
+     * The update function changes the value of this.ref.textContent, sets the state to "UNLOCKED", and calls
      * the readCarrat function.
      */
     update()
     {
-        //do something that changes the value of this.ref.value
+        //do something that changes the value of this.ref.textContent
         this.state = "UNLOCKED";
-        this.readCarrat();
     }
 
 }
@@ -1072,12 +809,12 @@ class VirtualBuffer
 
 /* The `RawBuffer` class extends the `VirtualBuffer` class and overrides the `update()` function to
 * replace specific glyphs with tabs and then calls the parent class's `update()` function.
-* It is used as the data processor for the "source" textarea. */
+* It is used as the data processor for the "source" Pre. */
 class RawBuffer extends VirtualBuffer
 {
-    constructor(textArea)
+    constructor(Pre)
     {
-        super(textArea);
+        super(Pre);
     }
 
     /**
@@ -1086,19 +823,19 @@ class RawBuffer extends VirtualBuffer
      */
     update()
     {
-        this.ref.value = this.ref.value.replace(/[└├│─ ]*​/gm, "\t");
-        this.ref.value = this.ref.value.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
+        //this.ref.textContent = this.ref.textContent.replace(/[└├│─ ]*​/gm, "\t");
+        //this.ref.textContent = this.ref.textContent.replace(/(?:\t+[\S ]+)(\t+)/gm, "\t");
         super.update();
     }
 }
 
 /* The `ExeBuffer` class extends the `VirtualBuffer` class and provides a way to update the input value
-of a tree object, parse it, and update the output value. It is used for the "display" textarea. */
+of a tree object, parse it, and update the output value. It is used for the "display" Pre. */
 class ExeBuffer extends VirtualBuffer
 {
-    constructor(textArea)
+    constructor(Pre)
     {
-        super(textArea);
+        super(Pre);
         this.tree = new ProcessingTree("");
     }
 
@@ -1108,9 +845,9 @@ class ExeBuffer extends VirtualBuffer
      */
     update()
     {
-        this.tree.input = this.ref.value;
+        this.tree.input = this.ref.innerHTML;
         this.tree.totalParse();
-        this.ref.value = this.tree.output;
+        this.ref.innerHTML = this.tree.output;
         super.update();
     }
 }
