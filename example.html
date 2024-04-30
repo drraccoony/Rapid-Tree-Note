@@ -16,51 +16,19 @@
 </head>
 <body>
 
-<pre id="pmain" contenteditable="true" style="outline: 2px solid slateblue;">Hello<b>World</b>OWO</b></pre>
+<p id="pmain" contenteditable="true" style="outline: 2px solid slateblue;"></p>
 <button onclick="window.convert()">Write!</button>
 <script>
   window.convert = function convert()
   {
     let element = document.getElementById("pmain");
     var content = element.textContent;
-    content = content.replace(/\<b\>/g, '&lt;b&gt;<b>');
+    content = content.replace(/\<b\>/g, '\<b\>&lt;b&gt;');
     content = content.replace(/\<\/b\>/g, '</b>&lt;/b&gt;');
     element.innerHTML = content;
     console.log("wrote to html!");
 
   }
-
-  document.addEventListener("keydown", (event) => window.keyHandler(event));
-
-
-  window.keyHandler = function(event)
-  {
-    if(event.key == "Tab")
-    {
-      event.preventDefault();
-
-      // Get the contenteditable element
-      var contentEditableElement = document.getElementById("pmain");
-
-      // Get the current selection
-      var selection = window.getSelection();
-      var range = selection.getRangeAt(0);
-
-      // Create a new text node with a tab character
-      var tabNode = document.createTextNode("\t");
-
-      // Insert the tab character at the start of the selection
-      range.insertNode(tabNode);
-
-      // Move the cursor to the right of the inserted tab character
-      range.setStartAfter(tabNode);
-      range.setEndAfter(tabNode);
-      selection.removeAllRanges();
-      selection.addRange(range);
-      
-    }
-  }
-  
 </script>
 
 </body>
