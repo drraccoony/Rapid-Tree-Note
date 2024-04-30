@@ -55,7 +55,7 @@ export default class Schema
         }
 
         {
-            this.raw.ref.addEventListener('scroll', (event) => this.syncScrollbars(event));
+            this.raw.ref.addEventListener('keydown', (event) => this.syncScrollbars(event));
             this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
         }
 
@@ -122,7 +122,6 @@ export default class Schema
         {
             //stuff here is done once every 1000ms, regardless of program state
             this.keyPostRouter();
-            this.syncScrollbars()
         }
     }
 
@@ -198,7 +197,7 @@ export default class Schema
      */
     pushURL()
     {
-        var payload = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
+        var payload = this.exe.ref.value.replace(/[\s]+$/, '');
         this.uri.push(payload);
 
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
@@ -225,8 +224,8 @@ export default class Schema
     {
         this.raw.update();
         this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
         this.exe.update();
+        this.syncScrollbars();
     }
 
     /**
@@ -473,9 +472,19 @@ export default class Schema
      * `syncScrollbars` function. It contains information about the event, such as the type of event,
      * the target element, and any additional data associated with the event.
      */
-    syncScrollbars(event)
-    {
-        this.exe.ref.scrollTop = this.raw.ref.scrollTop;
+    syncScrollbars(event) {
+        const display = document.getElementById('display');
+        const source = document.getElementById('source');
+        const mainDiv = document.getElementById('main');
+    
+        // Calculate the new height for the main div
+        const newHeight = `${display.offsetHeight + 50}px`;
+    
+        // Set the height of the main div to be 10vh taller than the display element
+        mainDiv.style.height = newHeight;
+    
+        // Set the height of the source textarea to match the display element
+        source.style.height = `${display.offsetHeight}px`;
     }
 }
 
@@ -1110,7 +1119,7 @@ class ExeBuffer extends VirtualBuffer
     {
         this.tree.input = this.ref.value;
         this.tree.totalParse();
-        this.ref.value = this.tree.output;
+        this.ref.innerHTML = this.tree.output;
         super.update();
     }
 }

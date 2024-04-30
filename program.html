@@ -89,16 +89,19 @@ You should have received a copy of the GNU Affero General Public License along w
 
     <hr>
     
-    <div style="position: relative; justify-content: center; align-items: center; height: 75vh; padding-top: 3vh; column-gap: 1em; columns: 2">
-      <textarea id="display" style="z-index: 1; pointer-events: none; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(67, 72, 91, 1.0); border: solid 4px black; color: cyan; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; resize: none; letter-spacing: 0px;"></textarea>
-      <textarea id="source" style="z-index: 2; position: fixed; left:5vw; width: 90vw; height: 75vh; background-color: rgba(0, 0, 0, 0.0); border: solid 4px black; color: white; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; resize: none; letter-spacing: 0px;"></textarea>
+    <div id="main" style="position: relative; justify-content: center; align-items: center; width: 90vw; left: 5vw; top: 5vh; min-height: 75vh;">
+      <pre id="display" style="z-index: 1; pointer-events: none; position: absolute; left: 0; top: -12px; width: 100%; min-height: 70vh; background-color: rgba(67, 72, 91, 1.0); outline: solid 4px black; color: cyan; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; letter-spacing: 0px; font-size: 12px; white-space: pre-wrap; vertical-align: top;"></pre>
+      <textarea id="source" style="z-index: 2; position: absolute; left: 0; top: 0; width: 100%; min-height: 70vh; background-color: transparent; outline: solid 4px black; color: white; font-family: Box, monospace, BoldItalic_Latin; tab-size:8; line-height: 1.2; resize: none; letter-spacing: 0px; font-size: 12px; padding: 0; border: none; box-sizing: border-box; vertical-align: top;"></textarea>
     </div>
+     
+    <!-- Add a new div to create space after the main div -->
+    
 
     <script src="./Code/lib/lzma-min.js"></script>
     <script src="./Code/lib/pako-min.js"></script>
 
     <script type="module">
-      import Schema from "./Code/exe/main.js";
+      import Schema from "./Code/src/main.js";
       var MainBuffer = new Schema(document.getElementById("source"), document.getElementById("display"));
       window.main = MainBuffer;
     </script>
