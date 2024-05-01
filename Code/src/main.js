@@ -13,8 +13,6 @@ You should have received a copy of the GNU Affero General Public License along w
 */
 
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
-import "./markdown.js";
-import Markdown from "./markdown.js";
 import { URIMannager } from "./URI-mannager.js";
 
 /* The Schema class is a container that handles user input, generates a formatted document, and
@@ -36,7 +34,6 @@ export default class Schema
     {
         //static config
         this.maxURLLength = 8192;
-        this.marker = new Markdown();
         this.uri = new URIMannager();
         window.main = this;
         
@@ -156,7 +153,6 @@ export default class Schema
      */
     urlPostEncodeOnIdle(staticOldValue)
     {
-        this.markdownParse();
         if(this.shouldEncode == staticOldValue)
         {
             this.pushURL();
@@ -187,7 +183,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!𝗬𝗼𝘂 𝗰𝗮𝗻 𝘄𝗿𝗮𝗽 𝘁𝗲𝘅𝘁 𝘄𝗶𝘁𝗵 𝗽𝗲𝗿𝗰𝗲𝗻𝘁 𝗲𝘅𝗰𝗹𝗮𝗺𝗮𝘁𝗶𝗼𝗻 𝗽𝗼𝗶𝗻𝘁𝘀 𝘁𝗼 𝗺𝗮𝗸𝗲 𝗶𝘁 𝗯𝗼𝗹𝗱%!\n\t\t\t%*𝘠𝘰𝘶 𝘤𝘢𝘯 𝘸𝘳𝘢𝘱 𝘵𝘦𝘹𝘵 𝘸𝘪𝘵𝘩 𝘱𝘦𝘳𝘤𝘦𝘯𝘵 𝘢𝘴𝘵𝘦𝘳𝘪𝘴𝘬𝘴 𝘵𝘰 𝘮𝘢𝘬𝘦 𝘪𝘵 𝘪𝘵𝘢𝘭𝘪𝘤%*\n\t\t\t%~̶Y̶o̶u̶ ̶c̶a̶n̶ ̶w̶r̶a̶p̶ ̶t̶e̶x̶t̶ ̶w̶i̶t̶h̶ ̶p̶e̶r̶c̶e̶n̶t̶ ̶t̶i̶l̶d̶e̶s̶ ̶t̶o̶ ̶s̶t̶r̶i̶k̶e̶ ̶i̶t̶ ̶t̶h̶r̶o̶u̶g̶h%~";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!You can wrap text with percent exclamation points to make it bold!%\n\t\t\t%*You can wrap text with percent asterisks to make it italic*%\n\t\t\t%~You can wrap text with percent tildes to strike it though~%";
         }
     }
 
@@ -250,151 +246,6 @@ export default class Schema
         this.raw.ref.selectionEnd = hold_end;
     }
 
-    markdownParse()
-    {
-        var hold_start = this.raw.ref.selectionStart;
-        var hold_end = this.raw.ref.selectionEnd;
-
-        {//revert everything to basic
-            this.raw.ref.value = this.marker.removeBold(this.raw.ref.value);
-            this.raw.ref.value = this.marker.removeItalic(this.raw.ref.value);
-            this.raw.ref.value = this.marker.removeStrikethrough(this.raw.ref.value);
-        }
-
-        {//bold what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\!") > 0) //bypass this logic if it is unneeded
-            {
-                var lines = this.raw.ref.value.split("\n");
-                var result = "";
-                for(var i = 0; i < lines.length; i++)
-                {
-                    var line = lines[i];
-                    var components = line.split("\%\!");
-                    for(var j = 0; j < components.length; j++)
-                    {
-                        // Check if the component should be bold
-                        if((j % 2 == 1) && (components.length-1 > j))
-                        {
-                            // Apply bold to the component
-                            components[j] = this.marker.addBold(components[j]);
-                        }
-                        // Reconstruct the line with bold applied where necessary
-                        result += components[j];
-                        // Add the "%!" back to the result, except for the last component of each line
-                        if(j < components.length - 1)
-                        {
-                            result += "\%\!";
-                        }
-                    }
-                    // Add a newline character after each line, except for the last line
-                    if(i < lines.length - 1)
-                    {
-                        result += "\n";
-                    }
-                }
-                // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
-                {
-                    result = result.substring(0, result.length-1);
-                }
-                this.raw.ref.value = result;
-            }
-        }
-
-        {//italicise what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\*") > 0) //bypass this logic if it is unneeded
-            {
-                var lines = this.raw.ref.value.split("\n");
-                var result = "";
-                for(var i = 0; i < lines.length; i++)
-                {
-                    var line = lines[i];
-                    var components = line.split("\%\*");
-                    for(var j = 0; j < components.length; j++)
-                    {
-                        // Check if the component should be italics
-                        if((j % 2 == 1) && (components.length-1 > j))
-                        {
-                            // Apply italics to the component
-                            components[j] = this.marker.addItalic(components[j]);
-                        }
-                        // Reconstruct the line with italics applied where necessary
-                        result += components[j];
-                        // Add the "%*" back to the result, except for the last component of each line
-                        if(j < components.length - 1)
-                        {
-                            result += "\%\*";
-                        }
-                    }
-                    // Add a newline character after each line, except for the last line
-                    if(i < lines.length - 1)
-                    {
-                        result += "\n";
-                    }
-                }
-                // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
-                {
-                    result = result.substring(0, result.length-1);
-                }
-                this.raw.ref.value = result;
-            }
-        }
-
-        {//strikethough what is needed
-            if(countCharOccurances(this.raw.ref.value, "\%\~") > 0) //bypass this logic if it is unneeded
-            {
-                var lines = this.raw.ref.value.split("\n");
-                var result = "";
-                for(var i = 0; i < lines.length; i++)
-                {
-                    var line = lines[i];
-                    var components = line.split("\%\~");
-                    for(var j = 0; j < components.length; j++)
-                    {
-                        // Check if the component should be strikethrough
-                        if((j % 2 == 1) && (components.length-1 > j))
-                        {
-                            // Apply strikethrough to the component
-                            components[j] = this.marker.addStrikethough(components[j]);
-                        }
-                        // Reconstruct the line with strikethrough applied where necessary
-                        result += components[j];
-                        // Add the "%~" back to the result, except for the last component of each line
-                        if(j < components.length - 1)
-                        {
-                            result += "\%\~";
-                        }
-                    }
-                    // Add a newline character after each line, except for the last line
-                    if(i < lines.length - 1)
-                    {
-                        result += "\n";
-                    }
-                }
-                // Ensure the result does not end with a newline character if the original text did not
-                if(this.raw.ref.value.endsWith("\n") && !result.endsWith("\n"))
-                {
-                    result = result.substring(0, result.length-1);
-                }
-                this.raw.ref.value = result;
-            }
-        }
-
-        this.keyPostRouter();
-
-        this.raw.ref.selectionStart = hold_start;
-        this.raw.ref.selectionEnd = hold_end;
-
-        function countCharOccurances(inputString, searchfor)
-        {
-            const regex = new RegExp("\\" + searchfor, 'g');
-            const matches = inputString.match(regex);
-            return matches ? matches.length : 0;
-        }
-
-    }
-
     /**
      * The handlePaste function sets a timeout to call syncronize the scrollbars after 100
      * milliseconds.
@@ -441,13 +292,21 @@ export default class Schema
         //Calculate the new start and ends and pull that off the exe buffer
         var selectStart = this.raw.ref.selectionStart + (8 * preTabs);
         var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
-        var payload = this.exe.ref.value.substring(selectStart, selectEnd);
+        var payload = this.exe.ref.textContent.substring(selectStart, selectEnd);
+
+        console.log(payload);
 
         //Put that value onto the clipboard
+        this.exe.tree.input = payload;
+        this.exe.tree.totalParse();
+        payload = this.exe.tree.output;
         payload = payload.replace(/├────── ​/gm, "├── ​");
         payload = payload.replace(/└────── ​/gm, "└── ​");
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
+
+        console.log(payload);
+
         navigator.clipboard.writeText(payload);
 
         function getTabs(string)
@@ -1119,7 +978,31 @@ class ExeBuffer extends VirtualBuffer
     {
         this.tree.input = this.ref.value;
         this.tree.totalParse();
-        this.ref.innerHTML = this.tree.output;
+        
+        var data = this.tree.output;
+
+        // escape special characters
+        data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+        //handle bold
+        data = data.replace(/(\%\!)(.*?)(\!\%|(?=\s*%!)|\n)/g, '$1<b>$2</b>$3');
+        data = data.replace(/\!\%/g, '</b>\!\%');
+
+        //handle italic
+        data = data.replace(/(\%\*)(.*?)(\*\%|(?=\s*%!)|\n)/g, '$1<i>$2</i>$3');
+        data = data.replace(/\*\%/g, '</i>\*\%');
+
+        //handle strikethough
+        data = data.replace(/(\%\~)(.*?)(\~\%|(?=\s*%!)|\n)/g, '$1<del>$2</del>$3');
+        data = data.replace(/\~\%/g, '</b>\~\%');
+
+
+        data = data.replace(/[└├│─ ]*​/gm, function(match) {
+            return `<span style="color: cyan;">${match}</span>`;
+        });
+
+        this.ref.innerHTML = data;
+
         super.update();
     }
 }
