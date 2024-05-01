@@ -121,10 +121,10 @@ $output = str_replace(">", "＞", $output);
 $output = htmlspecialchars($output);
 $exe_title = explode("\n", $output)[0];
 $exe_data = substr($output, strpos($output, "\n") + 1);
-$exe_data = str_replace("├────── ", "├── ", $exe_data);
-$exe_data = str_replace("└────── ", "└── ", $exe_data);
-$exe_data = str_replace("│       ", "│   ", $exe_data);
-$exe_data = str_replace("        ", "    ", $exe_data);
+$exe_data = str_replace("├── ​", "├── ", $exe_data);
+$exe_data = str_replace("└── ​", "└── ", $exe_data);
+$exe_data = str_replace("│   ​", "│   ", $exe_data);
+$exe_data = str_replace("    ​", "    ", $exe_data);
 
 $content = str_replace("{{pageTitle}}", $exe_title, $content);
 $content = str_replace("{{description}}", $exe_data, $content);

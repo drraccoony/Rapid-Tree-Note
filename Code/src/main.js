@@ -194,6 +194,14 @@ export default class Schema
     pushURL()
     {
         var payload = this.exe.ref.value.replace(/[\s]+$/, '');
+        this.exe.tree.input = payload;
+        this.exe.tree.totalParse();
+        payload = this.exe.tree.output;
+        payload = payload.replace(/├────── ​/gm, "├── ​");
+        payload = payload.replace(/└────── ​/gm, "└── ​");
+        payload = payload.replace(/│       ​/gm, "│   ​");
+        payload = payload.replace(/        ​/gm, "    ​");
+        console.log(payload);
         this.uri.push(payload);
 
         document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
