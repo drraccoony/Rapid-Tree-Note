@@ -56,6 +56,8 @@ export class URIMannager
             data = "Couldn't decode the provided link.\nAre you sure it was made by the RTN?";
         }
 
+        data = data.replace(/\s+$/gm, ""); //trim trailing 
+
         return data;
     }
 
