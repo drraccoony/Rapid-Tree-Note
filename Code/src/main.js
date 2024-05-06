@@ -993,16 +993,16 @@ class ExeBuffer extends VirtualBuffer
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
         // handle italic
-        data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><i>$2</i><span style="color:cyan">$3</span>');
+        data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
 
         // handle bold
-        data = data.replace(/(?<!\*)(\*{2})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><b>$2</b><span style="color:cyan">$3</span>');
+        data = data.replace(/(?<!\*)(\*{2})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><b>$2</b><span style="color:cyan"><b>$3</b></span>');
 
         // handle bold AND italic
-        data = data.replace(/(?<!\*)(\*{3})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><i><b>$2</b></i><span style="color:cyan">$3</span>');
+        data = data.replace(/(?<!\*)(\*{3})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><i><b>$2</b></i><span style="color:cyan"><b>$3</b></span>');
 
         // handle italic
-        data = data.replace(/(?<!\~)(\~{2})([^\n~]+?)(\1)(?!\~)/g, '<span style="color:cyan">$1</span><del>$2</del><span style="color:cyan">$3</span>');
+        data = data.replace(/(?<!\~)(\~{2})([^\n~]+?)(\1)(?!\~)/g, '<span style="color:cyan"><b>$1</b></span><del>$2</del><span style="color:cyan"><b>$3</b></span>');
 
         data = data.replace(/[└├│─ ]*​/gm, function(match) {
             return `<span style="color: cyan;">${match}</span>`;
