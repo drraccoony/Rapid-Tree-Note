@@ -201,6 +201,7 @@ export default class Schema
         payload = payload.replace(/└────── ​/gm, "└── ​");
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
+        payload = payload.replace(/<[^>]*>/g, "");
         console.log(payload);
         this.uri.push(payload);
 

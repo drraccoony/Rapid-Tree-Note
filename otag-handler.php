@@ -119,8 +119,18 @@ else
 $output = str_replace("<", "＜", $output);
 $output = str_replace(">", "＞", $output);
 $output = htmlspecialchars($output);
-$exe_title = explode("\n", $output)[0];
-$exe_data = substr($output, strpos($output, "\n") + 1);
+
+if (substr_count($output, "\n") >= 3) //if the content spans more than 1 line
+{
+    $exe_title = explode("\n", $output)[0];
+    $exe_data = substr($output, strpos($output, "\n") + 1);
+} 
+else //if the content spans just 1 line
+{
+    $exe_title = $output;
+    $exe_data = "&nbsp;";
+}
+
 $exe_data = str_replace("├── ​", "├── ", $exe_data);
 $exe_data = str_replace("└── ​", "└── ", $exe_data);
 $exe_data = str_replace("│   ​", "│   ", $exe_data);
