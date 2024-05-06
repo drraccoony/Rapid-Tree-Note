@@ -183,7 +183,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t%!You can wrap text with percent exclamation points to make it bold!%\n\t\t\t%*You can wrap text with percent asterisks to make it italic*%\n\t\t\t%~You can wrap text with percent tildes to strike it though~%";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t~~You can wrap text with double tildes to strike it though~~";
         }
     }
 
@@ -992,18 +992,17 @@ class ExeBuffer extends VirtualBuffer
         // escape special characters
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-        //handle bold
-        data = data.replace(/(\%\!)(.*?)(\!\%|(?=\s*%!)|\n)/g, '$1<b>$2</b>$3');
-        data = data.replace(/\!\%/g, '</b>\!\%');
+        // handle italic
+        data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><i>$2</i><span style="color:cyan">$3</span>');
 
-        //handle italic
-        data = data.replace(/(\%\*)(.*?)(\*\%|(?=\s*%!)|\n)/g, '$1<i>$2</i>$3');
-        data = data.replace(/\*\%/g, '</i>\*\%');
+        // handle bold
+        data = data.replace(/(?<!\*)(\*{2})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><b>$2</b><span style="color:cyan">$3</span>');
 
-        //handle strikethough
-        data = data.replace(/(\%\~)(.*?)(\~\%|(?=\s*%!)|\n)/g, '$1<del>$2</del>$3');
-        data = data.replace(/\~\%/g, '</b>\~\%');
+        // handle bold AND italic
+        data = data.replace(/(?<!\*)(\*{3})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan">$1</span><i><b>$2</b></i><span style="color:cyan">$3</span>');
 
+        // handle italic
+        data = data.replace(/(?<!\~)(\~{2})([^\n~]+?)(\1)(?!\~)/g, '<span style="color:cyan">$1</span><del>$2</del><span style="color:cyan">$3</span>');
 
         data = data.replace(/[└├│─ ]*​/gm, function(match) {
             return `<span style="color: cyan;">${match}</span>`;
