@@ -57,7 +57,7 @@ export default class Schema
         }
 
         {
-            //this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
+            this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
             this.focused = true;
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
         }
