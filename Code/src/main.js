@@ -27,21 +27,22 @@ export default class Schema
      * @param inputTextArea The inputTextArea parameter is the text area element where the user can
      * input their text. It is used to capture the user's input and handle events such as keydown,
      * copy, scroll, and paste.
-     * @param outputTextArea The outputTextArea parameter is the text area element where the generated
+     * @param outputPre The outputPre parameter is the text area element where the generated
      * document will be displayed. It is not directly accessible to the user.
      */
-    constructor(inputTextArea, outputTextArea)
+    constructor(inputTextArea, outputPre, wrapTestPre)
     {
         //static config
         this.maxURLLength = 8192;
         this.uri = new URIMannager();
         window.main = this;
-        
+
         var urlData = this.pullURL();
 
         {
             this.raw = new RawBuffer(inputTextArea);
-            this.exe = new ExeBuffer(outputTextArea);
+            this.exe = new ExeBuffer(outputPre);
+            this.wrap = wrapTestPre;
             this.state = "UNLOCKED";
         }
 
@@ -73,9 +74,20 @@ export default class Schema
         //update the URL Title
         if(urlData != "" && urlData != null)
         {
-            document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
+            document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
         }
 
+    }
+
+    debugDump()
+    {
+        console.log("=====STARTING=DEBUG=DUMP=====");
+        console.log("Source Value:");
+        console.log(this.raw.ref.value.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
+        console.log("-----------------");
+        console.log("Display Value:");
+        console.log(this.exe.ref.innerHTML.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
+        console.log("=====END=DEBUG=DUMP=====");
     }
 
     /**
@@ -193,7 +205,7 @@ export default class Schema
      */
     pushURL()
     {
-        var payload = this.exe.ref.value.replace(/[\s]+$/, '');
+        var payload = this.exe.ref.textContent.replace(/[\s]+$/, "");
         this.exe.tree.input = payload;
         this.exe.tree.totalParse();
         payload = this.exe.tree.output;
@@ -205,8 +217,83 @@ export default class Schema
         console.log(payload);
         this.uri.push(payload);
 
-        document.title = this.exe.ref.value.split("\n")[0].substring(0,32);
+        document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
         
+    }
+
+    /**
+     * Set up this.raw to be ready for default character insertion
+     * 1: find all lines (from this.exe) that contains block sequences of [LINE][DATA] or [GAP][DATA] and replace ALL glyphs on that line with a single space
+     * 2: replace all remaining tree glyphs (in this.exe) with \t
+     * 3: overwrite this.raw with this.exe
+     * 4: ensure carrat is in right place
+     * 5: default insertion will go into correct place in temporarily unwrapped position
+     * SEE postLineWrap for re-wrapping the input
+     */
+    preLineWrap()
+    {
+        //console.trace ();
+        //console.log("pre line wrap start", this.exe.ref.innerHTML.replaceAll('\n', '\\n'));
+        var lines = this.exe.ref.innerHTML.split("\n");
+        //console.log("LINES", lines);
+        var assembly = "";
+        for (var line of lines)
+        { 
+            if(/│ {3,7}​[^│├─└ ]/g.test(line) || (/ {4,8}​[^│├─└ ]/g.test(line)))
+            {
+                console.log("wrapping glyphs found for ", line);
+                assembly += "\n" + line.replace(/(?:│ +​|├─+ ​|└─+ ​| +​)+/g, "\t");
+            }
+            else
+            {
+                assembly += "\n" + line;
+            }
+        }
+        assembly = assembly.replace(/│ +​|├─+ ​|└─+ ​| +​/g, "\t");
+        this.raw.ref.value = assembly;
+    }
+
+    postLineWrap()
+    {
+        //console.trace ();
+        //console.log(this.raw.ref.value.replaceAll('\n', '\\n'));
+        //console.log(this.exe.ref.innerHTML.replaceAll('\n', '\\n').replace(/&lt;.*?&gt;/g, "").replace(/\<.*?\>/g, ""));
+        var lines = this.exe.ref.innerHTML.replace(/&lt;.*?&gt;/g, "").replace(/\<.*?\>/g, "").split("\n").filter(item => item!== "");
+        console.log("lines", lines);
+        var construction = "";
+        //console.log(lines.length);
+        for(var line of lines)
+        {
+            //console.log("I ran once!", line);
+            var leading = line.match(/^(?:│ +​|├─+ ​|└─+ ​| +​)+/gm); //|| ""; //find leading tree glyphs for that line
+            if (leading) {
+                leading = leading[0];
+            } else {
+                console.log("No leading glyphs found for line " + line);
+                leading = "";
+            }
+            var wrappingGlyphs = leading;
+            //console.log("wrapping glyphs", wrappingGlyphs);
+
+            wrappingGlyphs = wrappingGlyphs.replace(/├─+ ​$/gm, "│       ​"); //wrapping lines connected by fork should wrap with line
+            wrappingGlyphs = wrappingGlyphs.replace(/└─+ ​$/gm, "        ​"); //wrapping lines connected by bend should wrap with gap
+            wrappingGlyphs + "\n" + wrappingGlyphs;
+            //console.log("WG", wrappingGlyphs);
+
+            //find where line wraps are needed, and insert the computed line wrap glyphs
+            var brokenLine = this.findEffectiveBreakpoints(line);
+            //console.log("broken line" , brokenLine);
+            //var result = brokenLine;
+            var result = brokenLine.replaceAll("RTN_LINE-WRAP", wrappingGlyphs);
+
+            //write to elements
+            //console.log("appending line of ", result.replaceAll('\n', '\\n'));
+            construction += result + "\n";
+        }
+
+        //console.log("CONSTRUCTION", construction);
+        this.exe.ref.innerHTML = construction;
+        this.raw.ref.value = construction.replace(/│ +​|├─+ ​|└─+ ​| +​/g, "\t").replace(/&lt;.*?&gt;/g, "");
     }
 
     /**
@@ -228,31 +315,30 @@ export default class Schema
     keyPostRouter()
     {
         this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
+        this.exe.ref.innerHTML = this.raw.ref.value;
         this.exe.update();
         this.syncScrollbars();
     }
 
-    /**
-     * The function `hardFix()` preforms much the same functions as `keyPostRouter()`,
-     * except gaurentees that the graph will be brought to a consistent state, even if
-     * data loss occurs.
-     */
-    hardFix()
+    findEffectiveBreakpoints(string)
     {
-        this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
-        this.exe.update();
-        var hold_start = this.raw.ref.selectionStart;
-        var hold_end = this.raw.ref.selectionEnd;
-        this.raw.ref.value = this.exe.ref.value.substring(0,this.exe.ref.value.length-1);
-        this.raw.update();
-        this.exe.ref.value = this.raw.ref.value;
-        this.exe.tree.totalParse();
-        this.exe.update();
-        this.raw.ref.selectionStart = hold_start;
-        this.raw.ref.selectionEnd = hold_end;
+        //console.trace ();
+        this.wrap.textContent = "";
+        var preHeight = this.wrap.style.clientHeight;
+        var words = string.split(" ");
+        for(var word of words)
+        {
+            var save = this.wrap.textContent;
+            this.wrap.textContent += " " + word;
+            if(this.wrap.style.clientHeight != preHeight) // the pre got taller; indicating a line wrap!
+            {
+                this.wrap.textContent = save; //revert to before that word was added
+                this.wrap.textContent += "RTN_LINE-WRAP";
+                this.wrap.textContent += " " + word;
+                preHeight = this.wrap.style.clientHeight;
+            }
+        }
+        return this.wrap.textContent;
     }
 
     /**
@@ -303,7 +389,7 @@ export default class Schema
         var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
         var payload = this.exe.ref.textContent.substring(selectStart, selectEnd);
 
-        console.log(payload);
+        //console.log(payload);
 
         //Put that value onto the clipboard
         this.exe.tree.input = payload;
@@ -314,7 +400,7 @@ export default class Schema
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
 
-        console.log(payload);
+        //console.log(payload);
 
         navigator.clipboard.writeText(payload);
 
@@ -730,6 +816,10 @@ class VirtualBuffer
      */
     keyHandler(event, callback)
     {
+        if(event == undefined)
+        {
+            event = { "key": "none" };
+        }
         /* The below code is checking the value of the "state" property. If the value is "LOCKED", it
         sets a timeout of 10 milliseconds and calls this function with the provided
         event and callback parameters, effectively processing the command later if it can't currently be done. */
@@ -753,7 +843,6 @@ class VirtualBuffer
                 {
                     this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
                     this.moveCarrat(1);
-                    //setTimeout(() => {window.main.hardFix()}, 25);
                 }
             }
             else //a region is selected
@@ -817,7 +906,6 @@ class VirtualBuffer
                         }
                     }
                 }
-                setTimeout(() => {window.main.hardFix()}, 25);
             }
         }
 
@@ -985,7 +1073,7 @@ class ExeBuffer extends VirtualBuffer
      */
     update()
     {
-        this.tree.input = this.ref.value;
+        this.tree.input = this.ref.textContent;
         this.tree.totalParse();
         
         var data = this.tree.output;
