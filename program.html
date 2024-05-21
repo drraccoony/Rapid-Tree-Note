@@ -92,7 +92,7 @@ You should have received a copy of the GNU Affero General Public License along w
         border: none;
         box-sizing: border-box;
         overflow: hidden;
-        padding: 10px;
+        padding: 5px;
         word-break: break-word;
       }
 
@@ -105,7 +105,7 @@ You should have received a copy of the GNU Affero General Public License along w
         top: 0;
         width: 100%;
         min-height: 70vh;
-        background-color: rgba(67, 72, 91, 0.01);
+        background-color: transparent;
         outline: solid 4px black;
         color: transparent;
         font-family: Box, monospace, BoldItalic_Latin;
@@ -117,7 +117,7 @@ You should have received a copy of the GNU Affero General Public License along w
         border: none;
         box-sizing: border-box;
         overflow: hidden;
-        padding: 10px;
+        padding: 5px;
         white-space: pre-wrap;
         word-break: break-word;
       }
@@ -139,7 +139,7 @@ You should have received a copy of the GNU Affero General Public License along w
         white-space: pre-wrap;
         vertical-align: top;
         word-break: break-word;
-        padding: 10px;
+        padding: 5px;
       }
     </style>
     
@@ -193,6 +193,7 @@ You should have received a copy of the GNU Affero General Public License along w
             document.getElementById("source").style.pointerEvents = "none";
             document.getElementById("source").disabled = true;
             document.getElementById("source").hidden = true;
+            document.getElementById("display").style.pointerEvents = "normal";
             alert("Document is in READ-ONLY mode.\n\nYou are viewing this document on Mobile.\nFor full functionality, please visit this website on a computer.");
         }
       }, 250);
