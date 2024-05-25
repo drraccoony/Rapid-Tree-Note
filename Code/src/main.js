@@ -315,7 +315,7 @@ export default class Schema
     keyPostRouter()
     {
         this.raw.update();
-        this.exe.ref.innerHTML = this.raw.ref.value;
+        this.exe.ref.innerHTML = this.raw.ref.value.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
         this.exe.update();
         this.syncScrollbars();
     }
