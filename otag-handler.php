@@ -124,6 +124,8 @@ if (substr_count($output, "\n") >= 3) //if the content spans more than 1 line
 {
     $exe_title = explode("\n", $output)[0];
     $exe_data = substr($output, strpos($output, "\n") + 1);
+    $exe_title = preg_replace('/\s*$/', '', $exe_title); //prune whitespace from end
+    $exe_data = preg_replace('/\s*$/', '', $exe_data); //prune whitespace from end
 } 
 else //if the content spans just 1 line
 {
