@@ -113,7 +113,6 @@ else
     $url = "https://lars.d.umn.edu/RTN/program.html?enc=$encoding&cmpr=$compression&data=$data";
     $cmd = "node ./decompressor.js \"$url\"";
     $output = shell_exec($cmd);
-    file_put_contents("./Usage/dict/" . time() . ".txt", $output); // save document for future custom dictionary
 }
 
 $output = str_replace("<", "＜", $output);
