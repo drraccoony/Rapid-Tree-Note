@@ -195,7 +195,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t~~You can wrap text with double tildes to strike it though~~";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com";
         }
     }
 
@@ -222,81 +222,6 @@ export default class Schema
     }
 
     /**
-     * Set up this.raw to be ready for default character insertion
-     * 1: find all lines (from this.exe) that contains block sequences of [LINE][DATA] or [GAP][DATA] and replace ALL glyphs on that line with a single space
-     * 2: replace all remaining tree glyphs (in this.exe) with \t
-     * 3: overwrite this.raw with this.exe
-     * 4: ensure carrat is in right place
-     * 5: default insertion will go into correct place in temporarily unwrapped position
-     * SEE postLineWrap for re-wrapping the input
-     */
-    preLineWrap()
-    {
-        //console.trace ();
-        //console.log("pre line wrap start", this.exe.ref.innerHTML.replaceAll('\n', '\\n'));
-        var lines = this.exe.ref.innerHTML.split("\n");
-        //console.log("LINES", lines);
-        var assembly = "";
-        for (var line of lines)
-        { 
-            if(/│ {3,7}​[^│├─└ ]/g.test(line) || (/ {4,8}​[^│├─└ ]/g.test(line)))
-            {
-                console.log("wrapping glyphs found for ", line);
-                assembly += "\n" + line.replace(/(?:│ +​|├─+ ​|└─+ ​| +​)+/g, "\t");
-            }
-            else
-            {
-                assembly += "\n" + line;
-            }
-        }
-        assembly = assembly.replace(/│ +​|├─+ ​|└─+ ​| +​/g, "\t");
-        this.raw.ref.value = assembly;
-    }
-
-    postLineWrap()
-    {
-        //console.trace ();
-        //console.log(this.raw.ref.value.replaceAll('\n', '\\n'));
-        //console.log(this.exe.ref.innerHTML.replaceAll('\n', '\\n').replace(/&lt;.*?&gt;/g, "").replace(/\<.*?\>/g, ""));
-        var lines = this.exe.ref.innerHTML.replace(/&lt;.*?&gt;/g, "").replace(/\<.*?\>/g, "").split("\n").filter(item => item!== "");
-        console.log("lines", lines);
-        var construction = "";
-        //console.log(lines.length);
-        for(var line of lines)
-        {
-            //console.log("I ran once!", line);
-            var leading = line.match(/^(?:│ +​|├─+ ​|└─+ ​| +​)+/gm); //|| ""; //find leading tree glyphs for that line
-            if (leading) {
-                leading = leading[0];
-            } else {
-                console.log("No leading glyphs found for line " + line);
-                leading = "";
-            }
-            var wrappingGlyphs = leading;
-            //console.log("wrapping glyphs", wrappingGlyphs);
-
-            wrappingGlyphs = wrappingGlyphs.replace(/├─+ ​$/gm, "│       ​"); //wrapping lines connected by fork should wrap with line
-            wrappingGlyphs = wrappingGlyphs.replace(/└─+ ​$/gm, "        ​"); //wrapping lines connected by bend should wrap with gap
-            wrappingGlyphs + "\n" + wrappingGlyphs;
-            //console.log("WG", wrappingGlyphs);
-
-            //find where line wraps are needed, and insert the computed line wrap glyphs
-            var brokenLine = this.findEffectiveBreakpoints(line);
-            //console.log("broken line" , brokenLine);
-            //var result = brokenLine;
-            var result = brokenLine.replaceAll("RTN_LINE-WRAP", wrappingGlyphs);
-
-            //write to elements
-            //console.log("appending line of ", result.replaceAll('\n', '\\n'));
-            construction += result + "\n";
-        }
-
-        //console.log("CONSTRUCTION", construction);
-        this.exe.ref.innerHTML = construction;
-        this.raw.ref.value = construction.replace(/│ +​|├─+ ​|└─+ ​| +​/g, "\t").replace(/&lt;.*?&gt;/g, "");
-    }
-
-    /**
      * The function "keyPreRouter" is a member of the RawBuffer "raw" that handles key events and passes them to
      * another function called "keyPostRouter".
      * @param event - The event parameter is an object that represents the keyboard event that
@@ -318,27 +243,6 @@ export default class Schema
         this.exe.ref.innerHTML = this.raw.ref.value.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
         this.exe.update();
         this.syncScrollbars();
-    }
-
-    findEffectiveBreakpoints(string)
-    {
-        //console.trace ();
-        this.wrap.textContent = "";
-        var preHeight = this.wrap.style.clientHeight;
-        var words = string.split(" ");
-        for(var word of words)
-        {
-            var save = this.wrap.textContent;
-            this.wrap.textContent += " " + word;
-            if(this.wrap.style.clientHeight != preHeight) // the pre got taller; indicating a line wrap!
-            {
-                this.wrap.textContent = save; //revert to before that word was added
-                this.wrap.textContent += "RTN_LINE-WRAP";
-                this.wrap.textContent += " " + word;
-                preHeight = this.wrap.style.clientHeight;
-            }
-        }
-        return this.wrap.textContent;
     }
 
     /**
@@ -1080,6 +984,15 @@ class ExeBuffer extends VirtualBuffer
 
         // escape special characters
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+        //insert links
+        data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
+            if ($2) { // markdown-style link
+                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}"><b>[${$1}](${$2})</b></a>`;
+            } else { // static link
+                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}"><b>${$3}</b></a>`;
+            }
+        });
 
         // handle italic
         data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
