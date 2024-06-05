@@ -337,12 +337,15 @@ export default class Schema
     
         // Calculate the new height for the main div
         const newHeight = `${display.offsetHeight + 50}px`;
+        const newWidth = `${display.offsetWidth + mainDiv.offsetLeft}px`;
     
         // Set the height of the main div to be 10vh taller than the display element
         mainDiv.style.height = newHeight;
+        mainDiv.style.width = newWidth;
     
         // Set the height of the source textarea to match the display element
         source.style.height = `${display.offsetHeight}px`;
+        source.style.width = `${display.offsetWidth + mainDiv.offsetLeft}px`;
     }
 }
 
