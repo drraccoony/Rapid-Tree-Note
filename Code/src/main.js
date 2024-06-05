@@ -334,6 +334,10 @@ export default class Schema
         const display = document.getElementById('display');
         const source = document.getElementById('source');
         const mainDiv = document.getElementById('main');
+        const header = document.getElementById('header');
+
+        // Ensure spacing between header and body
+        mainDiv.style.top = `${header.offsetHeight + 10}px`;
     
         // Calculate the new height for the main div
         const newHeight = `${display.offsetHeight + 50}px`;
