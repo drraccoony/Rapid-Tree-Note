@@ -63,6 +63,30 @@ export default class Schema
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
         }
 
+        document.addEventListener('wheel', function(event) {
+            return;
+            // Calculate the new font size based on the current zoom level
+            let displaySize = parseFloat(document.getElementById("display").style.fontSize);
+            let displayTop = parseFloat(document.getElementById("display").style.top);
+            let sourceSize = parseFloat(document.getElementById("source").style.fontSize);
+            if (event.ctrlKey || event.shiftKey) {
+                console.log(event);
+                // Adjust the font size based on zooming
+                displaySize += event.deltaY * -0.001; // Adjust this multiplier as needed
+                sourceSize += event.deltaY * -0.001; // Adjust this multiplier as needed
+                
+                // Ensure the font size stays within reasonable bounds
+                displaySize = Math.max(0.5, Math.min(displaySize, 2)); // Example bounds
+                sourceSize = Math.max(0.5, Math.min(sourceSize, 2)); // Example bounds
+
+                displayTop = -1 * displaySize;
+
+                document.getElementById("display").style.fontSize = displaySize + 'vw';
+                document.getElementById("source").style.fontSize = sourceSize + 'vw';
+                document.getElementById("display").style.top = displayTop + 'vw';
+            }
+        });
+
         window.addEventListener('beforeunload', (event) => this.safeShutdown(event));
 
         //force inital values
@@ -350,6 +374,11 @@ export default class Schema
         // Set the height of the source textarea to match the display element
         source.style.height = `${display.offsetHeight}px`;
         source.style.width = `${display.offsetWidth + mainDiv.offsetLeft}px`;
+
+        // Ensure that display+source are at least as wide as the header
+        mainDiv.style.minWidth = `${header.offsetWidth}px`;
+        source.style.minWidth = `${header.offsetWidth}px`;
+        display.style.minWidth = `${header.offsetWidth}px`;
     }
 }
 
