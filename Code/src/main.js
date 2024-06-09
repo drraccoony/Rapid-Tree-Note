@@ -219,7 +219,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com";
         }
     }
 
@@ -327,6 +327,9 @@ export default class Schema
         payload = payload.replace(/└────── ​/gm, "└── ​");
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
+
+        //trim trailing whitespace
+        payload = payload.replace(/\s$/, "");
 
         //console.log(payload);
 
@@ -1042,6 +1045,10 @@ class ExeBuffer extends VirtualBuffer
         // handle italic
         data = data.replace(/(?<!\~)(\~{2})([^\n~]+?)(\1)(?!\~)/g, '<span style="color:cyan"><b>$1</b></span><del>$2</del><span style="color:cyan"><b>$3</b></span>');
 
+        //handle code blocks
+        data = data.replace(/(?<!\`)(\`{1})([^\n`]+?)(\1)(?!\`)/g, '<span style="color: rgb(232,145,45); background-color: rgb(44, 46, 54);"><b>$1</b>$2<b>$3</b></span>');
+
+        //make glyphs cyan
         data = data.replace(/[└├│─ ]*​/gm, function(match) {
             return `<span style="color: cyan;">${match}</span>`;
         });
