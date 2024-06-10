@@ -115,9 +115,7 @@ else
     $output = shell_exec($cmd);
 }
 
-$output = str_replace("<", "＜", $output);
-$output = str_replace(">", "＞", $output);
-$output = htmlspecialchars($output);
+$output = preg_replace('/[^A-Za-z0-9\n\t\ └├│─​]/', "�", $output);
 
 if (substr_count($output, "\n") >= 3) //if the content spans more than 1 line
 {
