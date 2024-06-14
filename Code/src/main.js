@@ -1048,9 +1048,6 @@ class ExeBuffer extends VirtualBuffer
         // escape special characters
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-        // handle bullet points
-        data = data.replace(/^((?:[└├│─ ]*​)*)(-|\*)( )/gm, "$1•$3");
-
         //insert links
         data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
             if ($2) { // markdown-style link
@@ -1062,6 +1059,10 @@ class ExeBuffer extends VirtualBuffer
 
         // handle italic
         data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
+
+        // handle bullet points
+        data = data.replace(/^((?:[└├│─ ]*​)*)(-)( )/gm, "$1•$3"); // dash case
+        data = data.replace(/^((?:[└├│─ ]*​)*)(\*)( )(?!.*\*)/gm, "$1•$3"); // asterisk case (prevent overriding italic)
 
         // handle bold
         data = data.replace(/(?<!\*)(\*{2})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><b>$2</b><span style="color:cyan"><b>$3</b></span>');
