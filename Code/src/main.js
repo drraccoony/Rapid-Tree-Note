@@ -154,6 +154,7 @@ export default class Schema
         if(this.focused)
         {
             //stuff here is done once every 1000ms, regardless of program state
+            //this.hardFix();
             this.keyPostRouter();
         }
     }
@@ -219,7 +220,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tLimited Markdown Support\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com";
         }
     }
 
@@ -382,6 +383,28 @@ export default class Schema
         mainDiv.style.minWidth = `${header.offsetWidth}px`;
         source.style.minWidth = `${header.offsetWidth}px`;
         display.style.minWidth = `${header.offsetWidth}px`;
+    }
+
+    /**
+     * The function `hardFix()` preforms much the same functions as `keyPostRouter()`,
+     * except gaurentees that the graph will be brought to a consistent state, even if
+     * data loss occurs.
+     */
+    hardFix()
+    {
+        this.raw.update();
+        this.exe.ref.tree.input = this.raw.ref.value;
+        this.exe.tree.totalParse();
+        this.exe.update();
+        var hold_start = this.raw.ref.selectionStart;
+        var hold_end = this.raw.ref.selectionEnd;
+        this.raw.ref.value = this.exe.tree.content.substring(0,this.exe.tree.content.length-1);
+        this.raw.update();
+        this.exe.ref.textContent = this.raw.ref.value;
+        this.exe.tree.totalParse();
+        this.exe.update();
+        this.raw.ref.selectionStart = hold_start;
+        this.raw.ref.selectionEnd = hold_end;
     }
 }
 
@@ -850,6 +873,7 @@ class VirtualBuffer
                     }
                 }
             }
+            //setTimeout(() => {window.main.hardFix()}, 25);
         }
 
         /* The below code is checking if the "Enter" key is pressed. If it is, it prevents the default
@@ -1023,6 +1047,9 @@ class ExeBuffer extends VirtualBuffer
 
         // escape special characters
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+        // handle bullet points
+        data = data.replace(/^((?:[└├│─ ]*​)*)(-|\*)( )/gm, "$1•$3");
 
         //insert links
         data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
