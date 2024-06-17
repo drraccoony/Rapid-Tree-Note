@@ -70,7 +70,7 @@ export default class Schema
             let displayTop = parseFloat(document.getElementById("display").style.top);
             let sourceSize = parseFloat(document.getElementById("source").style.fontSize);
             if (event.ctrlKey || event.shiftKey) {
-                console.log(event);
+                console.debug(event);
                 // Adjust the font size based on zooming
                 displaySize += event.deltaY * -0.001; // Adjust this multiplier as needed
                 sourceSize += event.deltaY * -0.001; // Adjust this multiplier as needed
@@ -105,13 +105,13 @@ export default class Schema
 
     debugDump()
     {
-        console.log("=====STARTING=DEBUG=DUMP=====");
-        console.log("Source Value:");
-        console.log(this.raw.ref.value.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
-        console.log("-----------------");
-        console.log("Display Value:");
-        console.log(this.exe.ref.innerHTML.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
-        console.log("=====END=DEBUG=DUMP=====");
+        console.debug("=====STARTING=DEBUG=DUMP=====");
+        console.debug("Source Value:");
+        console.debug(this.raw.ref.value.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
+        console.debug("-----------------");
+        console.debug("Display Value:");
+        console.debug(this.exe.ref.innerHTML.replaceAll('\n', '\\n').replaceAll('\t', '\\t'));
+        console.debug("=====END=DEBUG=DUMP=====");
     }
 
     /**
@@ -122,7 +122,7 @@ export default class Schema
     safeShutdown(event)
     {
         clearInterval(this.intervalUpdater);
-        console.log("RTN Safe Shutdown Complete.");
+        console.debug("RTN Safe Shutdown Complete.");
     }
 
     /**
@@ -175,7 +175,7 @@ export default class Schema
 
         this.shouldEncode = randomDecimalInRange;
 
-        //console.log("random idle value was " + randomDecimalInRange);
+        //console.debug("random idle value was " + randomDecimalInRange);
 
         setTimeout(() => this.urlPostEncodeOnIdle(randomDecimalInRange), 1000);
      
@@ -239,7 +239,7 @@ export default class Schema
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
         payload = payload.replace(/<[^>]*>/g, "");
-        console.log(payload);
+        console.debug(payload);
         this.uri.push(payload);
 
         document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
@@ -318,7 +318,7 @@ export default class Schema
         var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
         var payload = this.exe.ref.textContent.substring(selectStart, selectEnd);
 
-        //console.log(payload);
+        //console.debug(payload);
 
         //Put that value onto the clipboard
         this.exe.tree.input = payload;
@@ -332,7 +332,7 @@ export default class Schema
         //trim trailing whitespace
         payload = payload.replace(/\s$/, "");
 
-        //console.log(payload);
+        //console.debug(payload);
 
         navigator.clipboard.writeText(payload);
 
@@ -405,6 +405,163 @@ export default class Schema
         this.exe.update();
         this.raw.ref.selectionStart = hold_start;
         this.raw.ref.selectionEnd = hold_end;
+    }
+
+    dirnav(event, payload, lineIndex)
+    {
+        //prevent the link from navigating to #
+        event.preventDefault();
+
+        // build lines and prepare upper and lower bounds
+        var lines = this.raw.ref.value.split("\n");
+        var boundLower = 0;
+        var boundUpper = lines.length - 1;
+        var linePointer = lineIndex;
+
+        // find the components of the link, removing NULL, "", and "." from that list.
+        var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== ".");
+
+        // build a debug info object to print to console in the event of an error
+        var debug = {
+            Payload: payload,
+            Index: lineIndex,
+            Lines: lines,
+            LowerBound: boundLower,
+            UpperBound: boundUpper,
+            Actions: actions
+        };
+        console.debug(debug.Actions);
+
+        // iterate over the "actions" queue, consuming elements as they are used to move the linePointer
+        // if at any point a bounds is exceeded, an error is printed to console and the function returns early (with no effect)
+        while(actions.length != 0)
+        {
+            if(actions[0]=="..") // parent navigation
+            {
+                var targetIndentLevel = getIndentLevel(lines[linePointer])-1;
+                if(targetIndentLevel < 0)
+                {
+                    console.error("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
+                    return;
+                }
+                else
+                {
+                    while(linePointer >= 0 && getIndentLevel(lines[linePointer])!=targetIndentLevel)
+                    {
+                        linePointer--;
+                    }
+                    if(linePointer < 0)
+                    {
+                        console.error("DirNav could not find a proper parent...", debug);
+                        return;
+                    }
+                    actions.shift();
+                }
+            }
+            else
+            {
+                var startingLevel = getIndentLevel(lines[linePointer]); // if at any point we encoutner a line AT or below this level, abort!
+                
+                if(actions[0].match(/\[[0-9]*\]/)) // index navigation
+                {
+                    var targetChild = parseInt(actions[0].substring(1,actions[0].length-1), 10);
+                    var currentChild = -1;
+                    while(currentChild < targetChild && linePointer <= boundUpper)
+                    {
+                        linePointer++;
+                        if(getIndentLevel(lines[linePointer])<=startingLevel)
+                        {
+                            console.error("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
+                            return;
+                        }
+                        if(getIndentLevel(lines[linePointer])==startingLevel+1)
+                        {
+                            currentChild++;
+                        }
+                    }
+                    actions.shift();
+                }
+                else // keyed navigation
+                {
+                    const keyedRegex = new RegExp("^\\s*" + actions[0].substring(1,actions[0].length-1).replace(/(.)/g, "\\$1") + "\.*");
+                    while(!(lines[linePointer].match(keyedRegex))&& linePointer <= boundUpper)
+                    {
+                        linePointer++;
+                        if(getIndentLevel(lines[linePointer])<=startingLevel)
+                        {
+                            console.error("DirNav failed to find a child of key [" + actions[0].substring(1,actions[0].length-1) + "] before exhausting the domain!", debug);
+                            return;
+                        }
+                    }
+                    actions.shift();
+                }
+            }
+            console.debug("an action was consumed... current linePointer=" + linePointer);
+        }
+
+        //at this point, linePointer lies on the line that we want to navigate to
+        {
+            //add up the lines prior to the one pointed to by linePointer to get how many characters that is
+            var construction = "";
+            for(var i = 0; i < linePointer; i++)
+            {
+                construction += lines[i] + "\n";
+            }
+            construction = construction.substring(0,construction.length-1); //trim trailing \n
+            var lineJump = construction.length;
+
+            //get the number of leading whitespace on the linePointer line, to move the carrat to the start of content
+            var dataSearch = lines[linePointer].match(/^(\s*)([^\n]*)/);
+            var preData = dataSearch[1].length;
+            var postData = dataSearch[2].length;
+
+        }
+        
+        // move the carrat to the location we have found
+        {
+            this.raw.start = lineJump + preData;
+            this.raw.end = lineJump + preData + postData;
+            if(this.raw.start != 0) //correct for the very start of the document
+            {
+                this.raw.start++;
+                this.raw.end++;
+            }
+            this.raw.ref.focus();
+            this.raw.writeCarrat();
+            scrollToCaret(this.raw.ref);
+        }
+        
+        // helper functions
+        function getIndentLevel(string)
+        {
+            return string.split("\t").length-1;
+        }
+
+        function scrollToCaret(textarea) {
+            // Create a temporary div element
+            var carratFinder = document.createElement('div');
+            //carratFinder.style.visibility = 'hidden';
+            carratFinder.style.position = 'absolute';
+            carratFinder.style.color = "red";
+            carratFinder.style.padding = "5px";
+            carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
+            carratFinder.style.whiteSpace = "pre-wrap";
+            carratFinder.style.border = "solid 4px transparent";
+            carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
+            document.getElementById("main").appendChild(carratFinder);
+          
+            // Copy the text up to the caret position
+            carratFinder.innerHTML = textarea.value.substring(0, textarea.selectionEnd) + "<span id=\"dirNavCarrat\"></span>";
+
+            // scroll to the element (plus some space so the header doesn't cover it up)
+            document.getElementById("dirNavCarrat").scrollIntoView();
+            window.scrollBy(0, (-1 * document.getElementById('header').offsetHeight) - 24);
+          
+            // Remove the temporary div
+            document.getElementById("dirNavCarrat").remove();
+            document.getElementById("main").removeChild(carratFinder);
+          
+        }
     }
 }
 
@@ -535,7 +692,7 @@ class ProcessingTree
                             var downDistanceToData = findDataDown(line,index,mainArr);
                             var rightDistanceToData = findDataRight(line,index,mainArr);
 
-                            //console.log(line, index, downDistanceToData, rightDistanceToData);
+                            //console.debug(line, index, downDistanceToData, rightDistanceToData);
 
                             if(downDistanceToData <= rightDistanceToData)
                             {
@@ -548,11 +705,11 @@ class ProcessingTree
 
                             function findDataDown(line, index, mainArr) //look down until EOF or Data is found
                             {
-                                //console.log("D", line, index, mainArr);
+                                //console.debug("D", line, index, mainArr);
                                 var distance = 0;
                                 while(line < mainArr.length)
                                 {
-                                    //console.log("D", line, index);
+                                    //console.debug("D", line, index);
                                     if(line+1 > mainArr.length - 1)
                                     {
                                         return distance;
@@ -570,11 +727,11 @@ class ProcessingTree
 
                             function findDataRight(line, index, mainArr) //Look down from the block to the right until EOF or Data is found
                             {
-                                //console.log("R", line, index, mainArr);
+                                //console.debug("R", line, index, mainArr);
                                 var distance = 0;
                                 while(line < mainArr.length)
                                 {
-                                    //console.log("D", line, index);
+                                    //console.debug("D", line, index);
                                     if(line+1 > mainArr.length - 1)
                                     {
                                         return distance;
@@ -642,7 +799,7 @@ class ProcessingTree
          */
         function access(row,index,mainArr)
         {
-            //console.log(row, index, mainArr);
+            //console.debug(row, index, mainArr);
             if(row < 0 || index < 0)
             {
                 return "Null";
@@ -695,7 +852,7 @@ class ProcessingTree
         this.parseNewBlocks();
         this.toString();
 
-        //console.log(this);
+        //console.debug(this);
     }
 }
 
@@ -819,12 +976,12 @@ class VirtualBuffer
                 while(this.ref.value.substring(startRoot,startRoot+1) != "\n" && startRoot > 0)
                 {
                     startRoot--;
-                    //console.log(this.ref.value.substring(startRoot,startRoot+1));
+                    //console.debug(this.ref.value.substring(startRoot,startRoot+1));
                 }
                 while(this.ref.value.substring(endRoot,endRoot+1) != "\n" && endRoot > 0)
                 {
                     endRoot--;
-                    //console.log(this.ref.value.substring(endRoot,endRoot+1));
+                    //console.debug(this.ref.value.substring(endRoot,endRoot+1));
                 }
 
                 var roots = new Array();
@@ -839,14 +996,14 @@ class VirtualBuffer
                     }
                 }
 
-                //console.log(startRoot, endRoot);
+                //console.debug(startRoot, endRoot);
 
                 if(endRoot != startRoot)
                 {
                     roots.push(endRoot);
                 }
 
-                //console.log(roots);
+                //console.debug(roots);
 
                 var rootnum = 1;
                 for(var root of roots)
@@ -1056,6 +1213,22 @@ class ExeBuffer extends VirtualBuffer
                 return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}"><b>${$3}</b></a>`;
             }
         });
+
+        //insert RTN dir-navigator links
+        {
+            var lines = data.split("\n");
+            for(var i = 0; i < lines.length; i++)
+            {
+                lines[i] = lines[i].replace(/(\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, "<a style=\"z-index: 4; pointer-events: all; position: relative; color: rgb(232,145,45);\" href=\"#\" onclick=\"window.main.dirnav(event, '$1', " + i + ");\">$1</a>");
+            }
+            var construction = "";
+            for(var line of lines)
+            {
+                construction += line + "\n";
+            }
+            construction = construction.substring(0,construction.length-1);
+            data = construction;
+        }
 
         // handle italic
         data = data.replace(/(?<!\*)(\*{1})([^\n*]+?)(\1)(?!\*)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
