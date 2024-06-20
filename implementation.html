@@ -228,16 +228,31 @@ Implementation
 │   ​│   ​└── ​Special HTML Characters
 │   ​│   ​    ​├── ​It is important to escape all characters that are inserted into the <head>, such as " -> &ampquot;
 │   ​│   ​    ​└── ​Otherwise, the tag may end early, start a new string, etc.
-│   ​└── ​User Analytics
-│   ​    ​├── ​Foreword
-│   ​    ​│   ​├── ​Knowing how many users are using this service and how may help produce a more robust product
-│   ​    ​│   ​├── ​The RTN strives to be stateless-- no user data is ever stored, as user documents are stored in links
-│   ​    ​│   ​└── ​User analytics require some minimum local storage, so certain considerations must be made
-│   ​    ​├── ​Anonymity
-│   ​    ​│   ​├── ​We do not need to know who is connecting and to what document they are connecting, we just want to know the unique number of documents and users
-│   ​    ​│   ​└── ​Hashes are perfect for this! We execute sha256 on the user's IP address and the `data=` parameter of the URL
-│   ​    ​└── ​Size Minimization
-│   ​    ​    ​└── ​To use as little space as possible, data will be stored in base 64
+│   ​├── ​User Analytics
+│   ​│   ​├── ​Foreword
+│   ​│   ​│   ​├── ​Knowing how many users are using this service and how may help produce a more robust product
+│   ​│   ​│   ​├── ​The RTN strives to be stateless-- no user data is ever stored, as user documents are stored in links
+│   ​│   ​│   ​└── ​User analytics require some minimum local storage, so certain considerations must be made
+│   ​│   ​├── ​Anonymity
+│   ​│   ​│   ​├── ​We do not need to know who is connecting and to what document they are connecting, we just want to know the unique number of documents and users
+│   ​│   ​│   ​└── ​Hashes are perfect for this! We execute sha256 on the user's IP address and the `data=` parameter of the URL
+│   ​│   ​└── ​Size Minimization
+│   ​│   ​    ​└── ​To use as little space as possible, data will be stored in base 64
+│   ​└── ​Markdown Support
+│   ​    ​├── ​Stage One: Faux-Markdown
+│   ​    ​│   ​├── ​During the era of the dual-textarea approach, CSS styling was impossible, as &lt;textarea&gt;s do not have a .innerHTML
+│   ​    ​│   ​├── ​Instead, the RTN would replace certain sequences with <a href="https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols">Mathematical Alphanumeric Symbols</a> from UNICODE.
+│   ​    ​│   ​└── ​This worked, but not well, as some devices had 0 fonts capable of drawing these characters.
+│   ​    ​├── ​Stage Two: It's PRE time!
+│   ​    ​│   ​├── ​On 04/30/24, Brendan realized the output textarea could be replaced with a &lt;pre&gt; while maintaining functionality.
+│   ​    ​│   ​├── ​Using a &lt;pre&gt; instead of a &lt;textarea&gt; would allows for CSS styling, as &lt;pre&gt; DOES have a .innerHTML
+│   ​    ​│   ​└── ​Following this change, the faux-markdown system was removed and replaced with true CSS for &lt;b&gt;,&lt;i&gt;, and &lt;del&gt;
+│   ​    ​├── ​Stage Three: Markdown Standardization
+│   ​    ​│   ​├── ​The RTN was using non-standard markdown delaminators with the hopes of minimizing collisions with standard text.
+│   ​    ​│   ​└── ​Although technically more explicit, using the markdown convention that users already know was deemed better.
+│   ​    ​└── ​Stage Four: Broadening Markdown Support
+│   ​    ​    ​├── ​More and more markdown features were added until the only remaining features would be impossible to implement.
+│   ​    ​    ​└── ​The RTN cannot support things that change the size of text, so many remaining tags will remain unviable.
 ├── Github Release
 │   ├── The full source code of this project is available on github at <a href="https://github.com/Snail51/Rapid-Tree-Note">https://github.com/Snail51/Rapid-Tree-Note</a>.
 │   └── It is free to use, modify, etc, I just ask that you credit me, "Brendan Rood", and provide a link to this original Application.
