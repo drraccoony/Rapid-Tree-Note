@@ -220,7 +220,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t• Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, ./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `./` , followed by N navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tInvalid links will have no apparent effect. Check the console (verbose) to learn more.";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t• Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, ./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `./` , followed by N navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tInvalid links will have no apparent, and will appear [tcf55]red[tcf55].";
         }
     }
 
@@ -407,11 +407,38 @@ export default class Schema
         this.raw.ref.selectionEnd = hold_end;
     }
 
-    dirnav(event, payload, lineIndex)
+    /**
+     * The `dirnav` function in JavaScript is designed to navigate to a specific location in the document
+     * based on the provided DirNav link.
+     * @param event - The `event` parameter in the `dirnav` function is used to capture the event that
+     * triggered the function, typically the clicking of a link. This parameter is used to
+     * prevent the default behavior of the event, which in this case is preventing a link from
+     * navigating to `#`.
+     * @param payload - The `payload` parameter in the `dirnav` function represents the navigation path
+     * or actions to be taken. It consists of a series of components separated by slashes ("/"). These
+     * components can be of different types:
+     * .. - Navigates to the parent of the current node
+     * \[[0-9+]\] - Navigates to the child of the current node at the provided index
+     * \[.+]\] - Navigates to the child of the current node who's value starts with the included string
+     * @param lineIndex - The `lineIndex` parameter in the `dirnav` function represents the index of
+     * the current line within the array of lines. The `lineIndex` helps determine the starting point 
+     * for navigation by being provided by the link that is calling it.
+     * @param testOnly - The `testOnly` parameter in the `dirnav` function is a boolean flag that
+     * determines whether the function should perform the navigation actions or just test for validity.
+     * If `testOnly` is set to `true`, the function will only check if the navigation actions are valid
+     * without actually moving the cursor
+     * @returns The `dirnav` function returns a boolean value (`true` or `false`) depending on the
+     * outcome of the navigation process. `true` on success, `false` on error. If the function is in
+     * test mode (`testOnly` is `true`), it will return the value without actually performing the navigation.
+     */
+    dirnav(event, payload, lineIndex, testOnly=false)
     {
-        //prevent the link from navigating to #
-        event.preventDefault();
-
+        if(!testOnly)
+        {
+            //prevent the link from navigating to #
+            event.preventDefault();
+        }
+        
         // build lines and prepare upper and lower bounds
         var lines = this.raw.ref.value.split("\n");
         var boundLower = 0;
@@ -442,7 +469,7 @@ export default class Schema
                 if(targetIndentLevel < 0)
                 {
                     console.error("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
-                    return;
+                    return(false);
                 }
                 else
                 {
@@ -453,7 +480,7 @@ export default class Schema
                     if(linePointer < 0)
                     {
                         console.error("DirNav could not find a proper parent...", debug);
-                        return;
+                        return(false);
                     }
                     actions.shift();
                 }
@@ -472,7 +499,7 @@ export default class Schema
                         if(getIndentLevel(lines[linePointer])<=startingLevel)
                         {
                             console.error("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
-                            return;
+                            return(false);
                         }
                         if(getIndentLevel(lines[linePointer])==startingLevel+1)
                         {
@@ -490,13 +517,18 @@ export default class Schema
                         if(getIndentLevel(lines[linePointer])<=startingLevel)
                         {
                             console.error("DirNav failed to find a child of key [" + actions[0].substring(1,actions[0].length-1) + "] before exhausting the domain!", debug);
-                            return;
+                            return(false);
                         }
                     }
                     actions.shift();
                 }
             }
             console.debug("an action was consumed... current linePointer=" + linePointer);
+        }
+
+        if(testOnly) // don't actually do navigation if we are just testing for validity
+        {
+            return(true);
         }
 
         //at this point, linePointer lies on the line that we want to navigate to
@@ -529,6 +561,7 @@ export default class Schema
             this.raw.ref.focus();
             this.raw.writeCarrat();
             scrollToCaret(this.raw.ref);
+            return(true);
         }
         
         // helper functions
@@ -1219,7 +1252,13 @@ class ExeBuffer extends VirtualBuffer
             var lines = data.split("\n");
             for(var i = 0; i < lines.length; i++)
             {
-                lines[i] = lines[i].replace(/(\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, "<a style=\"z-index: 4; pointer-events: all; position: relative; color: rgb(82,235,0);\" href=\"#\" onclick=\"window.main.dirnav(event, '$1', " + i + ");\"><b>$1</b></a>");
+                window.dirnavIndex = i;
+                lines[i] = lines[i].replace(/(\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, function(match, $0) {
+                    var valid = window.main.dirnav(null, $0, window.dirnavIndex, true);
+                    var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
+                    const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0}', ${window.dirnavIndex});"><b>${$0}</b></a>`;
+                    return result;
+                });
             }
             var construction = "";
             for(var line of lines)
