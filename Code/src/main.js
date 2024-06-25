@@ -220,7 +220,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t• Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, ./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `./` , followed by N navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tInvalid links will have no apparent, and will appear [tcf55]red[tcf55].";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t• Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `DNL./` , followed by 1 or more navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tInvalid links will have no apparent, and will appear [tcf55]red[tcf55].";
         }
     }
 
@@ -446,7 +446,7 @@ export default class Schema
         var linePointer = lineIndex;
 
         // find the components of the link, removing NULL, "", and "." from that list.
-        var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== ".");
+        var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL.");
 
         // build a debug info object to print to console in the event of an error
         var debug = {
@@ -567,6 +567,10 @@ export default class Schema
         // helper functions
         function getIndentLevel(string)
         {
+            if(string == null || string == "")
+            {
+                return 0;
+            }
             return string.split("\t").length-1;
         }
 
@@ -1253,7 +1257,7 @@ class ExeBuffer extends VirtualBuffer
             for(var i = 0; i < lines.length; i++)
             {
                 window.dirnavIndex = i;
-                lines[i] = lines[i].replace(/(\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, function(match, $0) {
+                lines[i] = lines[i].replace(/(DNL\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, function(match, $0) {
                     var valid = window.main.dirnav(null, $0, window.dirnavIndex, true);
                     var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
                     const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0}', ${window.dirnavIndex});"><b>${$0}</b></a>`;
