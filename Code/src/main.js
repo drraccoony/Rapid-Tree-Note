@@ -510,13 +510,16 @@ export default class Schema
                 }
                 else // keyed navigation
                 {
-                    const keyedRegex = new RegExp("^\\s*" + actions[0].substring(1,actions[0].length-1).replace(/(.)/g, "\\$1") + "\.*");
+                    const key = actions[0].substring(1,actions[0].length-1).replace(/^([^a-zA-Z0-9]*)(.*)/, "$2");
+                    console.log(key);
+                    const keyedRegex = new RegExp("^\\s*[^a-zA-Z0-9]*" + key + "\.*");
+                    console.log(keyedRegex);
                     while(!(lines[linePointer].match(keyedRegex))&& linePointer <= boundUpper)
                     {
                         linePointer++;
                         if(getIndentLevel(lines[linePointer])<=startingLevel)
                         {
-                            console.error("DirNav failed to find a child of key [" + actions[0].substring(1,actions[0].length-1) + "] before exhausting the domain!", debug);
+                            console.error("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
                             return(false);
                         }
                     }
