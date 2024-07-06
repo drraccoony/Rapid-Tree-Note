@@ -446,7 +446,7 @@ export default class Schema
         var linePointer = lineIndex;
 
         // find the components of the link, removing NULL, "", and "." from that list.
-        var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL.");
+        var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL." && item!= "RTN." && item!= "DL.");
 
         // build a debug info object to print to console in the event of an error
         var debug = {
@@ -1257,10 +1257,10 @@ class ExeBuffer extends VirtualBuffer
             for(var i = 0; i < lines.length; i++)
             {
                 window.dirnavIndex = i;
-                lines[i] = lines[i].replace(/(DNL\.(?:\/\.\.|\/\[[^\]]+\])+\/?)/g, function(match, $0) {
-                    var valid = window.main.dirnav(null, $0, window.dirnavIndex, true);
+                lines[i] = lines[i].replace(/(DNL|RTN|DL)(\.)((?:\/\.\.|\/\[[^\]]+\])+)(\/?)/g, function(match, $0, $1, $2, $3) {
+                    var valid = window.main.dirnav(null, $0+$1+$2+$3, window.dirnavIndex, true);
                     var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
-                    const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0}', ${window.dirnavIndex});"><b>${$0}</b></a>`;
+                    const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0+$1+$2+$3}', ${window.dirnavIndex});"><b>${$0+$1+$2+$3}</b></a>`;
                     return result;
                 });
             }
