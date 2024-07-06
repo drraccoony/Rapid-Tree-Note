@@ -465,6 +465,12 @@ export default class Schema
             //prevent the link from navigating to #
             event.preventDefault();
         }
+
+        if(document.getElementById("source").hidden == true) // do nothing if the page is in read-only mode
+        {
+            event.preventDefault();
+            return;
+        }
         
         // build lines and prepare upper and lower bounds
         var lines = this.raw.ref.value.split("\n");
