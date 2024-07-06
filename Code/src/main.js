@@ -159,6 +159,26 @@ export default class Schema
         }
     }
 
+    darkenBorder()
+    {
+        var current = document.getElementById("display").style.border;
+        if(current == "")
+        {
+            return;
+        }
+        var value = parseInt(current.substring(14,17));
+
+        if(value == 0) // after reaching fully black, cancel the interval to save processing
+        {
+            clearInterval(this.outlineInterval);
+            return;
+        }
+
+        value = Math.max(value-5, 0);
+
+        document.getElementById("display").style.border = `4px solid rgb(${value},${value},${value})`;
+    }
+
     /**
      * This function is called every time a key is pressed
      * The function generates a random number between 0 and 8192 and sets it as the value of
@@ -193,6 +213,10 @@ export default class Schema
         if(this.shouldEncode == staticOldValue)
         {
             this.pushURL();
+
+            //make the border flash
+            document.getElementById("display").style.border = `4px solid rgb(255,255,255)`;
+            this.outlineInterval = setInterval(() => this.darkenBorder(), 10);
         }
        
     }
@@ -1051,7 +1075,6 @@ class VirtualBuffer
                     var deltaCharCount = 0; //the number of characters that have been added
                     for(var root of roots)
                     {
-                        console.log("AAAAAAA");
                         if(shouldTab(this.ref.value, root+deltaCharCount+1))
                         {
                             this.ref.value = this.ref.value.substring(0,root+deltaCharCount+1) + "\t" + this.ref.value.substring(root+deltaCharCount+1);
@@ -1066,7 +1089,6 @@ class VirtualBuffer
                     var deltaCharCount = 0; //the number of characters that have been removed
                     for(var root of roots)
                     {
-                        console.log("AAAAAAA");
                         if(this.ref.value.substring(root+deltaCharCount+1, root+deltaCharCount+2) == "\t")
                         {
                             this.ref.value = this.ref.value.substring(0,root+deltaCharCount+1) + "" + this.ref.value.substring(root+deltaCharCount+2);
