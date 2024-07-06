@@ -1046,32 +1046,37 @@ class VirtualBuffer
 
                 //console.debug(roots);
 
-                var rootnum = 1;
-                for(var root of roots)
+                if(!event.shiftKey)
                 {
-                    if(shouldTab(this.ref.value, root+rootnum))
+                    var deltaCharCount = 0; //the number of characters that have been added
+                    for(var root of roots)
                     {
-                        if(!event.shiftKey)
+                        console.log("AAAAAAA");
+                        if(shouldTab(this.ref.value, root+deltaCharCount+1))
                         {
-                            this.ref.value = this.ref.value.substring(0,root+rootnum) + "\t" + this.ref.value.substring(root+rootnum);
-                            rootnum++;
-                            this.ref.selectionStart = root+rootnum;
-                            this.ref.selectionEnd = root+rootnum;
+                            this.ref.value = this.ref.value.substring(0,root+deltaCharCount+1) + "\t" + this.ref.value.substring(root+deltaCharCount+1);
+                            deltaCharCount++;
+                            this.ref.selectionStart = root+deltaCharCount;
+                            this.ref.selectionEnd = root+deltaCharCount;
                         }
-                        else //shift is pressed, REMOVE a \t rather than adding one
+                    }
+                }   
+                else
+                {   
+                    var deltaCharCount = 0; //the number of characters that have been removed
+                    for(var root of roots)
+                    {
+                        console.log("AAAAAAA");
+                        if(this.ref.value.substring(root+deltaCharCount+1, root+deltaCharCount+2) == "\t")
                         {
-                            if(this.ref.value.substring(root+rootnum, root+rootnum+1) == "\t")
-                            {
-                                this.ref.value = this.ref.value.substring(0,root+rootnum) + "" + this.ref.value.substring(root+rootnum+1);
-                                rootnum++;
-                                this.ref.selectionStart = root+rootnum;
-                                this.ref.selectionEnd = root+rootnum;
-                            }
+                            this.ref.value = this.ref.value.substring(0,root+deltaCharCount+1) + "" + this.ref.value.substring(root+deltaCharCount+2);
+                            deltaCharCount--;
+                            this.ref.selectionStart = root+deltaCharCount;
+                            this.ref.selectionEnd = root+deltaCharCount;
                         }
                     }
                 }
             }
-            //setTimeout(() => {window.main.hardFix()}, 25);
         }
 
         /* The below code is checking if the "Enter" key is pressed. If it is, it prevents the default
