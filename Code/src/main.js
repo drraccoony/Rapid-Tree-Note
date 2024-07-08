@@ -46,18 +46,18 @@ export default class Schema
             this.state = "UNLOCKED";
         }
 
-        {
-            this.raw.ref.addEventListener("input", () => this.keyPostRouter());
-            this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event));
-            this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event));
+        { //input processing
+            this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event)); //we need to intercept the key before it is written so we can handle special cases
+            this.raw.ref.addEventListener("input", () => this.keyPostRouter()); //the value of the textarea was changed programatically, so we dont need to be so cautious
+            this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event)); //copying to clipboard requires some additional formatting of the payload
+            this.raw.ref.addEventListener('click', (event) => this.urlPreEncodeOnIdle(event)); //clicking should count as activity for the sake of preventing encode on idle
+            this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event)); //pasting data into the textarea demands immediate, special processing
         }
-
-        {
+        { //decorative
             this.raw.ref.addEventListener('keydown', (event) => this.syncScrollbars(event));
-            this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event));
+            this.raw.ref.addEventListener('click', (event) => this.syncScrollbars(event));
         }
-
-        {
+        { //iterative updater-- recalculate everything every 1000ms while window is focused. Helps protect against edge cases
             this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
             this.focused = true;
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
@@ -244,7 +244,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\tRE/Regular\\ Expressions\\ will\\ be\\ formatted\\ .*[^7]/gmU - **Make sure to escape spaces!**\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `DNL./`, `DL./`, or `RTN./`, followed by 1 or more navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tInvalid links will do nothing when clicked, and will appear DNL./[RED]";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\tRE/Regular\\ Expressions\\ will\\ be\\ formatted\\ .*[^7]/gmU - **Make sure to escape spaces!**\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `DNL./`, `DL./`, or `RTN./`, followed by 1 or more navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tDNL./[Invalid links will do nothing when clicked, and will appear RED]";
         }
     }
 
@@ -460,7 +460,7 @@ export default class Schema
      */
     dirnav(event, payload, lineIndex, testOnly=false)
     {
-        if(!testOnly)
+        if(!testOnly) //during a test, there won't be an event
         {
             //prevent the link from navigating to #
             event.preventDefault();
