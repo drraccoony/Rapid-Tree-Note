@@ -19,6 +19,16 @@ export class URIMannager
         this.maxURILength = 8192;
         this.defaultCompression = "LZMA2";
         this.defaultEncoding = "URI-B64";
+        this.lastAlert = new Date(0); // start as never
+    }
+
+    alertNoSpam()
+    {
+        if(new Date().getTime() - this.lastAlert >= 30000)
+        {
+            alert("Maxium URL Length Reached!\n\nShorten your document or prepare to save the raw text contents instead of the URL!");
+        }
+        this.lastAlert = new Date().getTime();
     }
 
     pull(URL) //turn URL into data
@@ -83,6 +93,7 @@ export class URIMannager
         if(URL.length + 512 > this.maxURILength)
         {
             URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + "MAXIMUM-LINK-LENGTH-EXCEEDED";
+            this.alertNoSpam();
         }
 
         history.replaceState({}, "", URL);

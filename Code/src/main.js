@@ -53,41 +53,17 @@ export default class Schema
             this.raw.ref.addEventListener('click', (event) => this.urlPreEncodeOnIdle(event)); //clicking should count as activity for the sake of preventing encode on idle
             this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event)); //pasting data into the textarea demands immediate, special processing
         }
-        { //decorative
-            this.raw.ref.addEventListener('keydown', (event) => this.syncScrollbars(event));
-            this.raw.ref.addEventListener('click', (event) => this.syncScrollbars(event));
+        { //visual effects
+            this.raw.ref.addEventListener('keydown', (event) => this.syncScrollbars(event)); // ensure the textboxes overlap contents
+            this.raw.ref.addEventListener('click', (event) => this.syncScrollbars(event)); // ensure the textboxes overlap contents
+            document.addEventListener('wheel', (event) => this.scaleTextOnZoom(event), { passive: false}); // intercept mouse zoom events and scale the document text instead
         }
         { //iterative updater-- recalculate everything every 1000ms while window is focused. Helps protect against edge cases
             this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
             this.focused = true;
-            document.addEventListener("visibilitychange", (event) => this.focusToggle(event));
+            document.addEventListener("visibilitychange", (event) => this.focusToggle(event)); //whenever the tab is not on top, pause the interval updater to save resources
+            window.addEventListener('beforeunload', (event) => this.safeShutdown(event)); // explicitly clear the interval when closing
         }
-
-        document.addEventListener('wheel', function(event) {
-            return;
-            // Calculate the new font size based on the current zoom level
-            let displaySize = parseFloat(document.getElementById("display").style.fontSize);
-            let displayTop = parseFloat(document.getElementById("display").style.top);
-            let sourceSize = parseFloat(document.getElementById("source").style.fontSize);
-            if (event.ctrlKey || event.shiftKey) {
-                console.debug(event);
-                // Adjust the font size based on zooming
-                displaySize += event.deltaY * -0.001; // Adjust this multiplier as needed
-                sourceSize += event.deltaY * -0.001; // Adjust this multiplier as needed
-                
-                // Ensure the font size stays within reasonable bounds
-                displaySize = Math.max(0.5, Math.min(displaySize, 2)); // Example bounds
-                sourceSize = Math.max(0.5, Math.min(sourceSize, 2)); // Example bounds
-
-                displayTop = -1 * displaySize;
-
-                document.getElementById("display").style.fontSize = displaySize + 'vw';
-                document.getElementById("source").style.fontSize = sourceSize + 'vw';
-                document.getElementById("display").style.top = displayTop + 'vw';
-            }
-        });
-
-        window.addEventListener('beforeunload', (event) => this.safeShutdown(event));
 
         //force inital values
         this.setURL(urlData);
@@ -143,6 +119,51 @@ export default class Schema
         {
             this.focused = true;
         }
+    }
+
+    /**
+     * The function `scaleTextOnZoom` adjusts font sizes and display position based on user zooming
+     * behavior. If the user is NOT holding ctrl (i.e., not zooming, just scrolling) no action is taken.
+     * OTHERWISE, the zoom is prevented and instead the font size of the document is modified.
+     * @param event - The `event` parameter in the `scaleTextOnZoom` function represents the event
+     * object that is generated when a user scrolls the mousewheel.
+     */
+    scaleTextOnZoom(event)
+    {
+        if(!event.ctrlKey) // user is scrolling, not zooming. do nothing.
+        {
+            return;
+        }
+
+        event.preventDefault();
+
+        // Get the current font sizes
+        let displaySize = parseFloat(document.getElementById("display").style.fontSize);
+        let displayTop = parseFloat(document.getElementById("display").style.top);
+        let sourceSize = parseFloat(document.getElementById("source").style.fontSize);
+
+        // Scale the sizes
+        const scaleSpeed = 0.1;
+        const smallestAllowed = 0.5;
+        const largestAllowed = 2.0;
+        if(event.deltaY > 0) // Zoom OUT (Down)
+        {
+            displaySize = Math.max(smallestAllowed, displaySize-scaleSpeed);
+            sourceSize = Math.max(smallestAllowed, sourceSize-scaleSpeed);
+        }
+        if(event.deltaY < 0) // Zoom IN (Up)
+        {
+            displaySize = Math.min(largestAllowed, displaySize+scaleSpeed);
+            sourceSize = Math.min(largestAllowed, sourceSize+scaleSpeed);
+        }
+
+        // set the displayTop offset
+        displayTop = -1 * displaySize;
+
+        // apply new font sizes
+        document.getElementById("display").style.fontSize = displaySize + 'vw';
+        document.getElementById("source").style.fontSize = sourceSize + 'vw';
+        document.getElementById("display").style.top = displayTop + 'vw';
     }
 
     /**
@@ -550,6 +571,10 @@ export default class Schema
                         linePointer++;
                         if(getIndentLevel(lines[linePointer])<=startingLevel)
                         {
+                            if(key.startsWith("Invalid links will do nothing when clicked")) //dont spam console on the sample invalid link
+                            {
+                                return(false);
+                            }
                             console.error("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
                             return(false);
                         }
@@ -557,7 +582,7 @@ export default class Schema
                     actions.shift();
                 }
             }
-            console.debug("an action was consumed... current linePointer=" + linePointer);
+            //console.debug("an action was consumed... current linePointer=" + linePointer);
         }
 
         if(testOnly) // don't actually do navigation if we are just testing for validity
