@@ -187,7 +187,7 @@ export default class Schema
         {
             return;
         }
-        var value = parseInt(current.substring(14,17));
+        var value = parseInt(current.substring(17,20));
 
         if(value == 0) // after reaching fully black, cancel the interval to save processing
         {
@@ -197,7 +197,7 @@ export default class Schema
 
         value = Math.max(value-5, 0);
 
-        document.getElementById("display").style.border = `4px solid rgb(${value},${value},${value})`;
+        document.getElementById("display").style.border = `0.25vw solid rgb(${value},${value},${value})`;
     }
 
     /**
@@ -236,7 +236,7 @@ export default class Schema
             this.pushURL();
 
             //make the border flash
-            document.getElementById("display").style.border = `4px solid rgb(255,255,255)`;
+            document.getElementById("display").style.border = `0.25vw solid rgb(255,255,255)`;
             this.outlineInterval = setInterval(() => this.darkenBorder(), 10);
         }
        
@@ -642,7 +642,7 @@ export default class Schema
             carratFinder.style.padding = "5px";
             carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
             carratFinder.style.whiteSpace = "pre-wrap";
-            carratFinder.style.border = "solid 4px transparent";
+            carratFinder.style.border = "solid 0.25vw transparent";
             carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
             document.getElementById("main").appendChild(carratFinder);
           
@@ -1349,7 +1349,7 @@ class ExeBuffer extends VirtualBuffer
         data = data.replace(/(?<!\_|\\)(\_{2})([^\n_]+?)(\1)(?!\_|\\)/g, '<span style="color:cyan"><b>$1</b></span><u>$2</u><span style="color:cyan"><b>$3</b></span>');
         
         //handle spoiler - made possible by https://codepen.io/volv/details/RrjooB
-        data = data.replace(/(?<!\||\\)(\|{2})([^\n\|]+?)(\1)(?!\||\\)/g, '<span style="color:cyan"><b>$1</b></span><a style=\"z-index: 4; pointer-events: all; position: relative;\" href=\"#s\" title=\"$2\"><span style=\"font-size: 0px;\">$2</span></a><span style="color:cyan"><b>$3</b></span>');
+        data = data.replace(/(?<!\||\\)(\|{2})([^\n\|]+?)(\1)(?!\||\\)/g, '<span style="color:cyan"><b>$1</b></span><a style=\"z-index: 4; pointer-events: all; position: relative;\" href=\"#s\" title=\"$2\"><span style=\"font-size: 0vw;\">$2</span></a><span style="color:cyan"><b>$3</b></span>');
 
         // handle bold
         data = data.replace(/(?<!\*|\\)(\*{2})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><b>$2</b><span style="color:cyan"><b>$3</b></span>');
