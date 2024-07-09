@@ -1183,8 +1183,6 @@ class VirtualBuffer
             var indentCurrent = countTabs(lineCurrent);
             var indentPrev = countTabs(linePrev);
 
-            console.log(indentCurrent, indentPrev);
-
             lineCurrent = string.substring(0, start).split("\n");
             lineCurrent = lineCurrent[lineCurrent.length-1];
 
@@ -1214,13 +1212,11 @@ class VirtualBuffer
             
             function countTabs(input)
             {
-                console.log(input);
                 if(input=="")
                 {
                     return 0;
                 }
                 var count = input.match(/^(\t*)/g);
-                console.log(count);
                 if(count != null)
                 {
                     count = count[0].length;
