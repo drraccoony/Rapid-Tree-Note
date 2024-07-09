@@ -1166,21 +1166,27 @@ class VirtualBuffer
          */
         function shouldTab(string, start)
         {
-            string = string.substring(0, start);
+            var linecount = string.substring(0, start).split("\n").length;
             var lines = string.split("\n");
-            var current = lines[lines.length-1];
-            var prev = "";
+            var lineCurrent = lines[linecount-1];
+            var linePrev = "";
             if(lines.length > 1)
             {
-                prev = lines[lines.length-2]
+                linePrev = lines[linecount-2]
             }
-            var prevChar = string.substring(start-1,start);
 
-            var noEntombment = (prevChar == "\t" || prevChar == "\n");
-            var noLeading = (countTabs(current)<=countTabs(prev));
+            var indentCurrent = countTabs(lineCurrent);
+            var indentPrev = countTabs(linePrev);
 
-            return (noEntombment && noLeading);
-
+            if(indentCurrent < indentPrev + 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
             function countTabs(input)
             {
                 var count = input.match(/^\t*(\t)/gm);
