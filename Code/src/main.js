@@ -649,9 +649,14 @@ export default class Schema
             // Copy the text up to the caret position
             carratFinder.innerHTML = textarea.value.substring(0, textarea.selectionEnd) + "<span id=\"dirNavCarrat\"></span>";
 
-            // scroll to the element (plus some space so the header doesn't cover it up)
-            document.getElementById("dirNavCarrat").scrollIntoView();
-            window.scrollBy(0, (-1 * document.getElementById('header').offsetHeight) - 24);
+            // scroll to the element (center it vertically and as far to the left as possible)
+            document.getElementById("dirNavCarrat").scrollIntoView(
+                {
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'end'
+                }
+            );
           
             // Remove the temporary div
             document.getElementById("dirNavCarrat").remove();
