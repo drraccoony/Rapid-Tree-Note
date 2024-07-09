@@ -522,7 +522,7 @@ export default class Schema
                 var targetIndentLevel = getIndentLevel(lines[linePointer])-1;
                 if(targetIndentLevel < 0)
                 {
-                    console.error("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
+                    console.debug("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
                     return(false);
                 }
                 else
@@ -533,7 +533,7 @@ export default class Schema
                     }
                     if(linePointer < 0)
                     {
-                        console.error("DirNav could not find a proper parent...", debug);
+                        console.debug("DirNav could not find a proper parent...", debug);
                         return(false);
                     }
                     actions.shift();
@@ -552,7 +552,7 @@ export default class Schema
                         linePointer++;
                         if(getIndentLevel(lines[linePointer])<=startingLevel)
                         {
-                            console.error("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
+                            console.debug("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
                             return(false);
                         }
                         if(getIndentLevel(lines[linePointer])==startingLevel+1)
@@ -575,7 +575,7 @@ export default class Schema
                             {
                                 return(false);
                             }
-                            console.error("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
+                            console.debug("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
                             return(false);
                         }
                     }
@@ -1183,7 +1183,12 @@ class VirtualBuffer
             var indentCurrent = countTabs(lineCurrent);
             var indentPrev = countTabs(linePrev);
 
-            if(indentCurrent < indentPrev + 1)
+            console.log(indentCurrent, indentPrev);
+
+            lineCurrent = string.substring(0, start).split("\n");
+            lineCurrent = lineCurrent[lineCurrent.length-1];
+
+            if(indentCurrent < indentPrev + 1 && !checkEntombment(lineCurrent))
             {
                 return true;
             }
@@ -1191,10 +1196,31 @@ class VirtualBuffer
             {
                 return false;
             }
+
+            function checkEntombment(line) //make sure we only insert tabs at the start of a line, not in the middle
+            {
+                var count = line.match(/([\S ]+)/g);
+                if(count != null)
+                {
+                    count = count[0].length;
+                }
+                else
+                {
+                    count = 0;
+                }
+
+                return(count > 0);
+            }
             
             function countTabs(input)
             {
-                var count = input.match(/^\t*(\t)/gm);
+                console.log(input);
+                if(input=="")
+                {
+                    return 0;
+                }
+                var count = input.match(/^(\t*)/g);
+                console.log(count);
                 if(count != null)
                 {
                     count = count[0].length;
