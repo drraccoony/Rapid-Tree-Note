@@ -51,6 +51,7 @@ export default class Schema
             this.raw.ref.addEventListener("input", () => this.keyPostRouter()); //the value of the textarea was changed programatically, so we dont need to be so cautious
             this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event)); //copying to clipboard requires some additional formatting of the payload
             this.raw.ref.addEventListener('click', (event) => this.urlPreEncodeOnIdle(event)); //clicking should count as activity for the sake of preventing encode on idle
+            this.raw.ref.addEventListener("input", () => this.urlPreEncodeOnIdle()); // things like spellcheck (which change the document contents) count against inactivity
             this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event)); //pasting data into the textarea demands immediate, special processing
         }
         { //visual effects
