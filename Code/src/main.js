@@ -266,7 +266,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\tRE/Regular\\ Expressions\\ will\\ be\\ formatted\\ .*[^7]/gmU - **Make sure to escape spaces!**\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tNote that DirNav links always start with `DNL./`, `DL./`, or `RTN./`, followed by 1 or more navigational tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tDNL./[Invalid links will do nothing when clicked, and will appear RED]";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\tRE/Regular\\ Expressions\\ will\\ be\\ formatted\\ .*[^7]/gmU - **Make sure to escape spaces!**\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tAll DirNav links start with an *Anchor Token* followed by 1 or more *Navigational Tokens*\n\t\t\tAnchor Tokens\n\t\t\t\t`DNL./`, `DL./`, `RTN./` - Start navigation at THIS LINE\n\t\t\t\t`DNL/`, `DL/`, `RTN/` - Start navigation at the root of the document (go up until first line at indent-level 0)\n\t\t\t\t`DNL~/`, `DL~/`, `RTN~/` - Start at one level before root (go up until first line at indent-level 1)\n\t\t\tNavigational Tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tDNL./[Invalid links will do nothing when clicked, and will appear RED]";
         }
     }
 
@@ -518,70 +518,122 @@ export default class Schema
         // if at any point a bounds is exceeded, an error is printed to console and the function returns early (with no effect)
         while(actions.length != 0)
         {
-            if(actions[0]=="..") // parent navigation
+            switch(actions[0])
             {
-                var targetIndentLevel = getIndentLevel(lines[linePointer])-1;
-                if(targetIndentLevel < 0)
-                {
-                    console.debug("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
-                    return(false);
-                }
-                else
-                {
-                    while(linePointer >= 0 && getIndentLevel(lines[linePointer])!=targetIndentLevel)
+                case "RTN.":    // self-navigation, do nothing
+                case "DNL.":    // self-navigation, do nothing
+                case "DL.":     // self-navigation, do nothing
+                    actions.shift();
+                    break;
+                case "RTN":     // root-navigation (/)
+                case "DNL":     // root-navigation (/)
+                case "DL":      // root-navigation (/)
+                    var targetIndentLevel = 0;
+                    if(targetIndentLevel < 0)
                     {
-                        linePointer--;
-                    }
-                    if(linePointer < 0)
-                    {
-                        console.debug("DirNav could not find a proper parent...", debug);
+                        console.debug("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
                         return(false);
                     }
-                    actions.shift();
-                }
-            }
-            else
-            {
-                var startingLevel = getIndentLevel(lines[linePointer]); // if at any point we encoutner a line AT or below this level, abort!
-                
-                if(actions[0].match(/\[[0-9]*\]/)) // index navigation
-                {
-                    var targetChild = parseInt(actions[0].substring(1,actions[0].length-1), 10);
-                    var currentChild = -1;
-                    while(currentChild < targetChild && linePointer <= boundUpper)
+                    else
                     {
-                        linePointer++;
-                        if(getIndentLevel(lines[linePointer])<=startingLevel)
+                        while(linePointer >= 0 && getIndentLevel(lines[linePointer])!=targetIndentLevel)
                         {
-                            console.debug("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
+                            linePointer--;
+                        }
+                        if(linePointer < 0)
+                        {
+                            console.debug("DirNav could not find a proper parent...", debug);
                             return(false);
                         }
-                        if(getIndentLevel(lines[linePointer])==startingLevel+1)
-                        {
-                            currentChild++;
-                        }
+                        actions.shift();
                     }
-                    actions.shift();
-                }
-                else // keyed navigation
-                {
-                    const key = actions[0].substring(1,actions[0].length-1).replace(/^([^a-zA-Z0-9]*)(.*)/, "$2");
-                    const keyedRegex = new RegExp("^\\s*[^a-zA-Z0-9]*" + key + "\.*");
-                    while(!(lines[linePointer].match(keyedRegex))&& linePointer <= boundUpper)
+                    break;
+                case "RTN~":     // one-from-root-navigation (/...)
+                case "DNL~":     // one-from-root-navigation (/...)
+                case "DL~":      // one-from-root-navigation (/...)
+                    var targetIndentLevel = 1;
+                    if(targetIndentLevel < 0)
                     {
-                        linePointer++;
-                        if(getIndentLevel(lines[linePointer])<=startingLevel)
+                        console.debug("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
+                        return(false);
+                    }
+                    else
+                    {
+                        while(linePointer >= 0 && getIndentLevel(lines[linePointer])!=targetIndentLevel)
                         {
-                            if(key.startsWith("Invalid links will do nothing when clicked")) //dont spam console on the sample invalid link
+                            linePointer--;
+                        }
+                        if(linePointer < 0)
+                        {
+                            console.debug("DirNav could not find a proper parent...", debug);
+                            return(false);
+                        }
+                        actions.shift();
+                    }
+                    break;
+                case "..": // parent navigation
+                    var targetIndentLevel = getIndentLevel(lines[linePointer])-1;
+                    if(targetIndentLevel < 0)
+                    {
+                        console.debug("DirNav called for invalid Indent Level " + targetIndentLevel, debug);
+                        return(false);
+                    }
+                    else
+                    {
+                        while(linePointer >= 0 && getIndentLevel(lines[linePointer])!=targetIndentLevel)
+                        {
+                            linePointer--;
+                        }
+                        if(linePointer < 0)
+                        {
+                            console.debug("DirNav could not find a proper parent...", debug);
+                            return(false);
+                        }
+                        actions.shift();
+                    }
+                    break;
+                default: // [] navigation
+                    var startingLevel = getIndentLevel(lines[linePointer]); // if at any point we encoutner a line AT or below this level, abort!
+                    
+                    if(actions[0].match(/\[[0-9]*\]/)) // index navigation [0-9*]
+                    {
+                        var targetChild = parseInt(actions[0].substring(1,actions[0].length-1), 10);
+                        var currentChild = -1;
+                        while(currentChild < targetChild && linePointer <= boundUpper)
+                        {
+                            linePointer++;
+                            if(getIndentLevel(lines[linePointer])<=startingLevel)
                             {
+                                console.debug("DirNav failed to find a child of index [" + targetChild + "] before exhausting the domain!", debug);
                                 return(false);
                             }
-                            console.debug("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
-                            return(false);
+                            if(getIndentLevel(lines[linePointer])==startingLevel+1)
+                            {
+                                currentChild++;
+                            }
                         }
+                        actions.shift();
                     }
-                    actions.shift();
-                }
+                    else // keyed navigation [\S]
+                    {
+                        const key = actions[0].substring(1,actions[0].length-1).replace(/^([^a-zA-Z0-9]*)(.*)/, "$2");
+                        const keyedRegex = new RegExp("^\\s*[^a-zA-Z0-9]*" + key + "\.*");
+                        while(!(lines[linePointer].match(keyedRegex))&& linePointer <= boundUpper)
+                        {
+                            linePointer++;
+                            if(getIndentLevel(lines[linePointer])<=startingLevel)
+                            {
+                                if(key.startsWith("Invalid links will do nothing when clicked")) //dont spam console on the sample invalid link
+                                {
+                                    return(false);
+                                }
+                                console.debug("DirNav failed to find a child of key [" + key + "] before exhausting the domain!", debug);
+                                return(false);
+                            }
+                        }
+                        actions.shift();
+                    }
+                    break;
             }
             //console.debug("an action was consumed... current linePointer=" + linePointer);
         }
@@ -1353,7 +1405,7 @@ class ExeBuffer extends VirtualBuffer
             for(var i = 0; i < lines.length; i++)
             {
                 window.dirnavIndex = i;
-                lines[i] = lines[i].replace(/(DNL|RTN|DL)(\.)((?:\/\.\.|\/\[[^\]]+\])+)(\/?)/g, function(match, $0, $1, $2, $3) {
+                lines[i] = lines[i].replace(/(DNL|RTN|DL)([\.\~]{0,1})((?:\/\.\.|\/\[[^\]]+\])+)(\/?)/g, function(match, $0, $1, $2, $3) {
                     var valid = window.main.dirnav(null, $0+$1+$2+$3, window.dirnavIndex, true);
                     var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
                     const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0+$1+$2+$3}', ${window.dirnavIndex});"><b>${$0+$1+$2+$3}</b></a>`;
