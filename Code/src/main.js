@@ -1421,6 +1421,21 @@ class ExeBuffer extends VirtualBuffer
             data = construction;
         }
 
+        // handle arrows
+        data = data.replace(/((?:\&lt\;)?)(-+|=+)((?:\&gt\;)?)/g, function(match, p1, p2, p3) {
+            
+            var rawstr = p1+p2+p3;
+
+            if(rawstr.startsWith("\&lt\;") || rawstr.split("").reverse().join("").startsWith("\;tg\&")) // arrow is properly formed
+            {
+                return `<b>${rawstr}</b>`;
+            }
+            else // arrow is malformed, return raw text
+            {
+                return rawstr;
+            }
+        });
+
         // handle italic
         data = data.replace(/(?<!\*|\\)(\*{1})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
 
