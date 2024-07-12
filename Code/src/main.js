@@ -1197,10 +1197,10 @@ class VirtualBuffer
         current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and
         automatically indents the new line based on the number of tabs at the current caret
         position. */
-        if(event.key == "Enter" && this.start == this.end)
+        if(event.key == "Enter")
         {
             event.preventDefault();
-            if(shouldNewline(this.ref.value, this.start))
+            if(shouldNewline(this.ref.value, this.start) && this.start == this.end)
             {
                 var autoIndent = this.countCaretLeft();
                 this.ref.value = this.ref.value.substring(0,this.start) + "\n" + this.ref.value.substring(this.end);
