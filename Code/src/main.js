@@ -456,6 +456,37 @@ export default class Schema
         this.raw.ref.selectionEnd = hold_end;
     }
 
+    scrollToCaret(textarea) {
+        // Create a temporary div element
+        var carratFinder = document.createElement('div');
+        //carratFinder.style.visibility = 'hidden';
+        carratFinder.style.position = 'absolute';
+        carratFinder.style.color = "red";
+        carratFinder.style.padding = "5px";
+        carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
+        carratFinder.style.whiteSpace = "pre-wrap";
+        carratFinder.style.border = "solid 0.25vw transparent";
+        carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
+        document.getElementById("main").appendChild(carratFinder);
+      
+        // Copy the text up to the caret position
+        carratFinder.innerHTML = textarea.value.substring(0, textarea.selectionEnd) + "<span id=\"scrollCarrat\"></span>";
+
+        // scroll to the element (center it vertically and as far to the left as possible)
+        document.getElementById("scrollCarrat").scrollIntoView(
+            {
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'end'
+            }
+        );
+      
+        // Remove the temporary div
+        document.getElementById("scrollCarrat").remove();
+        document.getElementById("main").removeChild(carratFinder);
+      
+    }
+
     /**
      * The `dirnav` function in JavaScript is designed to navigate to a specific location in the document
      * based on the provided DirNav link.
@@ -672,7 +703,7 @@ export default class Schema
             }
             this.raw.ref.focus();
             this.raw.writeCarrat();
-            scrollToCaret(this.raw.ref);
+            this.scrollToCaret(this.raw.ref);
             return(true);
         }
         
@@ -684,37 +715,6 @@ export default class Schema
                 return 0;
             }
             return string.split("\t").length-1;
-        }
-
-        function scrollToCaret(textarea) {
-            // Create a temporary div element
-            var carratFinder = document.createElement('div');
-            //carratFinder.style.visibility = 'hidden';
-            carratFinder.style.position = 'absolute';
-            carratFinder.style.color = "red";
-            carratFinder.style.padding = "5px";
-            carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
-            carratFinder.style.whiteSpace = "pre-wrap";
-            carratFinder.style.border = "solid 0.25vw transparent";
-            carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
-            document.getElementById("main").appendChild(carratFinder);
-          
-            // Copy the text up to the caret position
-            carratFinder.innerHTML = textarea.value.substring(0, textarea.selectionEnd) + "<span id=\"dirNavCarrat\"></span>";
-
-            // scroll to the element (center it vertically and as far to the left as possible)
-            document.getElementById("dirNavCarrat").scrollIntoView(
-                {
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'end'
-                }
-            );
-          
-            // Remove the temporary div
-            document.getElementById("dirNavCarrat").remove();
-            document.getElementById("main").removeChild(carratFinder);
-          
         }
     }
 }
@@ -1093,6 +1093,8 @@ class VirtualBuffer
      */
     keyHandler(event, callback)
     {
+        console.log(event);
+
         if(event == undefined)
         {
             event = { "key": "none" };
@@ -1195,7 +1197,7 @@ class VirtualBuffer
         current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and
         automatically indents the new line based on the number of tabs at the current caret
         position. */
-        if(event.key == "Enter")
+        if(event.key == "Enter" && this.start == this.end)
         {
             event.preventDefault();
             if(shouldNewline(this.ref.value, this.start))
@@ -1208,6 +1210,7 @@ class VirtualBuffer
                     this.ref.value = this.ref.value.substring(0,this.start) + "\t" + this.ref.value.substring(this.end);
                     this.moveCarrat(1);
                 }
+                window.main.scrollToCaret(this.ref);
             }
         }
 
