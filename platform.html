@@ -9,13 +9,25 @@
     <pre id="display"></pre>
 
     <script>
-      var output = "";
-      console.log(window.navigator);
-      for(var attribute in window.navigator)
+      document.getElementById("display").textContent = printObject(window.navigator, 0);
+
+      function printObject(object, indent)
       {
-        output += `"${attribute}","${window.navigator[attribute]}"\n`;
+        var output = "";
+        for(var attribute in object)
+        {
+          if(typeof object[attribute] == "object")
+          {
+            output += "\t".repeat(indent) + `"${attribute}","${object[attribute]}","${typeof object[attribute]}"\n`;
+            output += printObject(object[attribute], indent+1); 
+          }
+          else
+          {
+            output += "\t".repeat(indent) + `"${attribute}","${object[attribute]}","${typeof object[attribute]}"\n`;
+          }
+        }
+        return output;
       }
-      document.getElementById("display").textContent = output;
     </script>
 
   </body>
