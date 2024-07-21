@@ -1215,8 +1215,6 @@ class VirtualBuffer
             }
         }
 
-        window.main.scrollToCaret(this.ref);
-
         this.state = "LOCKED";
         setTimeout(() => {callback()}, 10);
 
