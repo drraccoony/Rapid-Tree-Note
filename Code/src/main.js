@@ -201,6 +201,34 @@ export default class Schema
         document.getElementById("display").style.border = `0.25vw solid rgb(${value},${value},${value})`;
     }
 
+    // special function used to redirect the user to static pages based on a <a>'s parameter. used for default homepage documentation sub-pages
+    redir(event, payload)
+    {
+        event.preventDefault();
+        payload = payload.replaceAll("#", "");
+        var url = "";
+        switch(payload)
+        {
+            case "help-indentation":
+                url = "./program.html?enc=URI-B64&cmpr=LZMA2&data=3YCAgILphoCAgICAgIDkOxgOtOa1RMWtC1rAWgHD4MuS2q4s-N7_eczgABt9OWpoi5V3uc9KWgITdID0KJ7OLRRh3HlkPu04VZFxrO3tKXJ7f3IKWBHU0q03LrS5PuobDSkddQkpvWcCmWagcPrhDnGzx3OoPOt4EhEIQjOxtqU3GJo470FmiRu6-OUiz75FJ6sBBdbgfBEHPW5R3W-6Jispd3WiJ1u9eJIxJUxVp4JZNPgz8aMjmxFkZREwJlLaOGHWjZqIW0qWoJgG-_Y5_44xQxkPJ4yfzHXVWWiI_EDURZWieuUU3858-VwiZ7afzJ4RWc3uIDdhTIlUGumcoZXa27uTZDRFGEXvoknP8n3lVaVEj1ciNydGtsiuZWA9ILEuP38ACe2gz9hyyFGzFtfMr40yTH6HuAX3kAI2eGQpGoBr7Lq-1UqRF55PjQeHOhHWzR4URk7dZiz_4ukMLoacSIdh5T4_toR8bBnt-xPrkvGrH9tR-uZ_337l-wRuFNjKEimxyqOLm57p7_Aq7y64QM_pSXiHYy6mDDUItaaqFe4G5HGaLTOaKMN2eWklpSqc4D_E-V5qPswmVsnraXtPjWowwluyeVRumKgq3poBKHS5iub1WHDIuGzs8I1uyeu0AUXpR4NmT4jxNVftddfNSe4JwfvL-LggOyh7Jw5VqWUBrn2xp_kLr9EHf0mcsgA";
+                break;
+            case "help-text_formatting":
+                url = "./program.html?enc=URI-B64&cmpr=LZMA2&data=3YCAgILai4CAgICAgIDquduPqXb7jRIeXZJa5quXL-_YBULetrv7Fa9zmEMC2eluivt2vlCNZPiuXsbhkv_GjRA-b-HKc2DxUmBI4U5mH-sgkkrVSDLm2sbiGLCKZ1npMhvi7MoVVP9nZ5FGbmAw65D3aTQiA1gxofLLmGoVYs5WohUUrc8JknZQ6GsEYIST0CYspt_flZYi_sLWMVZCN0SZSwAfjIbWorOqB-QW05HfuubNlhmH82QDGLWKiWkgV3rToBJsg5HYo3-r0_v8e1QDlDz3imUAck5mzoG0RhBrXHqE92loavL0hX0XxSd6Bs1Nty5oOEf-TXE0Uu1nL-Dvn2BJ1_opeElPQZ4jASNYSxQkpCjByHpzjEyp8RBOlOsfNLKmaf10oIV-1qnN2YFMPuoQjLKVQVY9vW4SqqotAMvIP8bPfGSCe6X8tufidslIzTQYo-cg4bebw2Yrp7eldOaNpdVjproufTjApo-m2wyFH3elDkHfirbkHB-0ZtKUa-m4esdIn-xwN-ik-O9Ix8qvT1W91ysiIDS6FIiieb4SC8KL1PUsl27c6wLR1Q2dbL6tSsV36zFfdzPnyzQOkbtOBhlg2lZx7WEW9EM-Rf7fa_morYQKT3t5lU7sleg_NK_56lcz3UHhjMl-LDD5Zq3z3fXgAW53Wc0NTbWXYgd0pNlEAX0Ztp7UD6mN3a829d9XOq1wgvBDP1PLlZ12-2fowjie5TNsZwSoZt1kGsLwPJYFWsnTra8zY8xLh2pGz2lsQU1Wr2JEcWoZEC3jNZqYujJpnpRTLJp6Jcxsyzb65BiqMPWtpWj99I4Q9FYICq2_TUAUaJ59bpFY8ubOlfI-AQNG2Yx7y-W49_v1WufVkDLmQYEora48kwFqNkHh8PajsKkYUjEcZZbHBdiRBjUomLl1UvfF568f17vVRIuORTYNEZ3ArtZ5enbDxT25vihTLwn6B8f84-hNpKFPbwR_lU9LbyvYDWBQienQeE_ElXqJkgEDGajAPuozNb80M6fhDdGNJ9ug_WyZlj_WRRAugMxPn6W0xwrtaNvk7Vf6HUG-ZVPbC7osp-tWPjsUQUPdRXt2W7fZHTatXOoTe-yF0mZu-vl4UWvCtodD4J5J96b7QBu_3ncNI6mCm6m22s5qdKbKRzt4RwQdYskeeIF-Ba9mAZPaOQN9ODA8NvPBQkYk_lpKPeAZd-hNB-KwgCnq3zav8_TmpNnvDfZI0vFbW3FNWmDiIBUQxEGWNo6Lfgiyew";
+                break;
+            case "help-color_control":
+                url = "./program.html?enc=URI-B64&cmpr=LZMA2&data=3YCAgIK2hYCAgICAgIDhO1kOZubIfbdOaZ6jTxWIq-i-xz9-HbveW2rGJk_L2-k52k7-ExQuFW_4hTZr1aIQzNO5FhLr-Sgdup_csPMZt5azFtX7yGg2bNT7gpFTfSjHpQnCKVPljEfFYQGtWQfQCzESnAg_tl8Kua0EXl4YkF02fNb_VBqA-_Z4v1Cbrlwpu8C2KXAjg-2qfcyV76zBZu8DQCE14jNsE0NOTgH1MFaR8mrdLXq1mDfwr06aDg-AsV6_YoYiuGi12oJVCk7t-TXV6EFkGlv165TIAW1NZhjDPHQXNOpabwTOhV_QLG6bkNT8-xJiouHjzdZh0N5Ze6H-YgvVFvCd0Seah2b_4_E_HkzhCiTqorg2g-YicZNS81mGxF1HZDLjonuFSqoz8ESG-Ep5A4LexltIKk5NT2TvWGqtcLNWDzG5I_TX-YKAI_C2QMyghMKj7_cld1OUep_VyblwvuHUKvV_rIlTBhxIBnd1ekfe0CKudRustcuk2Q5mnCLuR3DU9cvJdnhZ5F2tqoJHf3aZ22IjBgDKtMi-Es73fJnz_y9PgONMYDjrvDBvBo2bxE5XaN0UmV2jHfhtA2v7CyCL4COxCZ0WhzjCbI3Eqh7UhS8c7-Q6trlfwqyLulyqc142f0jkQA0";
+                break;
+            case "help-dnl":
+                url = "./program.html?enc=URI-B64&cmpr=LZMA2&data=3YCAgIKehoCAgICAgIDiutrOq5LNtAw18HOWiMAW1rroU-DyU6OTOoWHEPG-qGBiF0AQurJBssKAtrelsj1rjqxX14u6oUB8FnC3uv_GWNOHszDfLh4a-Qe2R4h7EdFTJCYLGorvsjVgsM9K4vERHDqoRda7OK0q7jrxfTqLNT_VoxeOjP4e6D2tQHertb6N3CPFO_aWqSRdcYjQDxSWjUxE6f7UmBEMJ6OxtScvkHKoYZVGOsnv0SbzB1HXweVcBqRxgKpceyWIF7fy4gAvyC3OUNQWnQDh5YhJS-40UKa7lyk998N0FUqlhy1FwtOT61JyMzVggkWVM7AhgQbnMcCE-87kMjR5yFOUbODXHAOuvgmBufU-fF8j9-5ADPsIqaHTBrqQ1nLa1j7NUx9csfC8cafHig915884xXgOFLjBb_OVeuidnbv8E2wzRpOrANQICPQYr5WAQ9UmTiG0vRpZiCzxNX3CiSaMfECmpkbuG5p4IN6atIzan3DnnxaYuftCyHR4jI9xKA6lX0LJV8QbP5ZqGYG1RUxwFqhiarmQCP7VrlEBWTW8mpoPYBEwH0wG-iDiKYdkIZLI9zRG9P8rYwGpuNDFK_05BmWaSZRcBFZr3rWurGt59-erRwoCIZVsRvigmCwwCmaAyRtcapk0GiwrtsGEQP3IsvPCNYwZJCDvTMY04PdzYPepGORcwjtt4p7zY0_n6JaPBYXBHLX3qI8hOP2sTFdlByN5ZgVPvJRFk-Oo1hw0EcwT4UJk4xf6BIc6_flgF_JHLkaVi0qSknCDMm9NhHS3A4sl7XBqnPnq7inpE0U4NZ9Ho4XxTAo9w0HWjG0JOAifpyBl-hEsYiHF8KAKo0B5no7qTEgoDQDTcKsNgxTl3XR_YaN3uA";
+                break;
+            default:
+                console.error(`Invalid redir called.\nTARGET: ${payload}`);
+                return;
+        }
+        history.pushState({}, "", window.location);
+        window.location.replace(url);
+    }
+
     /**
      * This function is called every time a key is pressed
      * The function generates a random number between 0 and 8192 and sets it as the value of
@@ -266,7 +294,7 @@ export default class Schema
         }
         else
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions\n\t\tIndentation\n\t\t\tUse TAB to indent\n\t\t\tSupports block indentation editing\n\t\tText Formatting\n\t\t\t*You can wrap text with single asterisks to make it italic*\n\t\t\t**You can wrap text with double asterisks to make it bold**\n\t\t\t***You can wrap text in triple asterisks to make it both bold and italic***\n\t\t\t__You can wrap text in double underscores to make it underlined__\n\t\t\tYou can wrap text in double vertical lines to apply a spoiler\n\t\t\t\tHover to reveal -> ||The cake is a Lie||\n\t\t\t`You can wrap text in backticks to mark it as computer code`\n\t\t\tRE/Regular\\ Expressions\\ will\\ be\\ formatted\\ .*[^7]/gmU - **Make sure to escape spaces!**\n\t\t\t~~You can wrap text with double tildes to strike it though~~\n\t\t\t- Starting a line with a dash or a single asterisk will turn it into a bullet point\n\t\t\t69. Start a line with a number and a period to format it as an ordered list\n\t\t\t[You can declare a link title](and a link address) to create a link\n\t\t\t\tNormal links will also become clickable - EX: https://google.com\n\t\t\tYou can wrap text with carets to make it ^superscript^ text\n\t\t\tYou can wrap text with exclamation-point carets to make it !^subscript!^ text\n\t\tColor Control\n\t\t\tCustom Text Color\n\t\t\t\tText color can be manually controlled via a glyph in the format [tc###]...text here...[tc###]\n\t\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t\t[tcf00] red text; with red 100%, green 0%, blue 0% [tcf00]\n\t\t\t\t\t[tc0fa]turquoise text; with red 0%, green 100%, blue 62.5%[tc0fa]\n\t\t\tCustom Highlight Color\n\t\t\t\tHighlight color can be manually controlled via a glyph in the format [hc###]...text here...[hc###]\n\t\t\t\tColor can be specified with 3 hex values in the place of the #'s, 4-bit color depth.\n\t\t\t\t\t[hcf00] red highlight; with red 100%, green 0%, blue 0% [hcf00]\n\t\t\t\t\t[hc034]dark turquoise highlight; with red 0%, green 18%, blue 25%[hc034]\n\t\t\t\tNote that, by default, dark highlights use bright text and bright highlights use dark text.\n\t\tDirectory-Style Document Navigation Links\n\t\t\tThe RTN allows you to link to other locations in the same document via a directory-style link\n\t\t\tFor Example, DNL./../../../[Samp]/[2]/[1] will bring you to the smiley face in this document\n\t\t\tAll DirNav links start with an *Anchor Token* followed by 1 or more *Navigational Tokens*\n\t\t\tAnchor Tokens\n\t\t\t\t`DNL./`, `DL./`, `RTN./` - Start navigation at THIS LINE\n\t\t\t\t`DNL/`, `DL/`, `RTN/` - Start navigation at the root of the document (go up until first line at indent-level 0)\n\t\t\t\t`DNL~/`, `DL~/`, `RTN~/` - Start at one level before root (go up until first line at indent-level 1)\n\t\t\tNavigational Tokens\n\t\t\t\t`..` - Navigate to the PARENT\n\t\t\t\t`[0-9]` - Navigate to the CHILD at the provided Index. (Uses 0-Index Base)\n\t\t\t\t`[.*]` - Navigate to the CHILD who's value starts with the provided string\n\t\t\tDNL./[Invalid links will do nothing when clicked, and will appear RED]";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions - *Click yellow links to view!*\n\t\t[Indentation](#help-indentation)\n\t\t\tUse TAB to indent\n\t\t[Text Formatting](#help-text_formatting)\n\t\t[Color and Highlighting](#help-color_control)\n\t\t[DNL Links / Intradocument References](#help-dnl)";
         }
     }
 
@@ -1397,8 +1425,16 @@ class ExeBuffer extends VirtualBuffer
         //insert links
         data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
             if ($2) { // markdown-style link
-                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}"><b>[${$1}](${$2})</b></a>`;
-            } else { // static link
+                if ($2.startsWith("#")) // function substitution link
+                {
+                    return `<a style="z-index: 4; pointer-events: all; position: relative; color: yellow;" href="#" onclick="window.main.redir(event, '${$2}')"><b>[${$1}](${$2})</b></a>`;
+                }
+                else // normal markdown link
+                {
+                    return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}"><b>[${$1}](${$2})</b></a>`;
+                }
+            }
+            else { // static link
                 return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}"><b>${$3}</b></a>`;
             }
         });
