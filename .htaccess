@@ -1,4 +1,9 @@
 AddDefaultCharset UTF-8
 
+# Allow CORS GET for the RTN. Necessary for checking if the primary mirror is online.
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET"
+
+# Forward program.html payloads to otag-handler.php to update the header with doc contents
 RewriteEngine On
 RewriteRule .*program\.html$ otag-handler.php [L]
