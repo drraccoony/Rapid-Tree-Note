@@ -130,14 +130,21 @@ else //if the content spans just 1 line
     $exe_data = "&nbsp;";
 }
 
+//impose length limits to avoid breaking previews
+$exe_title = substr($exe_title, 0, 128);
+$exe_data = substr($exe_data, 0, 512);
+
+//use non-breaking spaces in tree glyphs to prevent collapse in previews
 $exe_data = str_replace("├── ​", "├── ", $exe_data);
 $exe_data = str_replace("└── ​", "└── ", $exe_data);
 $exe_data = str_replace("│   ​", "│   ", $exe_data);
 $exe_data = str_replace("    ​", "    ", $exe_data);
 
+//replace document contents with payloads
 $content = str_replace("{{pageTitle}}", $exe_title, $content);
 $content = str_replace("{{description}}", $exe_data, $content);
 
+//record this event to the usage file
 $record = preg_replace('/[^a-zA-Z0-9]/', '_', $exe_title);
 $record = preg_replace('/_+/', '_', $record);
 $record = substr($record, 0, 512);
