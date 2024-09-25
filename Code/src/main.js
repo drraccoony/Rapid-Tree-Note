@@ -15,20 +15,13 @@ You should have received a copy of the GNU Affero General Public License along w
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
 import { URIMannager } from "./URI-mannager.js";
 
-/* The Schema class is a container that handles user input, generates a formatted document, and
-synchronizes scrollbars. */
+/* The Schema class is a container that handles user input, generates a formatted document, and synchronizes scrollbars. */
 export default class Schema
 {
     /**
-     * The constructor function initializes a coding assistant object with input and output text areas,
-     * sets event listeners for keydown, copy, scroll, and paste events, and sets intervals for key
-     * post routing and scrollbar synchronization.
-     * 
-     * @param inputTextArea The inputTextArea parameter is the text area element where the user can
-     * input their text. It is used to capture the user's input and handle events such as keydown,
-     * copy, scroll, and paste.
-     * @param outputPre The outputPre parameter is the text area element where the generated
-     * document will be displayed. It is not directly accessible to the user.
+     * The constructor function initializes a coding assistant object with input and output text areas, sets event listeners for keydown, copy, scroll, and paste events, and sets intervals for key post routing and scrollbar synchronization.
+     * @param inputTextArea The inputTextArea parameter is the text area element where the user can input their text. It is used to capture the user's input and handle events such as keydown, copy, scroll, and paste.
+     * @param outputPre The outputPre parameter is the text area element where the generated document will be displayed. It is not directly accessible to the user.
      */
     constructor(inputTextArea, outputPre, wrapTestPre)
     {
@@ -47,7 +40,7 @@ export default class Schema
             this.state = "UNLOCKED";
         }
 
-        { //input processing
+        { // user input processing
             this.raw.ref.addEventListener("keydown", (event) => this.keyPreRouter(event)); //we need to intercept the key before it is written so we can handle special cases
             this.raw.ref.addEventListener("input", () => this.keyPostRouter()); //the value of the textarea was changed programatically, so we dont need to be so cautious
             this.raw.ref.addEventListener("copy", (event) => this.handleCopy(event)); //copying to clipboard requires some additional formatting of the payload
@@ -55,25 +48,25 @@ export default class Schema
             this.raw.ref.addEventListener("input", () => this.urlPreEncodeOnIdle()); // things like spellcheck (which change the document contents) count against inactivity
             this.raw.ref.addEventListener('paste', (event) => this.handlePaste(event)); //pasting data into the textarea demands immediate, special processing
         }
-        { //visual effects
+        { // visual effects
             this.raw.ref.addEventListener('keydown', (event) => this.syncScrollbars(event)); // ensure the textboxes overlap contents
             this.raw.ref.addEventListener('click', (event) => this.syncScrollbars(event)); // ensure the textboxes overlap contents
             document.addEventListener('wheel', (event) => this.scaleTextOnZoom(event), { passive: false}); // intercept mouse zoom events and scale the document text instead
         }
-        { //iterative updater-- recalculate everything every 1000ms while window is focused. Helps protect against edge cases
+        { // iterative updater-- recalculate everything every 1000ms while window is focused. Helps protect against edge cases
             this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
             this.focused = true; // if the user is actively looking at the page or not
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event)); //whenever the tab is not on top, pause the interval updater to save resources
             window.addEventListener('beforeunload', (event) => this.safeShutdown(event)); // explicitly clear the interval when leaving the page
         }
 
-        //force inital values
+        // force inital values
         this.setURL(urlData);
         this.keyPostRouter();
         this.syncScrollbars();
         this.handlePaste();
 
-        //update the tab Title
+        // update the tab's Title explicitly once at startup
         if(urlData != "" && urlData != null)
         {
             document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
@@ -82,7 +75,7 @@ export default class Schema
     }
 
     /**
-     * Debug function that dumps a ton of info about the program's current state
+     * @description Debug function that dumps a ton of info about the program's current state
      */
     debugDump()
     {
@@ -96,9 +89,8 @@ export default class Schema
     }
 
     /**
-     * The function "safeShutdown" clears all interval IDs stored in the "intervalIDs" array.
+     * @description Clears all interval IDs stored in the "intervalIDs" array. This is necessary to avoid browser hanging in some edge cases.
      * @param event - A dummy event associated with the 'beforeunload' event. Its values are not used.
-     * This is necessary to avoid browser hanging in some edge cases.
      */
     safeShutdown(event)
     {
@@ -107,11 +99,8 @@ export default class Schema
     }
 
     /**
-     * The function toggles the value of the "focused" variable based on the visibility state of the
-     * document.
-     * @param event - The event parameter is the event object that is passed to the function when it is
-     * called. It contains information about the event that triggered the function, such as the type of
-     * event, the target element, and any additional data associated with the event. NOT USED
+     * @description Toggles the value of the "focused" variable based on the visibility state of the document.
+     * @param event - Dummy event associated with `visibilitychange`. NOT USED.
      */
     focusToggle(event)
     {
@@ -127,11 +116,8 @@ export default class Schema
     }
 
     /**
-     * The function `scaleTextOnZoom` adjusts font sizes and display position based on user zooming
-     * behavior. If the user is NOT holding ctrl (i.e., not zooming, just scrolling) no action is taken.
-     * OTHERWISE, the zoom is prevented and instead the font size of the document is modified.
-     * @param event - The `event` parameter in the `scaleTextOnZoom` function represents the event
-     * object that is generated when a user scrolls the mousewheel.
+     * @description Adjusts font sizes and display position based on user zooming behavior. If the user is NOT holding ctrl (i.e., not zooming, just scrolling) no action is taken OTHERWISE, the zoom is prevented and instead the font size of the document is modified.
+     * @param event - The `event` parameter in the `scaleTextOnZoom` function represents the event object that is generated when a user scrolls the mousewheel.
      */
     scaleTextOnZoom(event)
     {
@@ -172,8 +158,7 @@ export default class Schema
     }
 
     /**
-     * The function `intervalUpdate()` checks if the page is focused and performs certain actions if it
-     * is. These actions keep the page looking clean up-to-date.
+     * @description This function is called every 1000ms the program is loaded. Checks if the page is focused (recorded by this.focusToggle) and calls this.keyPostRouter() if it is. These actions keep the page looking clean up-to-date, and helps catch edge cases.
      */
     intervalUpdate()
     {
@@ -186,12 +171,9 @@ export default class Schema
     }
 
     /**
-     * This function reduces the brightness of the "display" element's outline, shifting from white to black.
-     * This has the effective result of smoothly returning the border to its original color (black) after an encoding "flash".
-     * It is called on an interval stored in this.outlineInterval. Once black is reached, this function clears this interval to stop execution.
-     * The interval is started as a function of the urlPostEncodeOnIdle() function.
+     * @description This function reduces the brightness of the "display" element's outline, shifting from white to black. This has the effective result of smoothly returning the border to its original color (black) after an encoding "flash".
+     * @interval Function is called on an interval stored in this.outlineInterval. Once black is reached, this function clears this interval to stop execution. The interval is started as a function of the urlPostEncodeOnIdle() function.
      */
-    // this function is called on an interval stored in this.outlineInterval
     darkenBorder()
     {
         // gather the RGB colors of the display element's border
@@ -216,12 +198,11 @@ export default class Schema
     }
 
     /**
-     * This function overrides special executive links found only on the default landing page of program.html.
-     * These special links are yellow and redirect the user to other precomputed pages that cover RTN documentation and instructions.
-     * This system is used so that gigantic links aren't needed to actually be written in the document, and are instead stored statically in code.
+     * @description This function overrides special executive links found only on the default landing page of program.html. These special links are yellow and redirect the user to other precomputed pages that cover RTN documentation and instructions. 
+     * @reason This system is used so that gigantic links aren't needed to actually be written in the document, and are instead stored in a static manner in code.
      * @param {*} event - <a>.click
      * @param {*} payload - a string token
-     * @returns null - opens a new browser tab to a certain RTN link
+     * @returns void - opens a new browser tab to a certain RTN link
      */
     redir(event, payload)
     {
@@ -268,14 +249,8 @@ export default class Schema
     }
 
     /**
-     * This function is called every time a key is pressed
-     * The function generates a random number between 0 and 8192 and sets it as the value of
-     * this.shouldEncode, then it calls the "urlPostEncodeOnIdle" function after 1000ms with the generated
-     * number as an argument.
-     * If this function hasn't been called another time in the last 1000ms, the value of this.shouldEncode will be the same as
-     * the this.urlPostEncodeOnIdle parameter was set as.
-     * 
-     * This effectively allows us to only do something after 1000ms of inactivity.
+     * @trigger This function is called every time a key is pressed
+     * @description The function helps detect when the user has been inactive for 1000ms by generating a random number between 0 and 8192 and sets it as the value of this.shouldEncode, then it calls the "urlPostEncodeOnIdle" function after 1000ms with the generated number as an argument. If this function hasn't been called another time in the last 1000ms, the value of this.shouldEncode will be the same as the this.urlPostEncodeOnIdle parameter was set as.
      */
     urlPreEncodeOnIdle()
     {
@@ -291,9 +266,7 @@ export default class Schema
     }
 
     /**
-     * The function `urlPostEncodeOnIdle` checks if `shouldEncode` is still equal to `the provided number`.
-     * If so, it calls the `pushURL` function. This will only be the case if this.urlPreEncodeOnIdle hasn't
-     * been called within the last 1000ms, because doing so would overwrite it causing a discrepency.
+     * @description Recipient of inactivity check started in urlPreEncodeOnIdle(). Checks if `shouldEncode` is still equal to the provided number (`staticOldValue`). If so, triggers the computationally expensive process of parsing the document. This will only be the case if this.urlPreEncodeOnIdle hasn't been called within the last 1000ms, because doing so would overwrite it causing a different value.
      * @param staticOldValue - The [0-8192] random integer that this.shouldEncode was set to when this timeout was created.
      */
     urlPostEncodeOnIdle(staticOldValue)
@@ -313,8 +286,8 @@ export default class Schema
     }
 
     /**
-     * Tells the URI mannager to process a decoding task, turning the URL into a string.
-     * All technical details of how that works are controlled by the URI mannager.
+     * @description Tells the URI mannager to process a decoding task, turning the URL into a string. 
+     * @note The URI mannager does a lot of different stuff based on the desired parameters, all technical details of how that works are controlled by the URI mannager. Treat this as a black box that hands you a the document's contents as a string.
      * @returns the decoded and decompressed URL as a string.
      */
     pullURL()
@@ -323,8 +296,7 @@ export default class Schema
     }
 
     /**
-     * Sets the value of the text input field to the provided string,
-     * or a default description of the RTN if the data is empty.
+     * @description Sets the value of the text input field to the provided string, or a default description of the RTN if the data is empty.
      * @param data - The `data` parameter is a string that represents the URL that needs to be set.
      */
     setURL(data)
@@ -333,35 +305,40 @@ export default class Schema
         {
             this.raw.ref.value = data;
         }
-        else
+        else // default "homepage" value
         {
             this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tMisc. Instructions - *Click yellow links to view!*\n\t\t[Indentation](#help-indentation)\n\t\t\tUse TAB to indent\n\t\t[Text Formatting](#help-text_formatting)\n\t\t[Color and Highlighting](#help-color_control)\n\t\t[DNL Links / Intradocument References](#help-dnl)";
         }
     }
 
     /**
-     * Preprocess the document's contents and then hand it to the URI-Mannager for encoding
-     * Results in the page's URL changing to match the document's contents after compression and encoding
+     * @description Preprocess the document's contents and then hand it to the URI-Mannager for encoding. Results in the page's URL changing to match the document's contents after compression and encoding
+     * @note The URI mannager does a lot of different stuff based on the desired parameters, all technical details of how that works are controlled by the URI mannager. Treat this as a black box that you hand the document's contents to and it magically changes the URL to encode that.
      */
     pushURL()
     {
+        // parse the document through the tree parser
         var payload = this.exe.ref.textContent.replace(/[\s]+$/, "");
         this.exe.tree.input = payload;
         this.exe.tree.totalParse();
         payload = this.exe.tree.output;
+
+        // shrink tree glyphs to be length 4 instead of length 8 in the text that gets encoded
         payload = payload.replace(/├────── ​/gm, "├── ​");
         payload = payload.replace(/└────── ​/gm, "└── ​");
         payload = payload.replace(/│       ​/gm, "│   ​");
         payload = payload.replace(/        ​/gm, "    ​");
+        // trim whitespace and revert bullet points in the text that gets encoded
         payload = payload.replace(/<[^>]*>/g, "");
         payload = payload.replace(/(\s*)(•)(.*)/gm, "$1-$3");
-        console.debug(payload);
+
+        // command the URI-Mannager to operate with the preprocessed string
+        //console.debug(payload);
         this.uri.push(payload);
     }
 
     /**
-     * Whenever a key is pressed, we need to pass it along to the textarea's handler AND also spin up an instance of urlPreEncodeOnIdle due to user interactivity.
-     * It provides a callback to the keyPostRouter() which will be executed after the handler returns.
+     * @description Whenever a key is pressed, we need to pass it along to the textarea's handler AND also spin up an instance of urlPreEncodeOnIdle due to user interactivity. It provides a callback to the keyPostRouter() which will be executed after the handler returns.
      */
     keyPreRouter(event)
     {
@@ -370,8 +347,7 @@ export default class Schema
     }
 
     /**
-     * Triggers the transfer of data to move from raw to exe, allowing for full parsing and such.
-     * Makes sure to explicitly escape "<" nd ">" as these could allow for arbitrary code execution
+     * @description Triggers the transfer of data to move from raw to exe, allowing for full parsing and such. Makes sure to explicitly escape "<" nd ">" as these could allow for arbitrary code execution
      */
     keyPostRouter()
     {
@@ -383,8 +359,7 @@ export default class Schema
     }
 
     /**
-     * Whenever text is pasted into the textarea, we need to check for text containing old-fashioned RTN glyphs that were not zero-width-space-deliminated
-     * If we find any, we manually convert them to \t to allow for further parsing
+     * @description Whenever text is pasted into the textarea, we need to check for text containing old-fashioned RTN glyphs that were not zero-width-space-deliminated. If we find any, we manually convert them to \t to allow for further parsing
      */
     handlePaste(event)
     {
@@ -398,9 +373,7 @@ export default class Schema
     }
 
     /**
-     * Whenever the user tries to copy text from the textarea, we need to gather the related text from the output and write that to the clipboard instead.
-     * This requires a lot of offset math because for every "\t" in the raw buffer we need to select 8 characters in the output buffer.
-     * Once we have the text value we are looking for, we then also reduce tree glyphs from length 8 to length 4 to make them more useful in external text editors.
+     * @description Whenever the user tries to copy text from the textarea, we need to gather the related text from the output and write that to the clipboard instead. This requires a lot of offset math because for every "\t" in the raw buffer we need to select 8 characters in the output buffer. Once we have the text value we are looking for, we then also reduce tree glyphs from length 8 to length 4 to make them more useful in external text editors.
      */
     handleCopy(event)
     {
@@ -461,8 +434,8 @@ export default class Schema
     }
 
     /**
-     * Makes it so the input textarea and output <p> line up vertically, regardless of scrolling or content.
-     * A discrepancy here would be very noticable to this function is called by several actions throughout the code, as well as the interval updater.
+     * @description Makes it so the input textarea and output <p> line up vertically, regardless of scrolling or content.
+     * @frequency A discrepancy here would be very noticable to this function is called by several actions throughout the code, as well as in the interval updater.
      */
     syncScrollbars(event) {
         const display = document.getElementById('display');
@@ -492,10 +465,8 @@ export default class Schema
     }
 
     /**
-     * @dangerous
-     * Gaurentees that the graph will be brought to a consistent state, even if data loss occurs.
-     * Preforms many of the same functions of `keyPostRouter()`, but does some shuffling to be absolute.
-     * This function should not be called willy-nilly
+     * @dangerous - This function may result in data loss.
+     * @description Gaurentees that the graph will be brought to a consistent state, even if data loss occurs. Preforms many of the same functions of `keyPostRouter()`, but does some shuffling to be absolute.
      */
     hardFix()
     {
@@ -522,7 +493,7 @@ export default class Schema
     }
 
     /**
-     * Creates a temporary DOM element at the location of the carrat in the textarea, scrolls to it (such that it is cerntered vertically), and then deletes that new element.
+     * @description Creates a temporary DOM element at the location of the carrat in the textarea, scrolls to it (such that it is cerntered vertically), and then deletes that new element.
      * @param {*} textarea - the textarea the carrat we want to scroll to is located in
      */
     scrollToCaret(textarea) {
@@ -563,8 +534,7 @@ export default class Schema
     }
 
     /**
-     * The Directory Navigation Link (DNL) system allows users to write links in an RTN document that when clicked brings them to (and selects) a certain line of the SAME document.
-     * The locaiton that is navigated to is dependent on the parameters provided during the function call, which are statically set as .onclick values in an arrow function embedded into the <a>.
+     * @description The Directory Navigation Link (DNL) system allows users to write links in an RTN document that when clicked brings them to (and selects) a certain line of the SAME document. The locaiton that is navigated to is dependent on the parameters provided during the function call, which are statically set as .onclick values in an arrow function embedded into the <a>.
      * @param event - The .onclick event fired by clicking the <a>. Is used only to do event.preventDefault(), preventing navigation to `#`.
      * @param payload - The `payload` parameter in the `dirnav` function represents the navigation path or actions to be taken. It consists of a series of components separated by slashes ("/"). These components can be of different types:
      * Type 1: .. - Navigates to the parent of the current node
@@ -598,15 +568,18 @@ export default class Schema
         var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL." && item!= "RTN." && item!= "DL.");
 
         // build a debug info object to print to console in the event of an error
-        //var debug = {
-        //    Payload: payload,
-        //    Index: lineIndex,
-        //    Lines: lines,
-        //    LowerBound: boundLower,
-        //    UpperBound: boundUpper,
-        //    Actions: actions
-        //};
-        //console.debug(debug.Actions);
+        if(false)
+        {
+            var debug = {
+                Payload: payload,
+                Index: lineIndex,
+                Lines: lines,
+                LowerBound: boundLower,
+                UpperBound: boundUpper,
+                Actions: actions
+            };
+            console.debug(debug.Actions);
+        }
 
         // iterate over the "actions" queue, consuming elements as they are used to move the linePointer
         // if at any point a bounds is exceeded, an error is printed to console and the function returns early (as FALSE with no effect)
