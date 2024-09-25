@@ -37,6 +37,7 @@ export default class Schema
         this.uri = new URIMannager();
         window.main = this;
 
+        // attempt initialization from page URL
         var urlData = this.pullURL();
 
         {
@@ -61,9 +62,9 @@ export default class Schema
         }
         { //iterative updater-- recalculate everything every 1000ms while window is focused. Helps protect against edge cases
             this.intervalUpdater = setInterval(() => this.intervalUpdate(), 1000);
-            this.focused = true;
+            this.focused = true; // if the user is actively looking at the page or not
             document.addEventListener("visibilitychange", (event) => this.focusToggle(event)); //whenever the tab is not on top, pause the interval updater to save resources
-            window.addEventListener('beforeunload', (event) => this.safeShutdown(event)); // explicitly clear the interval when closing
+            window.addEventListener('beforeunload', (event) => this.safeShutdown(event)); // explicitly clear the interval when leaving the page
         }
 
         //force inital values
@@ -72,7 +73,7 @@ export default class Schema
         this.syncScrollbars();
         this.handlePaste();
 
-        //update the URL Title
+        //update the tab Title
         if(urlData != "" && urlData != null)
         {
             document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
@@ -80,6 +81,9 @@ export default class Schema
 
     }
 
+    /**
+     * Debug function that dumps a ton of info about the program's current state
+     */
     debugDump()
     {
         console.debug("=====STARTING=DEBUG=DUMP=====");
@@ -181,8 +185,16 @@ export default class Schema
         }
     }
 
+    /**
+     * This function reduces the brightness of the "display" element's outline, shifting from white to black.
+     * This has the effective result of smoothly returning the border to its original color (black) after an encoding "flash".
+     * It is called on an interval stored in this.outlineInterval. Once black is reached, this function clears this interval to stop execution.
+     * The interval is started as a function of the urlPostEncodeOnIdle() function.
+     */
+    // this function is called on an interval stored in this.outlineInterval
     darkenBorder()
     {
+        // gather the RGB colors of the display element's border
         var current = document.getElementById("display").style.border;
         if(current == "")
         {
@@ -196,16 +208,29 @@ export default class Schema
             return;
         }
 
+        // reduce R, G, and B by 5
         value = Math.max(value-5, 0);
 
+        // apply the new color to the element
         document.getElementById("display").style.border = `0.25vw solid rgb(${value},${value},${value})`;
     }
 
-    // special function used to redirect the user to static pages based on a <a>'s parameter. used for default homepage documentation sub-pages
+    /**
+     * This function overrides special executive links found only on the default landing page of program.html.
+     * These special links are yellow and redirect the user to other precomputed pages that cover RTN documentation and instructions.
+     * This system is used so that gigantic links aren't needed to actually be written in the document, and are instead stored statically in code.
+     * @param {*} event - <a>.click
+     * @param {*} payload - a string token
+     * @returns null - opens a new browser tab to a certain RTN link
+     */
     redir(event, payload)
     {
         event.preventDefault();
+        
+        //get the payload string from the event
         payload = payload.replaceAll("#", "");
+
+        //based on the value of the payload, select a certain URL
         var url = "";
         switch(payload)
         {
@@ -226,17 +251,16 @@ export default class Schema
                 return;
         }
 
-        // Create a link element
-        var link = document.createElement('a');
+        // open a new tab to the URL we got by making a dummy <a> and clicking it in alt mode
+        
+        var link = document.createElement('a'); // Create a link element
         link.href = url;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
 
-        // Click the link programmatically
-        link.click();
+        link.click(); // Click the link programmatically
 
-        // Remove the link from the DOM
-        link.parentNode.removeChild(link);
+        link.parentNode.removeChild(link); // Remove the link from the DOM
 
         //OLD replace-based system
         //history.pushState({}, "", window.location);
@@ -246,31 +270,31 @@ export default class Schema
     /**
      * This function is called every time a key is pressed
      * The function generates a random number between 0 and 8192 and sets it as the value of
-     * "shouldEncode", then it calls the "urlPostEncodeOnIdle" function after one second with the generated
+     * this.shouldEncode, then it calls the "urlPostEncodeOnIdle" function after 1000ms with the generated
      * number as an argument.
-     * If this function hasn't been called in the last 1000ms, the value of this.shouldEncode will be the same as
-     * the this.urlPostEncodeOnIdle parameter was set as
+     * If this function hasn't been called another time in the last 1000ms, the value of this.shouldEncode will be the same as
+     * the this.urlPostEncodeOnIdle parameter was set as.
+     * 
+     * This effectively allows us to only do something after 1000ms of inactivity.
      */
     urlPreEncodeOnIdle()
     {
+        // set this.shouldEncode to a random number [0:8192]
         const min = 0;
         const max = 8192;
         const randomDecimalInRange = Math.random() * (max - min) + min;
-
         this.shouldEncode = randomDecimalInRange;
 
-        //console.debug("random idle value was " + randomDecimalInRange);
-
+        // call this.urlPostEncodeOnIdle in 1000ms with the random value we just made
         setTimeout(() => this.urlPostEncodeOnIdle(randomDecimalInRange), 1000);
      
     }
 
     /**
-     * The function `urlPostEncodeOnIdle` checks if `shouldEncode` is still equal to `staticOldValue` and if
-     * so, it calls the `pushURL` function. This will only be the case if this.urlPreEncodeOnIdle hasn't
-     * been called within the last 1000ms.
-     * @param staticOldValue - The value of the staticOldValue parameter is a variable that represents
-     * the previous value of the variable.
+     * The function `urlPostEncodeOnIdle` checks if `shouldEncode` is still equal to `the provided number`.
+     * If so, it calls the `pushURL` function. This will only be the case if this.urlPreEncodeOnIdle hasn't
+     * been called within the last 1000ms, because doing so would overwrite it causing a discrepency.
+     * @param staticOldValue - The [0-8192] random integer that this.shouldEncode was set to when this timeout was created.
      */
     urlPostEncodeOnIdle(staticOldValue)
     {
@@ -278,16 +302,19 @@ export default class Schema
         {
             this.pushURL();
 
-            //make the border flash
+            //make the border flash by setting it to white and then using an interval to darken it
             document.getElementById("display").style.border = `0.25vw solid rgb(255,255,255)`;
             this.outlineInterval = setInterval(() => this.darkenBorder(), 10);
+
+            //update the title of the tab to be the first 32 characters of the document's content
+            document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
         }
        
     }
 
     /**
-     * The function `pullURL()` extracts and decodes the URL parameter "data", converts it from hexadecimal to
-     * base 10, inflates it using the pako library, and returns the result as a string.
+     * Tells the URI mannager to process a decoding task, turning the URL into a string.
+     * All technical details of how that works are controlled by the URI mannager.
      * @returns the decoded and decompressed URL as a string.
      */
     pullURL()
@@ -296,8 +323,8 @@ export default class Schema
     }
 
     /**
-     * The function `setURL` sets the value of a text input field to the provided data, or a default
-     * value if the data is empty.
+     * Sets the value of the text input field to the provided string,
+     * or a default description of the RTN if the data is empty.
      * @param data - The `data` parameter is a string that represents the URL that needs to be set.
      */
     setURL(data)
@@ -313,8 +340,8 @@ export default class Schema
     }
 
     /**
-     * The function `pushURL()` compresses a string with the pako library, converts it to hexadecimal, encodes it, and
-     * updates the URL with the encoded data.
+     * Preprocess the document's contents and then hand it to the URI-Mannager for encoding
+     * Results in the page's URL changing to match the document's contents after compression and encoding
      */
     pushURL()
     {
@@ -330,17 +357,11 @@ export default class Schema
         payload = payload.replace(/(\s*)(•)(.*)/gm, "$1-$3");
         console.debug(payload);
         this.uri.push(payload);
-
-        document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
-        
     }
 
     /**
-     * The function "keyPreRouter" is a member of the RawBuffer "raw" that handles key events and passes them to
-     * another function called "keyPostRouter".
-     * @param event - The event parameter is an object that represents the keyboard event that
-     * occurred. It contains information about the key that was pressed, such as the key code, key
-     * name, and any modifiers that were pressed (e.g., shift, alt, ctrl).
+     * Whenever a key is pressed, we need to pass it along to the textarea's handler AND also spin up an instance of urlPreEncodeOnIdle due to user interactivity.
+     * It provides a callback to the keyPostRouter() which will be executed after the handler returns.
      */
     keyPreRouter(event)
     {
@@ -349,41 +370,37 @@ export default class Schema
     }
 
     /**
-     * The function `keyPostRouter()` updates and parses the data from RawBuffer "raw" before updating ExecutiveBuffer "exe".
+     * Triggers the transfer of data to move from raw to exe, allowing for full parsing and such.
+     * Makes sure to explicitly escape "<" nd ">" as these could allow for arbitrary code execution
      */
     keyPostRouter()
     {
         this.raw.update();
         this.exe.ref.innerHTML = this.raw.ref.value.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
         this.exe.update();
+
         this.syncScrollbars();
     }
 
     /**
-     * The handlePaste function sets a timeout to call syncronize the scrollbars after 100
-     * milliseconds.
-     * 
-     * @param event The event parameter is an object that represents the event that triggered the
-     * handlePaste function. It contains information about the event, such as the type of event, the
-     * target element, and any additional data associated with the event.
+     * Whenever text is pasted into the textarea, we need to check for text containing old-fashioned RTN glyphs that were not zero-width-space-deliminated
+     * If we find any, we manually convert them to \t to allow for further parsing
      */
     handlePaste(event)
     {
-        setTimeout((event) => this.syncScrollbars(event), 100);
         setTimeout(() => //do misc glyph replacement for forward conversion to zero-width-deliminated glyphs
         {
             this.raw.ref.value = this.raw.ref.value.replace(/├────── |│       |└────── |        /gm, "\t"); //size 8 glyphs
             this.raw.ref.value = this.raw.ref.value.replace(/├── |│   |└── |    /gm, "\t"); //size 4 glyphs
         }, 100);
+
+        setTimeout((event) => this.syncScrollbars(event), 100); //dont want to call this immediately because the DOM needs a moment to register the change
     }
 
     /**
-     * The `handleCopy` function in JavaScript handles copying selected text from a textarea to the
-     * clipboard, accounting for tab indentation.
-     * 
-     * @param event The event parameter is an object that represents the event that triggered the copy
-     * action. It contains information about the event, such as the target element and any additional
-     * data associated with the event. In this case, it is used to prevent the default copy behavior.
+     * Whenever the user tries to copy text from the textarea, we need to gather the related text from the output and write that to the clipboard instead.
+     * This requires a lot of offset math because for every "\t" in the raw buffer we need to select 8 characters in the output buffer.
+     * Once we have the text value we are looking for, we then also reduce tree glyphs from length 8 to length 4 to make them more useful in external text editors.
      */
     handleCopy(event)
     {
@@ -407,12 +424,12 @@ export default class Schema
         var selectEnd = this.raw.ref.selectionEnd + (8 * preTabs) + (8 * postTabs);
         var payload = this.exe.ref.textContent.substring(selectStart, selectEnd);
 
-        //console.debug(payload);
-
         //Put that value onto the clipboard
         this.exe.tree.input = payload;
         this.exe.tree.totalParse();
         payload = this.exe.tree.output;
+
+        // shrink the glyphs from size 8 to size 4
         payload = payload.replace(/├────── ​/gm, "├── ​");
         payload = payload.replace(/└────── ​/gm, "└── ​");
         payload = payload.replace(/│       ​/gm, "│   ​");
@@ -424,9 +441,9 @@ export default class Schema
         //trim trailing whitespace
         payload = payload.replace(/\s$/, "");
 
-        //console.debug(payload);
-
+        // write the payload to the clipboard
         navigator.clipboard.writeText(payload);
+
 
         function getTabs(string)
         {
@@ -444,11 +461,8 @@ export default class Schema
     }
 
     /**
-     * The function syncScrollbars synchronizes the scroll position of two elements.
-     * 
-     * @param event The `event` parameter is an object that represents the event that triggered the
-     * `syncScrollbars` function. It contains information about the event, such as the type of event,
-     * the target element, and any additional data associated with the event.
+     * Makes it so the input textarea and output <p> line up vertically, regardless of scrolling or content.
+     * A discrepancy here would be very noticable to this function is called by several actions throughout the code, as well as the interval updater.
      */
     syncScrollbars(event) {
         const display = document.getElementById('display');
@@ -478,38 +492,56 @@ export default class Schema
     }
 
     /**
-     * The function `hardFix()` preforms much the same functions as `keyPostRouter()`,
-     * except gaurentees that the graph will be brought to a consistent state, even if
-     * data loss occurs.
+     * @dangerous
+     * Gaurentees that the graph will be brought to a consistent state, even if data loss occurs.
+     * Preforms many of the same functions of `keyPostRouter()`, but does some shuffling to be absolute.
+     * This function should not be called willy-nilly
      */
     hardFix()
     {
+        // preform the normal actions of a keyPostRouter()
         this.raw.update();
         this.exe.ref.tree.input = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
+
+        // copy the content of the output directly into the input, making sure to record where the carrat was
         var hold_start = this.raw.ref.selectionStart;
         var hold_end = this.raw.ref.selectionEnd;
         this.raw.ref.value = this.exe.tree.content.substring(0,this.exe.tree.content.length-1);
+
+        // do another keyPostRouter()
         this.raw.update();
         this.exe.ref.textContent = this.raw.ref.value;
         this.exe.tree.totalParse();
         this.exe.update();
+
+        // return the carrat to the saved position
         this.raw.ref.selectionStart = hold_start;
         this.raw.ref.selectionEnd = hold_end;
     }
 
+    /**
+     * Creates a temporary DOM element at the location of the carrat in the textarea, scrolls to it (such that it is cerntered vertically), and then deletes that new element.
+     * @param {*} textarea - the textarea the carrat we want to scroll to is located in
+     */
     scrollToCaret(textarea) {
         // Create a temporary div element
         var carratFinder = document.createElement('div');
-        //carratFinder.style.visibility = 'hidden';
-        carratFinder.style.position = 'absolute';
-        carratFinder.style.color = "red";
-        carratFinder.style.padding = "5px";
-        carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
-        carratFinder.style.whiteSpace = "pre-wrap";
-        carratFinder.style.border = "solid 0.25vw transparent";
-        carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
+
+        // style the div so that it lines up with the existing textarea
+        {
+            //carratFinder.style.visibility = 'hidden'; /* this should be hidden but during normal execution this goes so fast that users cant see it. by leaving it visable, we can actually see when something breaks */
+            carratFinder.style.position = 'absolute';
+            carratFinder.style.color = "red";
+            carratFinder.style.padding = "5px";
+            carratFinder.style.wordBreak = "normal"; /* Prevent word breaking */
+            carratFinder.style.whiteSpace = "pre-wrap";
+            carratFinder.style.border = "solid 0.25vw transparent";
+            carratFinder.style.fontSize = document.getElementById("source").style.fontSize;
+        }
+
+        // Attatch the element to the main div, allowing it to stick on top
         document.getElementById("main").appendChild(carratFinder);
       
         // Copy the text up to the caret position
@@ -531,44 +563,32 @@ export default class Schema
     }
 
     /**
-     * The `dirnav` function in JavaScript is designed to navigate to a specific location in the document
-     * based on the provided DirNav link.
-     * @param event - The `event` parameter in the `dirnav` function is used to capture the event that
-     * triggered the function, typically the clicking of a link. This parameter is used to
-     * prevent the default behavior of the event, which in this case is preventing a link from
-     * navigating to `#`.
-     * @param payload - The `payload` parameter in the `dirnav` function represents the navigation path
-     * or actions to be taken. It consists of a series of components separated by slashes ("/"). These
-     * components can be of different types:
-     * .. - Navigates to the parent of the current node
-     * \[[0-9+]\] - Navigates to the child of the current node at the provided index
-     * \[.+]\] - Navigates to the child of the current node who's value starts with the included string
-     * @param lineIndex - The `lineIndex` parameter in the `dirnav` function represents the index of
-     * the current line within the array of lines. The `lineIndex` helps determine the starting point 
-     * for navigation by being provided by the link that is calling it.
-     * @param testOnly - The `testOnly` parameter in the `dirnav` function is a boolean flag that
-     * determines whether the function should perform the navigation actions or just test for validity.
-     * If `testOnly` is set to `true`, the function will only check if the navigation actions are valid
-     * without actually moving the cursor
-     * @returns The `dirnav` function returns a boolean value (`true` or `false`) depending on the
-     * outcome of the navigation process. `true` on success, `false` on error. If the function is in
-     * test mode (`testOnly` is `true`), it will return the value without actually performing the navigation.
+     * The Directory Navigation Link (DNL) system allows users to write links in an RTN document that when clicked brings them to (and selects) a certain line of the SAME document.
+     * The locaiton that is navigated to is dependent on the parameters provided during the function call, which are statically set as .onclick values in an arrow function embedded into the <a>.
+     * @param event - The .onclick event fired by clicking the <a>. Is used only to do event.preventDefault(), preventing navigation to `#`.
+     * @param payload - The `payload` parameter in the `dirnav` function represents the navigation path or actions to be taken. It consists of a series of components separated by slashes ("/"). These components can be of different types:
+     * Type 1: .. - Navigates to the parent of the current node
+     * Type 2: \[[0-9+]\] - Navigates to the child of the current node at the provided index
+     * Type 3: \[.+]\] - Navigates to the child of the current node who's value starts with the included string
+     * @param lineIndex - The index of the line in this document where the link that is calling this function is located. Helps determine the starting point for navigation processing.
+     * @param testOnly - Boolean flag that determines whether the function should actually perform the requested navigation action or just test for validity. If `testOnly` is set to `true`, the function will only check if the navigation actions are valid without actually moving the cursor. Used to check if links are valid so that they can appear green if they are or red if they are not.
+     * @returns - Checks if the provided DNL link points to a valid, extant position in the document. Returns TRUE if valid, FALSE if invalid.
      */
     dirnav(event, payload, lineIndex, testOnly=false)
     {
-        if(!testOnly) //during a test, there won't be an event
+        if(!testOnly) //during a test, there won't be an event, so canceling it would throw an error
         {
             //prevent the link from navigating to #
             event.preventDefault();
         }
 
-        if(document.getElementById("source").hidden == true) // do nothing if the page is in read-only mode
+        if(document.getElementById("source").hidden == true) // do nothing if the page is in read-only mode (mobile)
         {
             event.preventDefault();
             return;
         }
         
-        // build lines and prepare upper and lower bounds
+        // build lines and prepare upper and lower bounds. if we ever go past these, abort execution immediately
         var lines = this.raw.ref.value.split("\n");
         var boundLower = 0;
         var boundUpper = lines.length - 1;
@@ -578,25 +598,25 @@ export default class Schema
         var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL." && item!= "RTN." && item!= "DL.");
 
         // build a debug info object to print to console in the event of an error
-        var debug = {
-            Payload: payload,
-            Index: lineIndex,
-            Lines: lines,
-            LowerBound: boundLower,
-            UpperBound: boundUpper,
-            Actions: actions
-        };
-        console.debug(debug.Actions);
+        //var debug = {
+        //    Payload: payload,
+        //    Index: lineIndex,
+        //    Lines: lines,
+        //    LowerBound: boundLower,
+        //    UpperBound: boundUpper,
+        //    Actions: actions
+        //};
+        //console.debug(debug.Actions);
 
         // iterate over the "actions" queue, consuming elements as they are used to move the linePointer
-        // if at any point a bounds is exceeded, an error is printed to console and the function returns early (with no effect)
+        // if at any point a bounds is exceeded, an error is printed to console and the function returns early (as FALSE with no effect)
         while(actions.length != 0)
         {
             switch(actions[0])
             {
-                case "RTN.":    // self-navigation, do nothing
-                case "DNL.":    // self-navigation, do nothing
-                case "DL.":     // self-navigation, do nothing
+                case "RTN.":    // self-navigation (./), do nothing
+                case "DNL.":    // self-navigation (./), do nothing
+                case "DL.":     // self-navigation (./), do nothing
                     actions.shift();
                     break;
                 case "RTN":     // root-navigation (/)
@@ -746,7 +766,7 @@ export default class Schema
             }
             this.raw.ref.focus();
             this.raw.writeCarrat();
-            this.scrollToCaret(this.raw.ref);
+            this.scrollToCaret(this.raw.ref); //scroll to it!
             return(true);
         }
         
@@ -762,7 +782,7 @@ export default class Schema
     }
 }
 
-/* The LevelNode class represents a node in a tree structure with a level and a value. */
+/* The LevelNode class represents a node in a tree structure with a level and a value. Used by the `ProcessingTree` class. */
 class LevelNode
 {
     constructor(level, value)
@@ -775,10 +795,8 @@ class LevelNode
 class ProcessingTree
 {
     /**
-     * The constructor function initializes the input, nodes, blocks, and output properties.
-     * 
-     * @param input The `input` parameter is the input data that will be used in the constructor. It
-     * can be any type of data, such as a string, number, array, or object.
+     * This is the big kahoona, the class that actually inserts the tree glyphs into the text to replace it's "\t"'s. This algorithm is extremely complex and I can barely understand it, but it works and I don't dare touch it. You probably shouldn't, either.
+     * @param input The string that will be used in the constructor. Nonsensical data will produce nonsensical results. Text should be formatted in alignment with the structure of the RTN (stacked \t plaintext)
      */
     constructor(input)
     {
@@ -1428,132 +1446,137 @@ class ExeBuffer extends VirtualBuffer
      */
     update()
     {
+        // parse the input into the output via the main tree parser
         this.tree.input = this.ref.textContent;
         this.tree.totalParse();
-        
         var data = this.tree.output;
 
         // escape special characters
         data = data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-        //insert links
-        data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
-            if ($2) { // markdown-style link
-                if ($2.startsWith("#")) // function substitution link
-                {
-                    return `<a style="z-index: 4; pointer-events: all; position: relative; color: yellow;" href="#" onclick="window.main.redir(event, '${$2}')" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
-                }
-                else // normal markdown link
-                {
-                    return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
-                }
-            }
-            else { // static link
-                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}" target="_blank" rel="noopener noreferrer"><b>${$3}</b></a>`;
-            }
-        });
-        
-
-        //insert RTN dir-navigator links
+        //do formatting
         {
-            var lines = data.split("\n");
-            for(var i = 0; i < lines.length; i++)
+            //insert links
+            data = data.replace(/(\[(.+?)\]\((.+?)\))|(https?:\/\/\S+)/g, function(match, $0, $1, $2, $3) {
+                if ($2) { // markdown-style link
+                    if ($2.startsWith("#")) // function substitution link
+                    {
+                        return `<a style="z-index: 4; pointer-events: all; position: relative; color: yellow;" href="#" onclick="window.main.redir(event, '${$2}')" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
+                    }
+                    else // normal markdown link
+                    {
+                        return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
+                    }
+                }
+                else { // static link
+                    return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}" target="_blank" rel="noopener noreferrer"><b>${$3}</b></a>`;
+                }
+            });
+            
+
+            //insert RTN dir-navigator links
             {
-                window.dirnavIndex = i;
-                lines[i] = lines[i].replace(/(DNL|RTN|DL)([\.\~]{0,1})((?:\/\.\.|\/\[[^\]]+\])+)(\/?)/g, function(match, $0, $1, $2, $3) {
-                    var valid = window.main.dirnav(null, $0+$1+$2+$3, window.dirnavIndex, true);
-                    var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
-                    const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0+$1+$2+$3}', ${window.dirnavIndex});"><b>${$0+$1+$2+$3}</b></a>`;
-                    return result;
-                });
+                var lines = data.split("\n");
+                for(var i = 0; i < lines.length; i++)
+                {
+                    window.dirnavIndex = i;
+                    lines[i] = lines[i].replace(/(DNL|RTN|DL)([\.\~]{0,1})((?:\/\.\.|\/\[[^\]]+\])+)(\/?)/g, function(match, $0, $1, $2, $3) {
+                        var valid = window.main.dirnav(null, $0+$1+$2+$3, window.dirnavIndex, true);
+                        var color = valid? "#52eb00" : "#ff5555"; //green if valid, red if invalid
+                        const result = `<a style="z-index: 4; pointer-events: all; position: relative; color: ${color};" href="#" onclick="window.main.dirnav(event, '${$0+$1+$2+$3}', ${window.dirnavIndex});"><b>${$0+$1+$2+$3}</b></a>`;
+                        return result;
+                    });
+                }
+                var construction = "";
+                for(var line of lines)
+                {
+                    construction += line + "\n";
+                }
+                construction = construction.substring(0,construction.length-1);
+                data = construction;
             }
-            var construction = "";
-            for(var line of lines)
-            {
-                construction += line + "\n";
-            }
-            construction = construction.substring(0,construction.length-1);
-            data = construction;
+
+            // handle arrows
+            data = data.replace(/((?:\&lt\;)?)(-+|=+)((?:\&gt\;)?)/g, function(match, p1, p2, p3) {
+                
+                var rawstr = p1+p2+p3;
+
+                if(rawstr.startsWith("\&lt\;") || rawstr.split("").reverse().join("").startsWith("\;tg\&")) // arrow is properly formed
+                {
+                    return `<b>${rawstr}</b>`;
+                }
+                else // arrow is malformed, return raw text
+                {
+                    return rawstr;
+                }
+            });
+
+            // handle italic
+            data = data.replace(/(?<!\*|\\)(\*{1})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
+
+            // handle bullet points
+            data = data.replace(/^((?:[└├│─ ]*​)*)(-)( )/gm, "$1<span style=\"color: rgb(255,215,0)\">•</span>$3"); // dash case
+            data = data.replace(/^((?:[└├│─ ]*​)*)(\*)( )(?!.*\*)/gm, "$1<span style=\"color: rgb(255,215,0)\">•</span>$3"); // asterisk case (prevent overriding italic)
+
+            // handle ordered lists
+            data = data.replace(/^((?:[└├│─ ]*​)*)([0-9]+\.)( )/gm, "$1<span style=\"color: rgb(255,215,0)\"><b>$2</b></span>$3");
+
+            //handle underline
+            data = data.replace(/(?<!\_|\\)(\_{2})([^\n_]+?)(\1)(?!\_|\\)/g, '<span style="color:cyan"><b>$1</b></span><u>$2</u><span style="color:cyan"><b>$3</b></span>');
+            
+            //handle spoiler - made possible by https://codepen.io/volv/details/RrjooB
+            data = data.replace(/(?<!\||\\)(\|{2})([^\n\|]+?)(\1)(?!\||\\)/g, '<span style="color:cyan"><b>$1</b></span><a style=\"z-index: 4; pointer-events: all; position: relative;\" href=\"#s\" title=\"$2\"><span style=\"font-size: 0vw;\">$2</span></a><span style="color:cyan"><b>$3</b></span>');
+
+            // handle bold
+            data = data.replace(/(?<!\*|\\)(\*{2})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><b>$2</b><span style="color:cyan"><b>$3</b></span>');
+
+            // handle bold AND italic
+            data = data.replace(/(?<!\*|\\)(\*{3})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><i><b>$2</b></i><span style="color:cyan"><b>$3</b></span>');
+
+            // handle italic
+            data = data.replace(/(?<!\~|\\)(\~{2})([^\n~]+?)(\1)(?!\~|\\)/g, '<span style="color:cyan"><b>$1</b></span><del>$2</del><span style="color:cyan"><b>$3</b></span>');
+
+            // handle superscript
+            data = data.replace(/(?<!\\|\!)(\^)(.*?)(\^)(?<!\\|\!)/g, "<b>$1</b><span style=\"display: inline-block; top: -0.2vw; position: relative; line-height: 0.000001em; margin-block: 0;\">$2</span><b>$3</b>");
+
+            //handle subscript
+            data = data.replace(/(?<!\\)(\!\^)(.*?)(\!\^)(?<!\\)/g, "<b>$1</b><span style=\"display: inline-block; top: 0.2vw; position: relative; line-height: 0.000001em; margin-block: 0;\">$2</span><b>$3</b>");
+
+            //handle code blocks
+            data = data.replace(/(?<!\`)(\`{1})([^\n`]+?)(\1)(?!\`)/g, '<span style="color: rgb(232,145,45); background-color: rgb(44, 46, 54);"><b>$1</b>$2<b>$3</b></span>');
+
+            //handle regex blocks
+            data = data.replace(/(RE)(\/)((?:[^\r\n\t\f\v ]|\\ )+)(\/)([gmixsuUAJD]*)/g, '<span style="background-color: rgb(44, 46, 54)"><span style="color: rgb(23,159,241)"><b>$1$2</b></span><span style="color: rgb(192,90,81)">$3</span><span style="color: rgb(23,159,241)"><b>$4$5</b></span></span>');
+            
+            // handle manual highlight definition
+            data = data.replace(/(\[hc)([0-9abcdef])([0-9abcdef])([0-9abcdef])(\])(.*?)(\1)(\2)(\3)(\4)(\5)/g, function(match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) {
+                const r = parseInt(`${p2}0`, 16);
+                const g = parseInt(`${p3}0`, 16);
+                const b = parseInt(`${p4}0`, 16);
+                const luminosity = Math.max(r, g, b);
+                if(luminosity > 127) //highlight is relatively bright-- use a DARK text color
+                {
+                    return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="color: #101010; background-color: #${p2}0${p3}0${p4}0;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
+                }
+                else //highlight is relatively dark-- use a BRIGHT text color (no change)
+                {
+                    return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="background-color: #${p2}0${p3}0${p4}0;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
+                }
+            });
+
+            // handle manual color definition
+            data = data.replace(/(\[tc)([0-9abcdef])([0-9abcdef])([0-9abcdef])(\])(.*?)(\1)(\2)(\3)(\4)(\5)/g, function(match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) {
+                return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="color: #${p2}0${p3}0${p4}0; text-shadow: -1px -1px 5px black, -1px 0px 5px black, -1px 1px 5px black, 0px -1px 5px black, 0px 1px 5px black, 1px -1px 5px black, 1px 0px 5px black, 1px 1px 5px black;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
+            });
+
+            //make glyphs cyan
+            data = data.replace(/[└├│─ ]*​/gm, function(match) {
+                return `<span style="color: cyan;">${match}</span>`;
+            });
+
         }
 
-        // handle arrows
-        data = data.replace(/((?:\&lt\;)?)(-+|=+)((?:\&gt\;)?)/g, function(match, p1, p2, p3) {
-            
-            var rawstr = p1+p2+p3;
-
-            if(rawstr.startsWith("\&lt\;") || rawstr.split("").reverse().join("").startsWith("\;tg\&")) // arrow is properly formed
-            {
-                return `<b>${rawstr}</b>`;
-            }
-            else // arrow is malformed, return raw text
-            {
-                return rawstr;
-            }
-        });
-
-        // handle italic
-        data = data.replace(/(?<!\*|\\)(\*{1})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><i>$2</i><span style="color:cyan"><b>$3</b></span>');
-
-        // handle bullet points
-        data = data.replace(/^((?:[└├│─ ]*​)*)(-)( )/gm, "$1<span style=\"color: rgb(255,215,0)\">•</span>$3"); // dash case
-        data = data.replace(/^((?:[└├│─ ]*​)*)(\*)( )(?!.*\*)/gm, "$1<span style=\"color: rgb(255,215,0)\">•</span>$3"); // asterisk case (prevent overriding italic)
-
-        // handle ordered lists
-        data = data.replace(/^((?:[└├│─ ]*​)*)([0-9]+\.)( )/gm, "$1<span style=\"color: rgb(255,215,0)\"><b>$2</b></span>$3");
-
-        //handle underline
-        data = data.replace(/(?<!\_|\\)(\_{2})([^\n_]+?)(\1)(?!\_|\\)/g, '<span style="color:cyan"><b>$1</b></span><u>$2</u><span style="color:cyan"><b>$3</b></span>');
-        
-        //handle spoiler - made possible by https://codepen.io/volv/details/RrjooB
-        data = data.replace(/(?<!\||\\)(\|{2})([^\n\|]+?)(\1)(?!\||\\)/g, '<span style="color:cyan"><b>$1</b></span><a style=\"z-index: 4; pointer-events: all; position: relative;\" href=\"#s\" title=\"$2\"><span style=\"font-size: 0vw;\">$2</span></a><span style="color:cyan"><b>$3</b></span>');
-
-        // handle bold
-        data = data.replace(/(?<!\*|\\)(\*{2})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><b>$2</b><span style="color:cyan"><b>$3</b></span>');
-
-        // handle bold AND italic
-        data = data.replace(/(?<!\*|\\)(\*{3})([^\n*]+?)(\1)(?!\*|\\)/g, '<span style="color:cyan"><b>$1</b></span><i><b>$2</b></i><span style="color:cyan"><b>$3</b></span>');
-
-        // handle italic
-        data = data.replace(/(?<!\~|\\)(\~{2})([^\n~]+?)(\1)(?!\~|\\)/g, '<span style="color:cyan"><b>$1</b></span><del>$2</del><span style="color:cyan"><b>$3</b></span>');
-
-        // handle superscript
-        data = data.replace(/(?<!\\|\!)(\^)(.*?)(\^)(?<!\\|\!)/g, "<b>$1</b><span style=\"display: inline-block; top: -0.2vw; position: relative; line-height: 0.000001em; margin-block: 0;\">$2</span><b>$3</b>");
-
-        //handle subscript
-        data = data.replace(/(?<!\\)(\!\^)(.*?)(\!\^)(?<!\\)/g, "<b>$1</b><span style=\"display: inline-block; top: 0.2vw; position: relative; line-height: 0.000001em; margin-block: 0;\">$2</span><b>$3</b>");
-
-        //handle code blocks
-        data = data.replace(/(?<!\`)(\`{1})([^\n`]+?)(\1)(?!\`)/g, '<span style="color: rgb(232,145,45); background-color: rgb(44, 46, 54);"><b>$1</b>$2<b>$3</b></span>');
-
-        //handle regex blocks
-        data = data.replace(/(RE)(\/)((?:[^\r\n\t\f\v ]|\\ )+)(\/)([gmixsuUAJD]*)/g, '<span style="background-color: rgb(44, 46, 54)"><span style="color: rgb(23,159,241)"><b>$1$2</b></span><span style="color: rgb(192,90,81)">$3</span><span style="color: rgb(23,159,241)"><b>$4$5</b></span></span>');
-        
-        // handle manual highlight definition
-        data = data.replace(/(\[hc)([0-9abcdef])([0-9abcdef])([0-9abcdef])(\])(.*?)(\1)(\2)(\3)(\4)(\5)/g, function(match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) {
-            const r = parseInt(`${p2}0`, 16);
-            const g = parseInt(`${p3}0`, 16);
-            const b = parseInt(`${p4}0`, 16);
-            const luminosity = Math.max(r, g, b);
-            if(luminosity > 127) //highlight is relatively bright-- use a DARK text color
-            {
-                return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="color: #101010; background-color: #${p2}0${p3}0${p4}0;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
-            }
-            else //highlight is relatively dark-- use a BRIGHT text color (no change)
-            {
-                return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="background-color: #${p2}0${p3}0${p4}0;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
-            }
-        });
-
-        // handle manual color definition
-        data = data.replace(/(\[tc)([0-9abcdef])([0-9abcdef])([0-9abcdef])(\])(.*?)(\1)(\2)(\3)(\4)(\5)/g, function(match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11) {
-            return `<b>${p1}${p2}${p3}${p4}${p5}</b><span style="color: #${p2}0${p3}0${p4}0; text-shadow: -1px -1px 5px black, -1px 0px 5px black, -1px 1px 5px black, 0px -1px 5px black, 0px 1px 5px black, 1px -1px 5px black, 1px 0px 5px black, 1px 1px 5px black;"><b>${p6}</b></span><b>${p7}${p8}${p9}${p10}${p11}</b>`;
-        });
-
-        //make glyphs cyan
-        data = data.replace(/[└├│─ ]*​/gm, function(match) {
-            return `<span style="color: cyan;">${match}</span>`;
-        });
-
+        // set the objects content to the result
         this.ref.innerHTML = data;
 
         super.update();
