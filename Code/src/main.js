@@ -225,8 +225,22 @@ export default class Schema
                 console.error(`Invalid redir called.\nTARGET: ${payload}`);
                 return;
         }
-        history.pushState({}, "", window.location);
-        window.location.replace(url);
+
+        // Create a link element
+        var link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+
+        // Click the link programmatically
+        link.click();
+
+        // Remove the link from the DOM
+        link.parentNode.removeChild(link);
+
+        //OLD replace-based system
+        //history.pushState({}, "", window.location);
+        //window.location.replace(url);
     }
 
     /**
@@ -1427,17 +1441,18 @@ class ExeBuffer extends VirtualBuffer
             if ($2) { // markdown-style link
                 if ($2.startsWith("#")) // function substitution link
                 {
-                    return `<a style="z-index: 4; pointer-events: all; position: relative; color: yellow;" href="#" onclick="window.main.redir(event, '${$2}')"><b>[${$1}](${$2})</b></a>`;
+                    return `<a style="z-index: 4; pointer-events: all; position: relative; color: yellow;" href="#" onclick="window.main.redir(event, '${$2}')" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
                 }
                 else // normal markdown link
                 {
-                    return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}"><b>[${$1}](${$2})</b></a>`;
+                    return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$2}" target="_blank" rel="noopener noreferrer"><b>[${$1}](${$2})</b></a>`;
                 }
             }
             else { // static link
-                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}"><b>${$3}</b></a>`;
+                return `<a style="z-index: 4; pointer-events: all; position: relative;" href="${$3}" target="_blank" rel="noopener noreferrer"><b>${$3}</b></a>`;
             }
         });
+        
 
         //insert RTN dir-navigator links
         {
