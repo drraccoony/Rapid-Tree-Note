@@ -780,8 +780,7 @@ class ProcessingTree
     }
 
     /**
-     * The `toNodes()` function takes an input string and converts it into an array of `LevelNode`
-     * objects, where each object represents a line of data (tabs removed) with its corresponding indentation level.
+     * @description Takes an input string and converts it into an array of `LevelNode` objects, where each object represents a line of data (tabs removed) with its corresponding indentation level.
      */
     toNodes()
     {
@@ -817,8 +816,7 @@ class ProcessingTree
     }
 
     /**
-     * The function converts JavaScript code into a treeblock-based representation.
-     * If it produces an array of arrays, where each sub-array's content equals N "New" blocks followed by one "End"/"Data" block.
+     * @description Converts an array of `LevelNode`s into a treeblock-based representation. It produces an array of arrays, where each sub-array's content equals N "New" blocks followed by one "End"/"Data" block, where N == the indentation level of that line's LevelNode.
      */
     toBlocks()
     {
@@ -842,8 +840,9 @@ class ProcessingTree
     }
 
     /**
-     * The function `parseNewBlocks()` iterates over a 2D array of blocks and converts blocks of type
-     * "New" to other non-Data, non-End types based on certain conditions.
+     * @warning - This is THE function that makes the RTN work and is an absolute dumpster fire, but works consistently. If you need to understand it, Good luck. A written english description of this algorithm is described in implimentaiton.html.
+     * @hours_wasted_here 40
+     * @description The function `parseNewBlocks()` iterates over a 2D array of treeblocks and converts blocks of type "New" to other non-Data, non-End types based on certain conditions. The result is a 2D array of blocks that match the syntax of the UNIX `tree` command.
      */
     parseNewBlocks()
     {
@@ -1005,8 +1004,7 @@ class ProcessingTree
     }
 
     /**
-     * The `toString()` function assembles a string by concatenating the data from each block in the
-     * `mainArr` array, separated by new lines.
+     * @description The `toString()` function assembles a string by concatenating the data from each block in the `mainArr` array, separated by "\n" for each line.
      */
     toString()
     {
@@ -1026,8 +1024,12 @@ class ProcessingTree
     }
 
     /**
-     * The function `totalParse()` converts input into nodes, then into blocks, parses new blocks, and
-     * finally converts the result into a string. That final string is written to this.output.
+     * @description Main function for this class. Turns an unprocessed document (a series of text lines with a number of \t at the front of each) into a processed RTN document (\t replaced by tree glyphs inline with the UNIX `tree` command). Breaks up processing into the following steps:
+     * 1: toNodes() - Document_Contents<String> -> Array<LevelNode> 
+     * 2: toBlocks() - Array<LevelNode> -> Array<Array<TreeBlock>> 
+     * 3: parseNewBlocks() - Array<Array<TreeBlock>> -> Array<Array<TreeBlock>> (processed)
+     * 4: toString() - Array<Array<TreeBlock>> -> Formatted_Document<String> 
+     * @return void - The final processed string is written to this.output.
      */
     totalParse()
     {
@@ -1044,17 +1046,14 @@ class ProcessingTree
     }
 }
 
-/* The VirtualBuffer class is a JavaScript class that provides methods for handling text input in a
-textarea element, including tab and newline functionality. */
+/**
+ * @description The VirtualBuffer class acts as a wrapper to an associated textarea element, providing untilitity functions to manage the position of the carrat (the 2d user's selection or "text cursor").
+ */
 class VirtualBuffer
 {
     /**
-     * The constructor function initializes a textArea object with properties for the reference, carrat start,
-     * and carrat end positions of the selection, and the state of the object.
-     * 
-     * @param textArea The `textArea` parameter is the reference to the HTML textarea element that you
-     * want to work with. It is used to access and manipulate the text content and selection of the
-     * textarea.
+     * The constructor function initializes a textArea object with properties for the reference, carrat start, and carrat end positions of the selection, and the state of the object.
+     * @param textArea The `textArea` parameter is the reference to the HTML textarea element that you want to work with. It is used to access and manipulate the text content and selection of the textarea.
      */
     constructor(textArea)
     {
@@ -1074,8 +1073,7 @@ class VirtualBuffer
     }
 
     /**
-     * The function "readCarrat()" is used to get the start and end positions of the current text
-     * selection in a text input field and save it to the internal start and end memebers.
+     * The function "readCarrat()" is used to get the start and end positions of the current text selection in a text input field and save it to the internal start and end memebers.
      */
     readCarrat()
     {
@@ -1084,11 +1082,9 @@ class VirtualBuffer
     }
 
     /**
-     * The moveCarrat function updates the start and end positions of the carrat and then writes the
-     * carrat.
-     * 
-     * @param vector The parameter "vector" represents the amount by which the carrat should be moved.
-     * It is a vector that specifies the direction and magnitude of the movement.
+     * The moveCarrat function updates the start and end positions of the carrat and then writes the carrat.
+     * @param vector The parameter "vector" represents the amount by which the carrat should be moved. It is a vector that specifies the direction and magnitude of the movement. (positive for forward, negative for backward)
+     * @note I have no idea how this would work in languages that write right-to-left; probably catastropic failure.
      */
     moveCarrat(vector)
     {
@@ -1098,11 +1094,8 @@ class VirtualBuffer
     }
 
     /**
-     * The function "countCaretLeft" counts the number of tabs before the current cursor position in a
-     * text area.
-     * 
-     * @return The number of tabs (represented by "\t") in the last line of text before the caret
-     * position.
+     * The function "countCaretLeft" counts the number of tabs before the current carrat position in a text area.
+     * @return The number of tabs (represented by "\t") in the last line of text before the caret position.
      */
     countCaretLeft()
     {
@@ -1113,17 +1106,11 @@ class VirtualBuffer
     }
 
     /**
-     * The `keyHandler` function in JavaScript handles key events, such as pressing the Tab or Enter
-     * key, and performs specific actions based on the current state and caret position in a text input
-     * field.
-     * @param event - The `event` parameter is an object that represents the keyboard event that
-     * occurred. It contains information about the key that was pressed, such as the key code and key
-     * value.
-     * @param callback - The `callback` parameter is a function that will be called after processing
-     * the key event. It is used to handle any additional logic or actions that need to be performed
-     * after processing the key event.
-     * @returns The function `keyHandler` does not explicitly return a value, but functionally returns by
-     * executing its callaback after 10ms
+     * @description Function called whenever a key is pressed into a textarea. Called BEFORE the default result of that keypress can apply, such that we can intercept and replace the result as needed. This is used to modify what happens when the TAB and ENTER keys are pressed based on what they would do to the document.
+     * @param event - The `event` parameter is an object that represents the keyboard event that occurred. It contains information about the key that was pressed, such as the key code and key value.
+     * @param callback - The `callback` parameter is a function that wil be called after processing the key event, caused by calling it on a timeout of 10ms.It will always be a reference to schema.keyPostRouter.
+     * @returns void - The function `keyHandler` does not explicitly return a value, but functionally returns by executing its callaback after 10ms
+     * @locking - To prevent multiple callbacks colliding at the same time, as soon as we schedule a callback this virual buffer's .state property is set to "LOCKED". This will not be UNLOCKED until this.update() is called. Any additional attempts to call this.keyHandler while the VirtualBuffer is locked will result in the execution being denied and rescheduled for 10ms in the future, repeating indefinitely until allowed to pass. The callback function of the original attempt is preserved across reschedulings.
      */
     keyHandler(event, callback)
     {
@@ -1133,9 +1120,7 @@ class VirtualBuffer
         {
             event = { "key": "none" };
         }
-        /* The below code is checking the value of the "state" property. If the value is "LOCKED", it
-        sets a timeout of 10 milliseconds and calls this function with the provided
-        event and callback parameters, effectively processing the command later if it can't currently be done. */
+        /* The below code is checking the value of the "state" property. If the value is "LOCKED", it sets a timeout of 10 milliseconds and calls this function with the provided event and callback parameters, effectively processing the command later if it can't currently be done. */
         if(this.state == "LOCKED")
         {
             setTimeout(() => {this.keyHandler(event, callback)}, 10);
@@ -1144,9 +1129,7 @@ class VirtualBuffer
 
         this.readCarrat();
 
-        /* The below code is checking if the key pressed is the "Tab" key. If it is, it prevents the
-        default behavior of the tab key (which is to move focus to the next element) and insets a "\t"
-        at the appropriate position if shouldTab() returns true. */
+        /* The below code is checking if the key pressed is the "Tab" key. If it is, it prevents the default behavior of the tab key (which is to move focus to the next element) and insets a "\t" at the appropriate position if shouldTab() returns true. */
         if(event.key == "Tab")
         {
             event.preventDefault();
@@ -1226,11 +1209,7 @@ class VirtualBuffer
             }
         }
 
-        /* The below code is checking if the "Enter" key is pressed. If it is, it prevents the default
-        behavior of creating a new line. It then checks if a newline should be added based on the
-        current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and
-        automatically indents the new line based on the number of tabs at the current caret
-        position. */
+        /* The below code is checking if the key pressed is the "Enter" key. If it is, it prevents the default behavior of creating a new line. It then checks if a newline should be added based on the current position of the caret in shouldNewLine(). If a newline should be added, it adds a newline character and automatically indents the new line based on the number of tabs at the current caret position. */
         if(event.key == "Enter")
         {
             event.preventDefault();
@@ -1252,12 +1231,11 @@ class VirtualBuffer
         setTimeout(() => {callback()}, 10);
 
         /**
-         * The function `shouldTab` determines whether a tab should be inserted at a given
-         * position in a string based on the content of the previous and next lines.
+         * @helper - this is a helper (local) function
+         * @description The function `shouldTab` determines whether a tab should be inserted at a given position in a string based on the content of the previous and next lines.
          * @param string - The string parameter is the input string that you want to check for tabbing.
-         * @param start - The start parameter is the index at which the tabbing should start in the
-         * given string.
-         * @returns a boolean value.
+         * @param start - The start parameter is the index at which the tabbing should start in the given string.
+         * @returns bool - whether or not a tab could be inserted at the provided position withour resulting in an invalid document.
          */
         function shouldTab(string, start)
         {
@@ -1320,13 +1298,12 @@ class VirtualBuffer
         }
 
         /**
-         * The function shouldNewline determines whether a newline should be inserted at a given
-         * position in a string based on the content of the previous and next lines.
+         * @helper - this is a helper (local) function
+         * @description - The function shouldNewline determines whether a newline should be inserted at a given position in a string based on the content of the previous and next lines.
          * @param string - The input string that you want to check for newlines.
          * @param start - The start parameter is the index at which to start checking for newlines in
          * the string.
-         * @returns a boolean value indicating whether a newline should be inserted at a given position
-         * in a string.
+         * @returns a boolean value indicating whether a newline should be inserted at a given position in a string.
          */
         function shouldNewline(string, start)
         {
@@ -1368,8 +1345,7 @@ class VirtualBuffer
     }
 
     /**
-     * The update function changes the value of this.ref.value, sets the state to "UNLOCKED", and calls
-     * the readCarrat function.
+     * @description The update function changes the value of this.ref.value, sets the state to "UNLOCKED", and calls the readCarrat function.
      */
     update()
     {
@@ -1380,10 +1356,9 @@ class VirtualBuffer
 
 }
 
-
-/* The `RawBuffer` class extends the `VirtualBuffer` class and overrides the `update()` function to
-* replace specific glyphs with tabs and then calls the parent class's `update()` function.
-* It is used as the data processor for the "source" textarea. */
+/**
+ * @description - The `RawBuffer` class extends the `VirtualBuffer` class and overrides the `update()` function to replace specific glyphs with tabs and then calls the parent class's `update()` function. It is used as the data processor for the "source" textarea.
+ */
 class RawBuffer extends VirtualBuffer
 {
     constructor(textArea)
@@ -1392,8 +1367,7 @@ class RawBuffer extends VirtualBuffer
     }
 
     /**
-     * The `update()` function replaces glyphs of length 8 and 4 in a string with tabs, removes interal tabs, and then calls the
-     * `update()` function of the parent class.
+     * The `update()` function replaces glyphs of length 8 and 4 in a string with tabs, removes interal tabs, and then calls the `update()` function of the parent class.
      */
     update()
     {
@@ -1403,8 +1377,9 @@ class RawBuffer extends VirtualBuffer
     }
 }
 
-/* The `ExeBuffer` class extends the `VirtualBuffer` class and provides a way to update the input value
-of a tree object, parse it, and update the output value. It is used for the "display" textarea. */
+/**
+ * The `ExeBuffer` class extends the `VirtualBuffer` class and provides a way to update the input value of a tree object, parse it, and update the output value. It is used for the "display" textarea.
+ */
 class ExeBuffer extends VirtualBuffer
 {
     constructor(textArea)
@@ -1414,8 +1389,7 @@ class ExeBuffer extends VirtualBuffer
     }
 
     /**
-     * The `update()` function updates the input value of a tree object, parses it, and updates the
-     * output value.
+     * The `update()` function updates the input value of a tree object, parses it, and updates the output value.
      */
     update()
     {
