@@ -11,14 +11,14 @@ RTN is free software: you can redistribute it and/or modify it under the terms o
 
 RTN is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along with RTN. It is avalible at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
+You should have received a copy of the GNU Affero General Public License along with RTN. It is available at ./License/COPYING. Otherwise, see <https://www.gnu.org/licenses/>
 
 -----NOTE TO MAINTAINERS-----
 This script simply checks if the included
 `.link` attribute of a .rtn file is displayable.
 If it is, a redirect there occurs. If not, display raw file contents.
 
-It is in no way reuqired for the RTN to function,
+It is in no way required for the RTN to function,
 and just works with Apache2 RewriteEngine:
 RewriteEngine On
 RewriteRule .*\.rtn$ /rtn_viewer.php [NC,L]
