@@ -1,0 +1,160 @@
+@font-face {
+    font-family: 'Box';
+    src:
+        url('../../Resources/font/consola-box.woff2') format('woff2'),
+        url('../../Resources/font/consola-box.woff') format('woff');
+}
+
+body {
+    background-color: rgb(44, 46, 54); font-family: monospace; overflow-x: auto;
+}
+
+a {
+    color: rgb(66, 135, 255);
+}
+
+a:visited {
+    color: plum;
+}
+
+/* 
+* Navigation Styles
+*/
+.navigation-btn-div {
+    width: 10%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigation-btn {
+    width: 95%;
+    height: 75%;
+    background-color: rgba(67, 72, 91, 1.0);
+    outline: solid 0.25vw black;
+    box-shadow: none;
+    color: whitesmoke;
+    font-size: 1.5vw;
+}
+
+.btn-implementation {
+    width: 15%;
+}
+
+.logo-container {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 5vw;
+}
+
+/* 
+* End Navigation Styles
+*/
+
+#main {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    min-width: 90vw;
+    /* Minimum width */
+    top: 5vh;
+    min-height: 75vh;
+    overflow: hidden;
+}
+
+#display {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    width: max-content;
+    min-width: 90vw;
+    /* Ensure it can grow */
+    min-height: 70vh;
+    background-color: rgba(67, 72, 91, 1.0);
+    border: solid 0.25vw black;
+    outline: transparent;
+    color: whitesmoke;
+    font-family: Box, monospace;
+    tab-size: 8;
+    line-height: 1.2;
+    letter-spacing: 0vw;
+    white-space: pre-wrap;
+    vertical-align: top;
+    box-sizing: border-box;
+    overflow: visible;
+    padding: 0.5vw;
+    word-break: normal;
+    /* Prevent word breaking */
+}
+
+#source {
+    z-index: 2;
+    resize: none;
+    caret-color: whitesmoke;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: max-content;
+    min-width: 90vw;
+    /* Ensure it can grow */
+    min-height: 70vh;
+    background-color: transparent;
+    border: solid 0.25vw transparent;
+    outline: transparent;
+    color: transparent;
+    font-family: Box, monospace;
+    tab-size: 8;
+    line-height: 1.2;
+    letter-spacing: 0vw;
+    vertical-align: top;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 0.5vw;
+    word-break: normal;
+    /* Prevent word breaking */
+    white-space: pre-wrap;
+}
+
+#header {
+    position: fixed;
+    z-index: 10;
+    width: 96%;
+    background-color: rgba(67, 72, 91, 1.0);
+    border: solid 0.25vw black;
+    outline: solid 4vw transparent;
+    padding: 1%;
+}
+
+/* Spoiler tag logic, taken from https://codepen.io/volv/details/RrjooB */
+a[href="#s"],
+.md p>a[href="#s"] {
+    text-decoration: none !important;
+    cursor: default;
+    background: #000;
+    color: #fff !important;
+}
+
+a[href="#s"]::after,
+.md p>a[href="#s"]::after {
+    content: attr(title);
+    color: #000;
+    visibility: visible;
+}
+
+a[href="#s"]:hover,
+.md p>a[href="#s"]:hover {
+    color: #fff !important;
+}
+
+a[href="#s"]:hover::after,
+a[href="#s"]:active::after,
+.md p>a[href="#s"]:hover::after,
+.md p>a[href="#s"]:active::after {
+    color: #fff;
+}
