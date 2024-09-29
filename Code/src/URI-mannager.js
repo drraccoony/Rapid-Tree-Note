@@ -232,7 +232,7 @@ export class URIMannager
                 u8.push(val+128);
             }
             u8 = new Uint8Array(u8);
-            console.log(u8);
+            console.debug(u8);
             return u8;
         }
     }

@@ -568,18 +568,14 @@ export default class Schema
         var actions = payload.split("/").filter(item => item!== null && item!== undefined && item!== "" && item!== "DNL." && item!= "RTN." && item!= "DL.");
 
         // build a debug info object to print to console in the event of an error
-        if(false)
-        {
-            var debug = {
-                Payload: payload,
-                Index: lineIndex,
-                Lines: lines,
-                LowerBound: boundLower,
-                UpperBound: boundUpper,
-                Actions: actions
-            };
-            console.debug(debug.Actions);
-        }
+        var debug = {
+            Payload: payload,
+            Index: lineIndex,
+            Lines: lines,
+            LowerBound: boundLower,
+            UpperBound: boundUpper,
+            Actions: actions
+        };
 
         // iterate over the "actions" queue, consuming elements as they are used to move the linePointer
         // if at any point a bounds is exceeded, an error is printed to console and the function returns early (as FALSE with no effect)
@@ -1114,7 +1110,7 @@ class VirtualBuffer
      */
     keyHandler(event, callback)
     {
-        console.log(event);
+        console.debug(event);
 
         if(event == undefined)
         {
