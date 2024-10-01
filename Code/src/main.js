@@ -14,6 +14,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 import { Line, Fork, Bend, Gap, Data, New, End, Null } from "./treeblocks.js";
 import { URIMannager } from "./URI-mannager.js";
+import { Provider } from "./provider.js";
 
 /* The Schema class is a container that handles user input, generates a formatted document, and synchronizes scrollbars. */
 export default class Schema
@@ -29,6 +30,9 @@ export default class Schema
         this.maxURLLength = 8192;
         this.uri = new URIMannager();
         window.main = this;
+
+        // attatch provider to header
+        this.provider = new Provider("file_save");
 
         // attempt initialization from page URL
         var urlData = this.pullURL();
@@ -65,12 +69,14 @@ export default class Schema
         this.keyPostRouter();
         this.syncScrollbars();
         this.handlePaste();
+        this.urlPreEncodeOnIdle();
 
         // update the tab's Title explicitly once at startup
         if(urlData != "" && urlData != null)
         {
             document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
         }
+
 
     }
 
@@ -230,6 +236,19 @@ export default class Schema
 
             //update the title of the tab to be the first 32 characters of the document's content
             document.title = this.exe.ref.textContent.split("\n")[0].substring(0,32);
+
+            //update file download link
+            this.provider.clear();
+
+            var fileName = document.title;
+            fileName = fileName.replace(/[^A-Za-z0-9_-]/g, "_");
+            fileName += ".rtn"
+
+            var fileContents = `{\n  "how_to_open": "Visit the link contained in the value of the \`.link\` property. If no suitable copy of the RTN software exists, see \`.data_recovery\`.",\n  "link": "{{DATA}}",\n  "data_structure": "Each RTN link consists of 3 URI parameters: \`enc=\`, \`cmpr=\`, and \`data=\`. These stand for \`encoding\`, \`compression\`, and \`data\` respectively. Extraction of these components may be necessary for data recovery.",\n  "data_recovery": "In the event that no copy of the RTN software is available, it is still possible to recover the included data. Data is encoded with the \`.encoding\` encoding type and compressed with the \`.compression\` compression scheme. For URI-B64 encoding, replace \`-_\` with \`+/\` and then handle with normal base64_decode. For LZMA2 compression, gzinflate data[2:]."\n}`;
+            fileContents = fileContents.replace("{{DATA}}", window.link_full);
+
+        
+            this.provider.provide(fileName, "text/plain", fileContents);
         }
        
     }
@@ -256,7 +275,7 @@ export default class Schema
         }
         else // default "homepage" value
         {
-            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tAdditional Instructions - *Click links to view!*\n\t\t[Indentation](./Redir/indentation.html)\n\t\t\tUse TAB to indent\n\t\t[Text Formatting](./Redir/textformat.html)\n\t\t[Color and Highlighting](./Redir/color.html)\n\t\t[DNL Links / Intradocument References](./Redir/dirnavlink.html)";
+            this.raw.ref.value = "Rapid Tree Notetaker\n\tWhat is this?\n\t\tThe Rapid Tree Notetaker (RTN) is a notetaking tool developed by computer science student Brendan Rood at the University of Minnesota Duluth.\n\t\tIt aims to provide an easy way to take notes formatted similar to a Reddit thread, with indentation following a tree-like structure allowing for grouping.\n\t\tIt also prioritizes ease of sharing, as the URL can be shared to instantly communicate the note's contents.\n\t\t\tNotice how the border is flashing?\n\t\t\tEvery time you see that, it means that the document has been saved to the URL!\n\t\t\tIf the URL ever becomes longer than 8192 characters, it will alert you that saving is no longer possible.\n\t\t\tYou can click the header of the page to save the document as a `.rtn` file.\n\t\tIt is free to use and will never ask you to log in.\n\tSample\n\t\tEdit this text\n\t\tto generate\n\t\t\ta\n\t\t\tdocument\n\t\tformatted\n\t\t\tlike a tree!\n\t\t\t:3\n\tAdditional Instructions - *Click links to view!*\n\t\t[Indentation](./Redir/indentation.html)\n\t\t\tUse TAB to indent\n\t\t[Text Formatting](./Redir/textformat.html)\n\t\t[Color and Highlighting](./Redir/color.html)\n\t\t[DNL Links / Intradocument References](./Redir/dirnavlink.html)";
         }
     }
 

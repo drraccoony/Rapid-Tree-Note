@@ -26,7 +26,7 @@ export class URIMannager
     {
         if(new Date().getTime() - this.lastAlert >= 30000)
         {
-            alert("Maxium URL Length Reached!\n\nShorten your document or prepare to save the raw text contents instead of the URL!");
+            alert("Maxium URL Length Reached!\n\nShorten your document or prepare to save the raw text contents instead of the URL!\n\nYou can click the header of the page (\"Rapid Tree Notetaker\" to save the document as a `.rtn` file.");
         }
         this.lastAlert = new Date().getTime();
     }
@@ -89,6 +89,7 @@ export class URIMannager
     {
         var baseURL = window.location.href.split("?")[0];
         var URL = baseURL + "?enc=" + encoding + "&cmpr=" + compressionType + "&data=" + encodedData;
+        window.link_full = URL;
 
         if(URL.length + 512 > this.maxURILength)
         {
